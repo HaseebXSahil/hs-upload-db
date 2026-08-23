@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" name="viewport"/>
+  <title>DB Service PK • SIM & CNIC Database</title>
+  <meta content="DB Service PK — Fast SIM info & CNIC lookup. Powered by Haseeb Sahil API." name="description"/>
+  <meta content="#0F172A" name="theme-color"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --bg-primary: #0F172A; --bg-secondary: #1E293B; --bg-tertiary: #334155;
+      --bg-card: #1E293B; --bg-input: #0F172A;
+      --gold-primary: #FBBF24; --gold-light: #FCD34D; --gold-dark: #D97706;
+      --gold-bg: rgba(251,191,36,0.08); --gold-border: rgba(251,191,36,0.2);
+      --text-primary: #FFFFFF; --text-secondary: #CBD5E1; --text-muted: #94A3B8;
+      --border-color: #334155; --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.4); --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+      --shadow-gold: 0 4px 20px rgba(251,191,36,0.15);
+      --shadow-gold-lg: 0 8px 40px rgba(251,191,36,0.2);
+      --header-bg: rgba(15,23,42,0.98); --overlay-bg: rgba(0,0,0,0.7);
+      --loader-bg: rgba(15,23,42,0.95); --divider-color: rgba(255,255,255,0.05);
+    }
+    [data-theme="light"] {
+      --bg-primary: #F8FAFC; --bg-secondary: #FFFFFF; --bg-tertiary: #F1F5F9;
+      --bg-card: #FFFFFF; --bg-input: #F1F5F9;
+      --gold-primary: #D97706; --gold-light: #F59E0B; --gold-dark: #B45309;
+      --gold-bg: rgba(217,119,6,0.08); --gold-border: rgba(217,119,6,0.2);
+      --text-primary: #1E293B; --text-secondary: #475569; --text-muted: #64748B;
+      --border-color: #E2E8F0; --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1); --shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
+      --shadow-gold: 0 4px 20px rgba(217,119,6,0.1);
+      --shadow-gold-lg: 0 8px 40px rgba(217,119,6,0.15);
+      --header-bg: rgba(255,255,255,0.98); --overlay-bg: rgba(0,0,0,0.5);
+      --loader-bg: rgba(248,250,252,0.95); --divider-color: rgba(0,0,0,0.05);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-primary); color: var(--text-primary);
+      min-height: 100vh; min-height: 100dvh;
+      -webkit-tap-highlight-color: transparent;
+      line-height: 1.6; overflow-x: hidden; display: flex; flex-direction: column;
+      transition: background 0.4s ease, color 0.4s ease; padding-top: 64px;
+    }
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: var(--gold-primary); border-radius: 10px; }
+
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInScale { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    @keyframes pulseGlow { 0%,100% { box-shadow: 0 0 5px rgba(251,191,36,0.3); } 50% { box-shadow: 0 0 25px rgba(251,191,36,0.6); } }
+    @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    @keyframes bounce { 0%,80%,100% { transform: scale(0); } 40% { transform: scale(1); } }
+    @keyframes statusPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.5); } }
+
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    .header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--header-bg); backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-color); padding: 0 16px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: var(--shadow-md); animation: fadeInDown 0.6s ease-out;
+    }
+    .header.scrolled { box-shadow: var(--shadow-lg); }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { width: 38px; height: 38px; background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #0F172A; font-size: 16px; box-shadow: var(--shadow-gold); }
+    .logo-text h1 { font-size: 0.9rem; font-weight: 800; color: var(--gold-primary); white-space: nowrap; }
+    .logo-text .tagline { font-size: 0.5rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; display: none; }
+    .header-actions { display: flex; align-items: center; gap: 6px; }
+    .theme-toggle { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: all 0.3s ease; }
+    .theme-toggle:hover { border-color: var(--gold-primary); background: var(--bg-tertiary); box-shadow: var(--shadow-gold); transform: rotate(15deg); }
+    .hamburger { width: 38px; height: 38px; display: flex; flex-direction: column; gap: 4px; align-items: center; justify-content: center; cursor: pointer; background: none; border: none; padding: 6px; }
+    .hamburger span { width: 20px; height: 2px; background: var(--text-primary); border-radius: 3px; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); background: var(--gold-primary); }
+    .hamburger.active span:nth-child(2) { opacity: 0; transform: scale(0); }
+    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(4px,-4px); background: var(--gold-primary); }
+
+    .menu-overlay { position: fixed; inset: 0; background: var(--overlay-bg); z-index: 98; display: none; backdrop-filter: blur(4px); }
+    .menu-overlay.active { display: block; }
+    .menu-panel { position: fixed; top: 0; right: -100%; width: 85%; max-width: 320px; height: 100%; background: var(--bg-secondary); z-index: 99; transition: right 0.4s ease; overflow-y: auto; padding: 20px 16px; box-shadow: var(--shadow-lg); border-left: 1px solid var(--border-color); }
+    .menu-panel.active { right: 0; }
+    .menu-close { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: var(--text-muted); padding: 4px 8px; }
+    .menu-close:hover { color: var(--gold-primary); transform: rotate(90deg); }
+    .menu-link { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; text-decoration: none; color: var(--text-secondary); font-weight: 500; font-size: 0.9rem; transition: all 0.3s ease; }
+    .menu-link:hover, .menu-link.active { background: var(--gold-bg); color: var(--gold-primary); font-weight: 700; }
+    .menu-wa { display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); color: #0F172A; padding: 14px; border-radius: 30px; text-decoration: none; font-weight: 800; margin-top: 16px; font-size: 0.9rem; box-shadow: var(--shadow-gold); }
+
+    .app { width: 100%; max-width: 100%; margin: 0 auto; padding: 0 12px; flex: 1; }
+
+    .hero { background: var(--bg-card); border-radius: 24px; padding: 20px 16px; margin: 12px 0; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); animation: fadeInScale 0.8s ease-out; text-align: center; }
+    .hero h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; color: var(--text-primary); }
+    .hero h2 span { background: linear-gradient(135deg, var(--gold-light), var(--gold-primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero p { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 14px; }
+
+    .search-card { background: var(--bg-card); border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow-lg); border: 1px solid var(--border-color); }
+    .search-label { font-size: 0.65rem; font-weight: 700; color: var(--gold-primary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; }
+    .search-input-wrap { display: flex; gap: 8px; align-items: center; background: var(--bg-input); border: 2px solid var(--border-color); border-radius: 12px; padding: 4px; transition: all 0.4s ease; }
+    .search-input-wrap:focus-within { border-color: var(--gold-primary); box-shadow: 0 0 0 4px var(--gold-bg); }
+    .search-input-wrap input { flex: 1; border: none; background: none; padding: 12px 14px; font-size: 0.9rem; font-weight: 500; color: var(--text-primary); outline: none; min-width: 0; width: 100%; }
+    .search-input-wrap input::placeholder { color: var(--text-muted); font-size: 0.8rem; }
+    .search-btn { background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); color: #0F172A; border: none; padding: 11px 18px; border-radius: 10px; font-weight: 800; font-size: 0.8rem; cursor: pointer; white-space: nowrap; min-height: 42px; transition: all 0.3s ease; box-shadow: var(--shadow-gold); }
+    .search-btn:hover { box-shadow: var(--shadow-gold-lg); transform: translateY(-2px); }
+
+    .result-item { background: var(--bg-card); border-radius: 16px; padding: 18px; border: 1px solid var(--border-color); border-left: 4px solid var(--gold-primary); margin-bottom: 12px; box-shadow: var(--shadow-lg); transition: all 0.4s ease; }
+    .result-item:hover { box-shadow: var(--shadow-gold-lg); transform: translateY(-2px); }
+    .result-header { display: flex; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 6px; }
+    .sim-tag { background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark)); color: #0F172A; padding: 3px 14px; border-radius: 20px; font-size: 0.6rem; font-weight: 800; }
+    .net-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 14px; border-radius: 20px; font-size: 0.6rem; font-weight: 800; color: white; }
+    .info-row { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--divider-color); transition: all 0.3s ease; }
+    .info-row:last-child { border-bottom: none; }
+    .info-icon { color: var(--gold-primary); font-size: 0.85rem; width: 20px; text-align: center; flex-shrink: 0; margin-top: 2px; }
+    .info-label { font-size: 0.55rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .info-value { font-size: 0.8rem; font-weight: 700; color: var(--text-primary); word-break: break-word; }
+    .action-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-color); }
+    .btn-action { padding: 10px 8px; border-radius: 24px; border: 2px solid var(--gold-primary); background: transparent; color: var(--gold-primary); font-weight: 700; font-size: 0.6rem; cursor: pointer; text-align: center; transition: all 0.4s ease; min-height: 38px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .btn-action:hover { background: var(--gold-bg); border-color: var(--gold-light); color: var(--gold-light); box-shadow: var(--shadow-gold); transform: translateY(-3px); }
+    .btn-action.save-image { border-color: #8B5CF6; color: #8B5CF6; }
+    .btn-action.save-image:hover { background: rgba(139,92,246,0.1); border-color: #A78BFA; color: #A78BFA; }
+    .btn-action.whatsapp { border-color: #25D366; color: #25D366; }
+    .btn-action.whatsapp:hover { background: rgba(37,211,102,0.1); border-color: #34D399; color: #25D366; }
+
+    .dev-section { background: var(--bg-card); border-radius: 16px; padding: 16px; margin: 16px 0; border: 1px solid var(--border-color); text-align: center; }
+    .dev-section img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--gold-primary); margin-bottom: 8px; }
+    .dev-section h3 { font-size: 0.9rem; font-weight: 700; color: var(--gold-primary); }
+    .dev-section p { font-size: 0.75rem; color: var(--text-secondary); }
+    .dev-links { display: flex; justify-content: center; gap: 12px; margin-top: 10px; flex-wrap: wrap; }
+    .dev-links a { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-tertiary); padding: 6px 16px; border-radius: 20px; color: var(--text-secondary); text-decoration: none; font-size: 0.7rem; font-weight: 600; border: 1px solid var(--border-color); transition: all 0.3s ease; }
+    .dev-links a:hover { border-color: var(--gold-primary); color: var(--gold-primary); transform: translateY(-2px); }
+
+    /* About Developer Text (without button) */
+    .about-text {
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .about-text strong { color: var(--gold-primary); }
+
+    .footer { background: #1E293B; margin-top: 24px; border-top: 3px solid #FBBF24; }
+    .footer-container { padding: 28px 16px 20px; }
+    .footer-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 24px; }
+    .footer-brand { display: flex; flex-direction: column; gap: 10px; }
+    .footer-logo { display: flex; align-items: center; gap: 10px; }
+    .footer-logo-icon { width: 42px; height: 42px; background: linear-gradient(135deg, #FBBF24, #D97706); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #0F172A; font-size: 18px; box-shadow: 0 4px 20px rgba(251,191,36,0.2); }
+    .footer-logo-text h3 { font-size: 1.1rem; font-weight: 800; color: #FFFFFF; }
+    .footer-logo-text h3 span { color: #FBBF24; }
+    .footer-tagline { font-size: 0.55rem; color: #94A3B8; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+    .footer-description { font-size: 0.75rem; line-height: 1.6; color: #94A3B8; }
+    .footer-social { display: flex; gap: 10px; margin-top: 4px; }
+    .footer-social-link { width: 38px; height: 38px; border-radius: 8px; background: #334155; display: flex; align-items: center; justify-content: center; color: #CBD5E1; text-decoration: none; transition: all 0.3s ease; font-size: 0.9rem; border: 1px solid #475569; }
+    .footer-social-link:hover { background: #FBBF24; color: #0F172A; border-color: #FBBF24; transform: scale(1.1) rotate(5deg); }
+    .footer-column h4 { font-size: 0.75rem; font-weight: 700; color: #FBBF24; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid #334155; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .footer-links li a { color: #94A3B8; text-decoration: none; font-size: 0.75rem; transition: all 0.3s ease; display: flex; align-items: center; gap: 6px; }
+    .footer-links li a:hover { color: #FCD34D; padding-left: 8px; }
+    .footer-bottom { border-top: 1px solid #334155; padding-top: 16px; display: flex; flex-direction: column; gap: 10px; align-items: center; text-align: center; }
+    .footer-copyright { font-size: 0.7rem; color: #94A3B8; }
+    .footer-copyright strong { color: #FCD34D; }
+    .footer-bottom-links { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .footer-bottom-links a { color: #94A3B8; text-decoration: none; font-size: 0.65rem; transition: all 0.3s ease; }
+    .footer-bottom-links a:hover { color: #FCD34D; }
+
+    .loader { display: none; position: fixed; inset: 0; background: var(--loader-bg); backdrop-filter: blur(8px); z-index: 999; justify-content: center; align-items: center; flex-direction: column; gap: 20px; }
+    .loader.active { display: flex; }
+    .loader-spinner-wrap { position: relative; width: 60px; height: 60px; }
+    .spinner { width: 60px; height: 60px; border: 3px solid var(--border-color); border-top: 3px solid var(--gold-primary); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .loader-text { color: var(--text-secondary); font-weight: 600; font-size: 0.85rem; }
+    .loader-dots { display: flex; gap: 6px; }
+    .loader-dot { width: 8px; height: 8px; background: var(--gold-primary); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+    .loader-dot:nth-child(1) { animation-delay: -0.32s; }
+    .loader-dot:nth-child(2) { animation-delay: -0.16s; }
+    .loader-dot:nth-child(3) { animation-delay: 0s; }
+    .toast-container { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 10001; display: flex; flex-direction: column; gap: 8px; max-width: 92vw; pointer-events: none; }
+    .toast { background: var(--bg-card); padding: 12px 18px; border-radius: 12px; box-shadow: var(--shadow-lg); font-size: 0.8rem; font-weight: 600; animation: fadeInDown 0.5s ease-out; pointer-events: auto; border-left: 4px solid var(--gold-primary); color: var(--text-primary); }
+    .toast.success { border-left-color: #10B981; }
+    .toast.error { border-left-color: #EF4444; }
+    .toast.info { border-left-color: #60A5FA; }
+
+    @media (min-width: 600px) {
+      .app { padding: 0 20px; } .header { padding: 0 20px; }
+      .logo-text .tagline { display: block; }
+      .hero { padding: 28px 24px; } .hero h2 { font-size: 1.8rem; }
+      .search-card { padding: 20px; }
+      .footer-container { padding: 32px 24px 24px; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+      .footer-bottom { flex-direction: row; justify-content: space-between; text-align: left; }
+    }
+    @media (min-width: 900px) {
+      .app { max-width: 900px; } .hamburger { display: none; }
+      .hero { padding: 36px 32px; } .hero h2 { font-size: 2.2rem; }
+      .footer-grid { grid-template-columns: 1.5fr 1fr 1fr; gap: 36px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader" id="loader">
+    <div class="loader-spinner-wrap"><div class="spinner"></div></div>
+    <div class="loader-text">🔍 Searching Database...</div>
+    <div class="loader-dots"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div>
+  </div>
+  <div class="toast-container" id="toastContainer"></div>
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <div class="menu-panel" id="menuPanel">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border-color);">
+      <strong style="color:var(--gold-primary);font-size:0.95rem;"><i class="fas fa-database"></i> Menu</strong>
+      <button class="menu-close" id="menuClose">×</button>
+    </div>
+    <a class="menu-link active" href="#home"><i class="fas fa-home"></i> Home</a>
+    <a class="menu-link" href="#results"><i class="fas fa-search"></i> Search</a>
+    <a class="menu-link" href="#developer"><i class="fas fa-code"></i> Developer</a>
+    <a class="menu-wa" href="https://whatsapp.com/channel/0029VbD6Sqa72WTuLavy9l2w" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp Channel</a>
+  </div>
+
+  <main class="app" id="home">
+    <header class="header" id="header">
+      <div class="logo">
+        <div class="logo-icon"><i class="fas fa-database"></i></div>
+        <div class="logo-text"><h1>DB Service PK</h1><div class="tagline">SIM & CNIC Database</div></div>
+      </div>
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" title="Switch Theme"><i class="fas fa-sun"></i></button>
+        <button class="hamburger" id="hamburgerBtn"><span></span><span></span><span></span></button>
+      </div>
+    </header>
+
+    <section class="hero reveal">
+      <h2>🔍 Instant <span>SIM / CNIC</span> Lookup</h2>
+      <p>Enter a mobile number or CNIC to get detailed information.</p>
+    </section>
+
+    <section class="search-card reveal">
+      <div class="search-label">✦ Enter Number or CNIC</div>
+      <form id="searchForm">
+        <div class="search-input-wrap">
+          <input autocomplete="off" id="searchInput" inputmode="numeric" placeholder="03331234567 or 3520212345678" required type="text" value=""/>
+          <button class="search-btn" type="submit"><i class="fas fa-search"></i> Search</button>
+        </div>
+        <!-- Live Validation Hint -->
+        <div id="validationHint" style="margin-top: 8px; font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
+          <i class="fas fa-info-circle"></i> Enter 11-digit mobile (03...) or 13-digit CNIC
+        </div>
+      </form>
+    </section>
+
+    <div id="results"></div>
+
+    <section id="developer" class="dev-section reveal">
+      <img src="https://files.catbox.moe/9ubo3l.jpg" alt="Haseeb Sahil"/>
+      <h3>👨‍💻 Haseeb Sahil</h3>
+      <p>Developer & API Provider</p>
+      
+      <div class="about-text">
+        Hi! I'm <strong>Haseeb Sahil</strong>, creator of <strong>DB Service PK</strong>. 
+        This tool helps you find SIM data using CNIC or phone number.
+      </div>
+
+      <div class="dev-links">
+        <a href="https://whatsapp.com/channel/0029VbD6Sqa72WTuLavy9l2w" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp Channel</a>
+        <a href="https://telegram.me/hsmodzofc2" target="_blank"><i class="fab fa-telegram-plane"></i> Telegram Channel</a>
+        <a href="https://t.me/Haseeb_Contact_Bot" target="_blank"><i class="fas fa-robot"></i> Contact Bot</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer reveal" id="footer">
+    <div class="footer-container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <div class="footer-logo-icon"><i class="fas fa-database"></i></div>
+            <div class="footer-logo-text"><h3>DB Service <span>PK</span></h3><div class="footer-tagline">SIM & CNIC Database</div></div>
+          </div>
+          <p class="footer-description">Fast and reliable SIM information & CNIC lookup service powered by Haseeb Sahil API.</p>
+          <div class="footer-social">
+            <a class="footer-social-link" href="https://whatsapp.com/channel/0029VbD6Sqa72WTuLavy9l2w" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a class="footer-social-link" href="https://telegram.me/hsmodzofc2" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h4>Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#home"><i class="fas fa-chevron-right"></i> Home</a></li>
+            <li><a href="#results"><i class="fas fa-chevron-right"></i> Search</a></li>
+            <li><a href="#developer"><i class="fas fa-chevron-right"></i> Developer</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Contact</h4>
+          <div class="footer-contact-item" style="display:flex;gap:10px;margin-bottom:10px;">
+            <div class="footer-contact-icon" style="width:32px;height:32px;border-radius:6px;background:#334155;display:flex;align-items:center;justify-content:center;color:#FBBF24;font-size:0.75rem;border:1px solid #475569;"><i class="fas fa-user"></i></div>
+            <div class="footer-contact-text" style="font-size:0.7rem;color:#94A3B8;"><strong style="color:#CBD5E1;display:block;">Haseeb Sahil</strong> Developer</div>
+          </div>
+          <div class="footer-contact-item" style="display:flex;gap:10px;margin-bottom:10px;">
+            <div class="footer-contact-icon" style="width:32px;height:32px;border-radius:6px;background:#334155;display:flex;align-items:center;justify-content:center;color:#FBBF24;font-size:0.75rem;border:1px solid #475569;"><i class="fab fa-whatsapp"></i></div>
+            <div class="footer-contact-text" style="font-size:0.7rem;color:#94A3B8;"><strong style="color:#CBD5E1;display:block;">WhatsApp Channel</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-copyright">© 2026 <strong>DB Service PK</strong> — All rights reserved.</div>
+        <div class="footer-bottom-links"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Disclaimer</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <a class="fab-wa" href="https://whatsapp.com/channel/0029VbD6Sqa72WTuLavy9l2w" target="_blank" style="position:fixed;bottom:20px;right:16px;width:50px;height:50px;background:linear-gradient(135deg,#FBBF24,#D97706);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0F172A;font-size:1.4rem;box-shadow:0 4px 20px rgba(251,191,36,0.2);z-index:90;text-decoration:none;"><i class="fab fa-whatsapp"></i></a>
+
+  <script>
+    const loader=document.getElementById('loader'), toastContainer=document.getElementById('toastContainer');
+    const hamburgerBtn=document.getElementById('hamburgerBtn'), menuPanel=document.getElementById('menuPanel');
+    const menuOverlay=document.getElementById('menuOverlay'), menuClose=document.getElementById('menuClose');
+    const searchForm=document.getElementById('searchForm'), searchInput=document.getElementById('searchInput');
+    const themeToggle=document.getElementById('themeToggle'), html=document.documentElement;
+    const resultsDiv=document.getElementById('results');
+    const validationHint = document.getElementById('validationHint');
+
+    const savedTheme=localStorage.getItem('dbtheme')||'dark';
+    html.setAttribute('data-theme',savedTheme);
+    themeToggle.querySelector('i').className=savedTheme==='dark'?'fas fa-sun':'fas fa-moon';
+
+    themeToggle.addEventListener('click',()=>{
+      const t=html.getAttribute('data-theme')==='dark'?'light':'dark';
+      html.setAttribute('data-theme',t);
+      localStorage.setItem('dbtheme',t);
+      themeToggle.querySelector('i').className=t==='dark'?'fas fa-sun':'fas fa-moon';
+      showToast(t==='dark'?'🌙 Dark Mode':'☀️ Light Mode','info');
+    });
+
+    window.addEventListener('scroll',()=>{
+      document.getElementById('header').classList.toggle('scrolled',window.scrollY>10);
+    });
+
+    function revealOnScroll(){
+      document.querySelectorAll('.reveal').forEach(e=>{
+        if(e.getBoundingClientRect().top<window.innerHeight-100) e.classList.add('visible');
+      });
+    }
+    window.addEventListener('scroll',revealOnScroll);
+    window.addEventListener('load',revealOnScroll);
+    revealOnScroll();
+
+    function showToast(m,t='success'){
+      const toast=document.createElement('div');
+      toast.className='toast '+t;
+      toast.innerHTML=({success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'}[t]||'✅')+' '+m;
+      toastContainer.appendChild(toast);
+      setTimeout(()=>{
+        toast.style.opacity='0'; toast.style.transform='translateY(-20px)';
+        setTimeout(()=>toast.remove(),300);
+      },3500);
+    }
+
+    function openMenu(){hamburgerBtn.classList.add('active');menuPanel.classList.add('active');menuOverlay.classList.add('active');document.body.classList.add('menu-open');}
+    function closeMenu(){hamburgerBtn.classList.remove('active');menuPanel.classList.remove('active');menuOverlay.classList.remove('active');document.body.classList.remove('menu-open');}
+    hamburgerBtn.addEventListener('click',e=>{e.stopPropagation();menuPanel.classList.contains('active')?closeMenu():openMenu();});
+    menuClose.addEventListener('click',closeMenu);
+    menuOverlay.addEventListener('click',closeMenu);
+    document.querySelectorAll('.menu-link').forEach(l=>l.addEventListener('click',closeMenu));
+
+    // ===== LIVE INPUT VALIDATION =====
+    searchInput.addEventListener('input', function() {
+      const value = this.value.trim();
+      const clean = value.replace(/\D/g, '');
+      const inputWrap = this.closest('.search-input-wrap');
+      
+      // Remove existing validation classes
+      this.classList.remove('valid', 'invalid');
+      
+      if (value.length === 0) {
+        validationHint.innerHTML = '<i class="fas fa-info-circle"></i> Enter 11-digit mobile (03...) or 13-digit CNIC';
+        validationHint.style.color = 'var(--text-muted)';
+        return;
+      }
+      
+      // Check: 11 digits starting with 03 OR 13 digits
+      const isMobile = /^03\d{9}$/.test(clean); // 03 + 9 digits = 11 total
+      const isCNIC = /^\d{13}$/.test(clean);    // 13 digits exactly
+      
+      if (isMobile || isCNIC) {
+        this.classList.add('valid');
+        validationHint.style.color = 'var(--gold-primary)';
+        if (isMobile) {
+          validationHint.innerHTML = '<i class="fas fa-check-circle" style="color:var(--gold-primary);"></i> ✅ Valid Mobile (11 digits)';
+        } else {
+          validationHint.innerHTML = '<i class="fas fa-check-circle" style="color:var(--gold-primary);"></i> ✅ Valid CNIC (13 digits)';
+        }
+      } else {
+        this.classList.add('invalid');
+        validationHint.style.color = '#EF4444';
+        if (clean.length === 11 && !clean.startsWith('03')) {
+          validationHint.innerHTML = '<i class="fas fa-times-circle" style="color:#EF4444;"></i> ❌ Mobile must start with 03';
+        } else if (clean.length === 13) {
+          validationHint.innerHTML = '<i class="fas fa-times-circle" style="color:#EF4444;"></i> ❌ Invalid CNIC format';
+        } else {
+          validationHint.innerHTML = '<i class="fas fa-times-circle" style="color:#EF4444;"></i> ❌ Enter 11-digit mobile (03...) or 13-digit CNIC';
+        }
+      }
+    });
+
+    // ===== SEARCH =====
+    const API_KEY = 'haseebxsahil';
+    const API_URL = 'https://haseeb-sahilapiiz.vercel.app/tools/pak-sim-info';
+
+    searchForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const query = searchInput.value.trim();
+      
+      // Validate before search
+      const clean = query.replace(/\D/g, '');
+      const isMobile = /^03\d{9}$/.test(clean);
+      const isCNIC = /^\d{13}$/.test(clean);
+      
+      if (!query) { 
+        showToast('Please enter a number or CNIC', 'error'); 
+        return; 
+      }
+      if (!isMobile && !isCNIC) {
+        showToast('Enter 11-digit mobile (03...) or 13-digit CNIC', 'error');
+        return;
+      }
+
+      loader.style.display='flex'; loader.classList.add('active');
+      resultsDiv.innerHTML = '';
+
+      try {
+        const url = `${API_URL}?query=${encodeURIComponent(query)}&apikey=${API_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.success && data.data && data.data.length > 0) {
+          renderResults(data.data);
+          showToast(`✅ Found ${data.total} record(s)`, 'success');
+        } else {
+          resultsDiv.innerHTML = `
+            <div class="result-item" style="border-left-color:#EF4444; text-align:center;">
+              <p style="color:var(--text-muted); font-weight:600;">❌ No records found for <strong>"${query}"</strong></p>
+              <p style="font-size:0.75rem; color:var(--text-muted);">Check the number or CNIC and try again.</p>
+            </div>
+          `;
+          showToast('❌ No records found', 'error');
+        }
+      } catch (err) {
+        resultsDiv.innerHTML = `
+          <div class="result-item" style="border-left-color:#EF4444; text-align:center;">
+            <p style="color:var(--text-muted); font-weight:600;">⚠️ API Error</p>
+            <p style="font-size:0.75rem; color:var(--text-muted);">${err.message || 'Something went wrong'}</p>
+          </div>
+        `;
+        showToast('⚠️ API error', 'error');
+      } finally {
+        loader.style.display='none'; loader.classList.remove('active');
+      }
+    });
+
+    function renderResults(data) {
+      let html = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border-color);">
+        <h3 style="font-size: 1rem; font-weight: 800; color: var(--text-primary);">📋 Results (${data.length})</h3>
+        <button onclick="copyAllResults()" style="background:var(--gold-bg); border:1px solid var(--gold-border); color:var(--gold-primary); padding:4px 12px; border-radius:16px; font-size:0.7rem; font-weight:600; cursor:pointer; transition:all 0.3s ease;">
+          <i class="fas fa-copy"></i> Copy All
+        </button>
+      </div>`;
+
+      data.forEach((item, index) => {
+        const networkColor = getNetworkColor(item.network);
+        html += `
+          <div class="result-item" id="resultCard_${index}">
+            <div class="result-header">
+              <span class="sim-tag">📱 SIM</span>
+              <span class="net-badge" style="background:${networkColor};">${item.network || 'N/A'}</span>
+            </div>
+            <div class="info-row"><span class="info-icon"><i class="fas fa-user"></i></span><div><div class="info-label">Name</div><div class="info-value">${item.name || '—'}</div></div></div>
+            <div class="info-row"><span class="info-icon"><i class="fas fa-mobile-alt"></i></span><div><div class="info-label">Mobile</div><div class="info-value">${item.mobile || '—'}</div></div></div>
+            <div class="info-row"><span class="info-icon"><i class="fas fa-id-card"></i></span><div><div class="info-label">CNIC</div><div class="info-value">${item.cnic || '—'}</div></div></div>
+            <div class="info-row"><span class="info-icon"><i class="fas fa-map-marker-alt"></i></span><div><div class="info-label">Address</div><div class="info-value">${item.address || '—'}</div></div></div>
+            <div class="info-row"><span class="info-icon"><i class="fas fa-calendar-alt"></i></span><div><div class="info-label">Registration Date</div><div class="info-value">${item.registrationDate || '—'}</div></div></div>
+            <div class="info-row"><span class="info-icon"><i class="fas fa-tag"></i></span><div><div class="info-label">Num2Name</div><div class="info-value">${item.Num2Name || '—'}</div></div></div>
+            <div class="action-row">
+              <button class="btn-action" onclick="copyData('${item.name || ''}','${item.mobile || ''}','${item.cnic || ''}','${item.address || ''}','${item.network || ''}','${item.registrationDate || ''}')"><i class="fas fa-copy"></i> Copy</button>
+              <button class="btn-action save-image" onclick="saveImage(${index})"><i class="fas fa-image"></i> Save Image</button>
+              <button class="btn-action whatsapp" onclick="shareOnWhatsApp('${item.name || ''}','${item.mobile || ''}','${item.cnic || ''}','${item.address || ''}','${item.network || ''}','${item.registrationDate || ''}')"><i class="fab fa-whatsapp"></i> Share</button>
+            </div>
+          </div>
+        `;
+      });
+      resultsDiv.innerHTML = html;
+      
+      // Store data for copy all
+      window._exportData = data;
+    }
+
+    function getNetworkColor(net) {
+      if (!net) return '#64748B';
+      const n = net.toLowerCase();
+      if (n.includes('jazz')) return '#EAB308';
+      if (n.includes('telenor')) return '#3B82F6';
+      if (n.includes('zong')) return '#22C55E';
+      if (n.includes('ufone')) return '#F97316';
+      if (n.includes('warid')) return '#A855F7';
+      return '#64748B';
+    }
+
+    // ===== SAVE IMAGE (PNG) FEATURE =====
+    function saveImage(index) {
+      const card = document.getElementById(`resultCard_${index}`);
+      if (!card) {
+        showToast('⚠️ Card not found', 'error');
+        return;
+      }
+      
+      if (typeof html2canvas === 'undefined') {
+        showToast('⚠️ Image library not loaded', 'error');
+        return;
+      }
+      
+      showToast('📸 Generating image...', 'info');
+      
+      html2canvas(card, {
+        scale: 2,
+        backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-card').trim() || '#1E293B',
+        useCORS: true,
+        logging: false,
+        width: card.scrollWidth,
+        height: card.scrollHeight
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `DB-Service-PK-Result-${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('✅ Image saved!', 'success');
+      }).catch(err => {
+        console.error(err);
+        showToast('⚠️ Failed to generate image', 'error');
+      });
+    }
+
+    function copyData(name, mobile, cnic, address, network, reg) {
+      const text = `📱 DB Service PK — Report\n═══════════════════════\n👤 Name: ${name}\n📞 Mobile: ${mobile}\n🆔 CNIC: ${cnic}\n📍 Address: ${address}\n📶 Network: ${network}\n📅 Registered: ${reg}`;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(()=>showToast('📋 Copied!','success')).catch(()=>fallbackCopy(text));
+      } else fallbackCopy(text);
+    }
+    function fallbackCopy(text) {
+      const ta=document.createElement('textarea'); ta.value=text; ta.style.cssText='position:fixed;left:-9999px';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); showToast('📋 Copied!','success'); } catch(e) { showToast('Copy failed','error'); }
+      document.body.removeChild(ta);
+    }
+
+    function shareOnWhatsApp(name, mobile, cnic, address, network, reg) {
+      const text = `📱 *DB Service PK — Report*\n═══════════════════════\n👤 *Name:* ${name}\n📞 *Mobile:* ${mobile}\n🆔 *CNIC:* ${cnic}\n📍 *Address:* ${address}\n📶 *Network:* ${network}\n📅 *Registered:* ${reg}\n═══════════════════════\n© DB Service PK`;
+      const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+      showToast('📤 Opening WhatsApp...', 'info');
+    }
+
+    function copyAllResults() {
+      const data = window._exportData;
+      if (!data || data.length === 0) {
+        showToast('⚠️ No data to copy', 'error');
+        return;
+      }
+
+      let text = `📋 DB Service PK — All Results (${data.length})\n`;
+      text += `Generated: ${new Date().toLocaleString()}\n`;
+      text += `═══════════════════════════════════\n\n`;
+
+      data.forEach((item, index) => {
+        text += `📌 Result #${index + 1}\n`;
+        text += `👤 Name: ${item.name || '—'}\n`;
+        text += `📞 Mobile: ${item.mobile || '—'}\n`;
+        text += `🆔 CNIC: ${item.cnic || '—'}\n`;
+        text += `📍 Address: ${item.address || '—'}\n`;
+        text += `📶 Network: ${item.network || '—'}\n`;
+        text += `📅 Registered: ${item.registrationDate || '—'}\n`;
+        text += `🏷️ Num2Name: ${item.Num2Name || '—'}\n`;
+        text += `─────────────────────────────\n\n`;
+      });
+
+      text += `═══════════════════════════════════\n`;
+      text += `© DB Service PK`;
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text)
+          .then(() => showToast(`📋 Copied ${data.length} results!`, 'success'))
+          .catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === '/' && !e.ctrlKey && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) {
+        e.preventDefault(); searchInput.focus();
+      }
+    });
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); searchForm.dispatchEvent(new Event('submit')); }
+    });
+  </script>
+</body>
+</html>
