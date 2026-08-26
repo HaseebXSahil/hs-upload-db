@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Forever Friendship</title>
+<style>
+body{margin:0;min-height:100vh;text-align:center;font-family:Arial;background:linear-gradient(135deg,#667eea,#764ba2,#ff758c);color:white;overflow:hidden}
+h1{font-size:55px;text-shadow:0 0 25px white}
+.card{display:inline-block;margin:30px;padding:30px;border-radius:30px;background:#ffffff33;backdrop-filter:blur(10px);animation:f 4s infinite}
+img{width:180px;height:180px;border-radius:50%;object-fit:cover;border:6px solid white}
+button{padding:12px 25px;border-radius:30px;border:0;margin:8px;font-weight:bold}
+.word{position:fixed;font-size:30px;font-weight:bold;animation:fall 10s linear infinite}
+@keyframes f{50%{transform:translateY(-20px)}}@keyframes fall{from{top:100vh}to{top:-100px;transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<h1>💖 FOREVER FRIENDSHIP 💖</h1>
+<p>A Bond Beyond Time • A Story Beyond Words</p>
+<div class="card"><img src="https://via.placeholder.com/180"><h2>Friend One</h2></div>
+<div class="card"><img src="https://via.placeholder.com/180"><h2>Friend Two</h2></div>
+<br>
+<button onclick="alert('Friendship Forever ❤️')">🎁 Surprise</button>
+<script>
+setInterval(()=>{let x=document.createElement('div');x.className='word';x.innerHTML=['LOVE','BOND','FOREVER','BEST FRIENDS'][Math.floor(Math.random()*4)];x.style.left=Math.random()*90+'%';document.body.appendChild(x);setTimeout(()=>x.remove(),10000)},700);
+</script>
+</body>
+</html>
