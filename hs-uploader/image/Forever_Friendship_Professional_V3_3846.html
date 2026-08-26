@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Forever Friendship | Premium</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Montserrat:wght@500;800&display=swap');
+
+*{box-sizing:border-box}
+body{
+margin:0;
+min-height:100vh;
+font-family:Montserrat,sans-serif;
+color:#fff;
+text-align:center;
+overflow-x:hidden;
+background:radial-gradient(circle at top,#3949ab,#111827 55%,#050505);
+}
+
+.container{padding:50px}
+
+h1{
+font-family:"Cormorant Garamond",serif;
+font-size:75px;
+letter-spacing:3px;
+animation:shine 3s infinite alternate;
+}
+
+@keyframes shine{
+from{text-shadow:0 0 10px #fff}
+to{text-shadow:0 0 45px #9fa8ff}
+}
+
+.subtitle{
+font-size:24px;
+letter-spacing:4px;
+opacity:.9;
+}
+
+.cards{
+display:flex;
+justify-content:center;
+gap:50px;
+flex-wrap:wrap;
+margin:50px;
+}
+
+.card{
+width:350px;
+padding:35px;
+border-radius:35px;
+background:rgba(255,255,255,.08);
+border:1px solid rgba(255,255,255,.2);
+backdrop-filter:blur(20px);
+animation:lift 5s infinite;
+}
+
+@keyframes lift{
+50%{transform:translateY(-25px)}
+}
+
+.photo{
+width:240px;
+height:240px;
+border-radius:50%;
+object-fit:cover;
+border:5px solid white;
+box-shadow:0 0 40px #667eea;
+}
+
+.name{
+font-size:40px;
+font-weight:800;
+margin-top:20px;
+}
+
+button{
+padding:16px 35px;
+border-radius:40px;
+border:0;
+margin:10px;
+font-weight:800;
+cursor:pointer;
+background:white;
+color:#111827;
+}
+
+button:hover{
+transform:scale(1.08);
+}
+
+.panel{
+max-width:850px;
+margin:40px auto;
+padding:35px;
+border-radius:30px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(20px);
+}
+
+input,textarea{
+width:80%;
+padding:15px;
+border-radius:15px;
+border:0;
+margin:8px;
+}
+
+.surprise{
+display:none;
+max-width:700px;
+margin:30px auto;
+font-family:"Cormorant Garamond",serif;
+font-size:36px;
+line-height:1.5;
+}
+
+.floating{
+position:fixed;
+font-size:25px;
+font-weight:800;
+opacity:.35;
+animation:floatText 12s linear forwards;
+}
+
+@keyframes floatText{
+from{top:100vh}
+to{top:-100px}
+}
+
+.particle{
+position:fixed;
+width:8px;
+height:8px;
+background:white;
+border-radius:50%;
+animation:particle 8s linear forwards;
+}
+
+@keyframes particle{
+from{transform:translateY(100vh)}
+to{transform:translateY(-20vh)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Forever Friendship</h1>
+<div class="subtitle">A timeless connection • A story beyond words</div>
+
+<div class="cards">
+
+<div class="card">
+<img id="pic1" class="photo" src="https://via.placeholder.com/240">
+<div id="name1" class="name">Friend One</div>
+</div>
+
+<div class="card">
+<img id="pic2" class="photo" src="https://via.placeholder.com/240">
+<div id="name2" class="name">Friend Two</div>
+</div>
+
+</div>
+
+
+<button onclick="openSurprise()">Unlock Hidden Memory</button>
+
+<div id="surprise" class="surprise"></div>
+
+
+<h2>Friendship Music</h2>
+<input type="file" id="music" accept="audio/*"><br>
+<button onclick="audio.play()">Play</button>
+<button onclick="audio.pause()">Pause</button>
+<audio id="audio"></audio>
+
+
+<div class="panel">
+
+<h2>Admin Studio</h2>
+
+<input id="f1" placeholder="Friend 1 name">
+<button onclick="name1.innerHTML=f1.value">Change Name</button>
+
+<br>
+
+<input id="f2" placeholder="Friend 2 name">
+<button onclick="name2.innerHTML=f2.value">Change Name</button>
+
+<br>
+
+<input type="file" id="image1">
+<button onclick="pic1.src=URL.createObjectURL(image1.files[0])">Change Picture 1</button>
+
+<br>
+
+<input type="file" id="image2">
+<button onclick="pic2.src=URL.createObjectURL(image2.files[0])">Change Picture 2</button>
+
+<br>
+
+<textarea id="quote" placeholder="Custom surprise quotation"></textarea>
+
+<br>
+
+<button onclick="saveData()">Save Information</button>
+<button onclick="generate()">Generate Link</button>
+
+<p id="link"></p>
+
+</div>
+
+</div>
+
+
+<script>
+
+music.onchange=()=>audio.src=URL.createObjectURL(music.files[0]);
+
+function openSurprise(){
+
+let text=quote.value ||
+"Some friendships are not created by chance. They are written in memories, strengthened by trust, and preserved forever.";
+
+surprise.style.display="block";
+surprise.innerHTML="";
+
+let i=0;
+let timer=setInterval(()=>{
+surprise.innerHTML+=text[i];
+i++;
+if(i>=text.length) clearInterval(timer);
+},60);
+
+}
+
+
+function saveData(){
+localStorage.friendship=JSON.stringify({
+one:name1.innerHTML,
+two:name2.innerHTML
+});
+alert("Information saved");
+}
+
+
+function generate(){
+link.innerHTML=location.href+"?friend="+btoa(name1.innerHTML+"-"+name2.innerHTML);
+}
+
+
+setInterval(()=>{
+let t=document.createElement("div");
+t.className="floating";
+t.innerHTML=["Forever Bond","Beautiful Memories","True Friendship","Always Together"][Math.floor(Math.random()*4)];
+t.style.left=Math.random()*90+"%";
+document.body.appendChild(t);
+setTimeout(()=>t.remove(),12000);
+},1000);
+
+
+setInterval(()=>{
+let p=document.createElement("div");
+p.className="particle";
+p.style.left=Math.random()*100+"%";
+document.body.appendChild(p);
+setTimeout(()=>p.remove(),8000);
+},300);
+
+</script>
+
+</body>
+</html>
