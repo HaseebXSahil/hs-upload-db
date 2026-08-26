@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Forever — Friendship</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Montserrat:wght@500;600;700&display=swap');
+:root{--gold:#e8c56a;--ink:#080b14;--muted:#aeb5c7}
+*{box-sizing:border-box} body{margin:0;background:var(--ink);color:#fff;font-family:Montserrat,sans-serif}
+body:before,body:after{content:"";position:fixed;border-radius:50%;filter:blur(80px);opacity:.35;z-index:-1}
+body:before{width:420px;height:420px;background:#6557ff;top:-130px;left:-100px}
+body:after{width:420px;height:420px;background:#d85a91;right:-120px;bottom:-120px}
+.wrap{max-width:1180px;margin:auto;padding:32px 20px 70px}
+.hero{text-align:center;padding:65px 10px 35px}
+.kicker{letter-spacing:5px;color:var(--gold);font-size:12px;font-weight:700;text-transform:uppercase}
+h1{font-family:"Cormorant Garamond",serif;font-size:clamp(58px,9vw,105px);line-height:.85;margin:18px 0;color:#fff}
+.hero p{color:var(--muted);letter-spacing:2px}
+.people{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin:35px 0}
+.person{position:relative;padding:26px;text-align:center;background:linear-gradient(145deg,#171c2c,#0e1220);border:1px solid #ffffff20;border-radius:28px;box-shadow:0 25px 70px #0008}
+.frame{width:250px;height:250px;margin:auto;padding:8px;border-radius:50%;background:conic-gradient(var(--gold),#fff,var(--gold),#7c70ff,var(--gold))}
+.photo{width:100%;height:100%;display:block;border-radius:50%;object-fit:cover;background:#151a29}
+.person h2{font-family:"Cormorant Garamond",serif;font-size:42px;margin:18px 0 4px;color:var(--gold)}
+.person small{color:var(--muted);letter-spacing:2px}
+.actions{text-align:center;margin:20px 0}.btn{border:1px solid #ffffff25;background:#171c2c;color:#fff;border-radius:999px;padding:13px 20px;margin:5px;cursor:pointer}.primary{background:var(--gold);color:#111;border:0;font-weight:700}
+.section{margin:30px 0;padding:28px;background:#ffffff08;border:1px solid #ffffff16;border-radius:24px}
+.section h3{font-family:"Cormorant Garamond",serif;font-size:34px;margin:0 0 18px}
+input,textarea{width:100%;padding:13px;margin:6px 0;background:#0d1220;border:1px solid #ffffff20;color:#fff;border-radius:12px}
+textarea{min-height:90px;resize:vertical}
+.surprise{display:none;text-align:center;padding:34px;border:1px solid var(--gold);border-radius:24px;background:radial-gradient(circle,#25213a,#0b0e18);min-height:180px}
+.surprise .label{color:var(--gold);letter-spacing:4px;font-size:12px;font-weight:700}
+#typed{font-family:"Cormorant Garamond",serif;font-size:clamp(28px,4vw,43px);line-height:1.25;margin-top:18px}
+.share{word-break:break-all;color:#bfc6d8;font-size:13px;margin-top:12px}
+.status{min-height:20px;color:var(--gold);font-size:13px}
+@media(max-width:750px){.people{grid-template-columns:1fr}.frame{width:205px;height:205px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+<div class="kicker">A private story • two people • countless memories</div>
+<h1>Forever</h1>
+<p>Friendship is remembered in moments, not measured in years.</p>
+</header>
+
+<section class="people">
+<article class="person">
+<div class="frame"><img id="pic1" class="photo" alt="Friend 1"></div>
+<h2 id="name1">Friend One</h2><small>THE FIRST CHAPTER</small>
+</article>
+<article class="person">
+<div class="frame"><img id="pic2" class="photo" alt="Friend 2"></div>
+<h2 id="name2">Friend Two</h2><small>THE OTHER HALF</small>
+</article>
+</section>
+
+<div class="actions">
+<button class="btn primary" id="surpriseBtn">Open the Surprise</button>
+</div>
+
+<section id="surprise" class="surprise">
+<div class="label">A MESSAGE KEPT JUST FOR YOU</div>
+<div id="typed"></div>
+</section>
+
+<section class="section">
+<h3>Friendship Music</h3>
+<input id="musicFile" type="file" accept="audio/*">
+<div class="actions">
+<button class="btn primary" id="playBtn">Play</button>
+<button class="btn" id="pauseBtn">Pause</button>
+</div>
+<audio id="audio" controls style="width:100%"></audio>
+</section>
+
+<section class="section">
+<h3>Admin Studio</h3>
+<input id="nameInput1" placeholder="Friend 1 name">
+<button class="btn" id="nameBtn1">Change Friend 1 Name</button>
+<input id="nameInput2" placeholder="Friend 2 name">
+<button class="btn" id="nameBtn2">Change Friend 2 Name</button>
+<label>Friend 1 picture<input id="picInput1" type="file" accept="image/*"></label>
+<label>Friend 2 picture<input id="picInput2" type="file" accept="image/*"></label>
+<textarea id="surpriseText" placeholder="Write your surprise message"></textarea>
+<div class="actions">
+<button class="btn primary" id="saveBtn">Save Information</button>
+<button class="btn" id="shareBtn">Generate Share Link</button>
+</div>
+<div id="status" class="status"></div>
+<div id="share" class="share"></div>
+</section>
+</div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const defaults={
+name1:"Friend One",name2:"Friend Two",
+message:"Some friendships become the most beautiful chapter of our lives. Through every change, every distance, and every unforgettable moment, the bond remains. This is our story — and it is worth keeping forever."
+};
+
+function readState(){
+try{return JSON.parse(localStorage.getItem("friendshipV6"))||{}}
+catch(e){return {}}
+}
+function applyState(s){
+$("name1").textContent=s.name1||defaults.name1;
+$("name2").textContent=s.name2||defaults.name2;
+$("surpriseText").value=s.message||defaults.message;
+if(s.pic1)$("pic1").src=s.pic1;
+if(s.pic2)$("pic2").src=s.pic2;
+$("nameInput1").value=s.name1||"";
+$("nameInput2").value=s.name2||"";
+}
+function saveState(){
+const s=readState();
+s.name1=$("name1").textContent||defaults.name1;
+s.name2=$("name2").textContent||defaults.name2;
+s.message=$("surpriseText").value||defaults.message;
+try{
+localStorage.setItem("friendshipV6",JSON.stringify(s));
+$("status").textContent="Saved successfully.";
+}catch(e){$("status").textContent="Storage is full. Try smaller images."}
+return s;
+}
+function fileToDataURL(file,cb){
+if(!file){return}
+const r=new FileReader();
+r.onload=()=>cb(r.result);
+r.onerror=()=>{$("status").textContent="Could not read that image."};
+r.readAsDataURL(file);
+}
+function bindImage(input,img,key){
+$(input).addEventListener("change",function(){
+const file=this.files[0];
+if(!file)return;
+if(!file.type.startsWith("image/")){$("status").textContent="Please choose an image file.";return}
+if(file.size>3*1024*1024){$("status").textContent="Please use an image smaller than 3 MB.";return}
+fileToDataURL(file,data=>{
+$(img).src=data;
+const s=readState();s[key]=data;localStorage.setItem("friendshipV6",JSON.stringify(s));
+$("status").textContent="Picture updated.";
+});
+});
+}
+
+$("nameBtn1").onclick=()=>{$("name1").textContent=$("nameInput1").value.trim()||defaults.name1;saveState()};
+$("nameBtn2").onclick=()=>{$("name2").textContent=$("nameInput2").value.trim()||defaults.name2;saveState()};
+$("saveBtn").onclick=saveState;
+
+bindImage("picInput1","pic1","pic1");
+bindImage("picInput2","pic2","pic2");
+
+$("musicFile").addEventListener("change",function(){
+const f=this.files[0]; if(!f)return;
+$("audio").src=URL.createObjectURL(f);
+$("status").textContent="Music ready on this device.";
+});
+$("playBtn").onclick=async()=>{try{await $("audio").play()}catch(e){$("status").textContent="Choose a music file first."}};
+$("pauseBtn").onclick=()=>$("audio").pause();
+
+$("surpriseBtn").onclick=()=>{
+const box=$("surprise"),out=$("typed");
+const text=$("surpriseText").value.trim()||defaults.message;
+box.style.display="block";out.textContent="";
+let i=0;
+$("surpriseBtn").disabled=true;
+const timer=setInterval(()=>{
+out.textContent+=text.charAt(i++);
+if(i>=text.length){clearInterval(timer);$("surpriseBtn").disabled=false}
+},38);
+box.scrollIntoView({behavior:"smooth",block:"center"});
+};
+
+$("shareBtn").onclick=()=>{
+const s=saveState();
+const payload=btoa(encodeURIComponent(JSON.stringify({name1:s.name1,name2:s.name2,message:s.message,pic1:s.pic1||"",pic2:s.pic2||""})));
+const url=location.href.split("?")[0]+"?friend="+payload;
+$("share").innerHTML="";
+const a=document.createElement("a");a.href=url;a.textContent=url;a.style.color="#e8c56a";$("share").appendChild(a);
+if(navigator.clipboard)navigator.clipboard.writeText(url).then(()=>$("status").textContent="Share link generated and copied.").catch(()=>$("status").textContent="Share link generated.");
+else $("status").textContent="Share link generated.";
+};
+
+function loadFromURL(){
+const q=new URLSearchParams(location.search).get("friend");
+if(!q)return;
+try{
+const data=JSON.parse(decodeURIComponent(atob(q)));
+const s=readState();
+Object.assign(s,data);
+localStorage.setItem("friendshipV6",JSON.stringify(s));
+$("status").textContent="Shared friendship loaded.";
+}catch(e){$("status").textContent="This share link is invalid or incomplete."}
+}
+applyState(readState());loadFromURL();applyState(readState());
+})();
+</script>
+</body>
+</html>
