@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Forever Friendship</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,sans-serif}
+body{
+margin:0;min-height:100vh;overflow-x:hidden;text-align:center;color:white;
+background:linear-gradient(135deg,#8e2de2,#ff758c,#4facfe);
+}
+.hero{padding:35px}
+h1{font-size:52px;font-weight:900;text-shadow:0 0 25px #fff}
+.tag{font-size:22px;font-weight:bold;animation:pulse 2s infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
+.cards{display:flex;justify-content:center;gap:35px;flex-wrap:wrap;margin:30px}
+.card{
+background:#ffffff25;backdrop-filter:blur(15px);padding:25px;border-radius:30px;
+width:280px;box-shadow:0 15px 35px #333;animation:float 4s infinite
+}
+@keyframes float{50%{transform:translateY(-20px)}}
+.photo{
+width:220px;height:220px;border-radius:50%;object-fit:cover;
+border:7px solid white;box-shadow:0 0 30px pink
+}
+.name{font-size:32px;font-weight:900;margin:15px}
+button{
+padding:12px 25px;margin:7px;border:0;border-radius:30px;
+font-weight:bold;cursor:pointer;background:white;color:#8e2de2
+}
+.panel{
+margin:30px auto;padding:25px;max-width:700px;background:#ffffff20;
+backdrop-filter:blur(12px);border-radius:25px
+}
+input,textarea{padding:12px;border-radius:15px;border:0;margin:6px;width:85%}
+.quote,.word{
+position:fixed;font-weight:900;font-size:25px;pointer-events:none;
+animation:move 10s linear forwards
+}
+@keyframes move{from{transform:translateY(100vh)}to{transform:translateY(-120vh) rotate(360deg)}}
+.flower{
+position:fixed;top:-40px;font-size:35px;animation:flower 8s linear forwards
+}
+@keyframes flower{to{top:110vh;transform:rotate(720deg)}}
+.hidden{display:none;background:white;color:#8e2de2;padding:20px;border-radius:20px}
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>💖 FOREVER FRIENDSHIP 💖</h1>
+<div class="tag">A Beautiful Bond • Endless Memories • Forever Together</div>
+
+<div class="cards">
+<div class="card">
+<img id="pic1" class="photo" src="https://via.placeholder.com/180">
+<div id="name1" class="name">Friend 1</div>
+</div>
+<div class="card">
+<img id="pic2" class="photo" src="https://via.placeholder.com/180">
+<div id="name2" class="name">Friend 2</div>
+</div>
+</div>
+
+<button onclick="document.getElementById('surprise').style.display='block'">🎁 Hidden Surprise</button>
+<div id="surprise" class="hidden">🌹 True friendship is the greatest gift in life 🌹</div>
+
+<h2>🎵 Friendship Music</h2>
+<input type="file" id="musicFile" accept="audio/*"><br>
+<button onclick="playMusic()">▶ Play</button>
+<button onclick="pauseMusic()">⏸ Pause</button>
+<audio id="audio"></audio>
+
+<div class="panel">
+<h2>⚙ Admin Friendship Studio</h2>
+
+<input id="n1" placeholder="Friend 1 Name">
+<button onclick="changeName1()">Change Friend 1 Name</button><br>
+
+<input id="n2" placeholder="Friend 2 Name">
+<button onclick="changeName2()">Change Friend 2 Name</button><br>
+
+<input type="file" id="photo1" accept="image/*">
+<button onclick="changePic1()">Friend 1 Picture Change</button><br>
+
+<input type="file" id="photo2" accept="image/*">
+<button onclick="changePic2()">Friend 2 Picture Change</button><br>
+
+<textarea id="quoteText" placeholder="Write floating quote"></textarea><br>
+
+<button onclick="saveData()">💾 Save Information</button>
+<button onclick="generateLink()">🔗 Generate Link</button>
+<p id="link"></p>
+</div>
+</div>
+
+<script>
+let audio=document.getElementById("audio");
+
+musicFile.onchange=()=>audio.src=URL.createObjectURL(musicFile.files[0]);
+function playMusic(){audio.play()}
+function pauseMusic(){audio.pause()}
+
+function changeName1(){name1.innerHTML=n1.value;saveData()}
+function changeName2(){name2.innerHTML=n2.value;saveData()}
+
+function changePic1(){
+if(photo1.files[0]){
+pic1.src=URL.createObjectURL(photo1.files[0]);
+localStorage.setItem("pic1",pic1.src);
+}
+}
+function changePic2(){
+if(photo2.files[0]){
+pic2.src=URL.createObjectURL(photo2.files[0]);
+localStorage.setItem("pic2",pic2.src);
+}
+}
+
+function saveData(){
+localStorage.setItem("friendship",
+JSON.stringify({a:name1.innerHTML,b:name2.innerHTML}));
+alert("Saved Successfully ❤️")
+}
+
+window.onload=()=>{
+let d=JSON.parse(localStorage.getItem("friendship"));
+if(d){name1.innerHTML=d.a;name2.innerHTML=d.b}
+if(localStorage.pic1) pic1.src=localStorage.pic1;
+if(localStorage.pic2) pic2.src=localStorage.pic2;
+}
+
+function generateLink(){
+let data={
+friend1:name1.innerHTML,
+friend2:name2.innerHTML,
+quote:quoteText.value
+};
+let encoded=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+let url=location.origin+location.pathname+"?friend="+encoded;
+link.innerHTML="<a style="+""color:white""+ " href='"+url+"'>"+url+"</a>";
+}
+
+setInterval(()=>{
+let f=document.createElement("div");
+f.className="flower";f.innerHTML="🌸";
+f.style.left=Math.random()*100+"%";
+document.body.appendChild(f);
+setTimeout(()=>f.remove(),8000);
+},400);
+
+setInterval(()=>{
+let w=document.createElement("div");
+w.className="word";
+w.innerHTML=["FOREVER","BEST FRIENDS","LOVE","MEMORIES","BOND"][Math.floor(Math.random()*5)];
+w.style.left=Math.random()*90+"%";
+document.body.appendChild(w);
+setTimeout(()=>w.remove(),10000);
+},900);
+
+setInterval(()=>{
+let q=document.createElement("div");
+q.className="quote";
+q.innerHTML="💞 "+(quoteText.value||"Friendship Forever");
+q.style.left="10%";
+document.body.appendChild(q);
+setTimeout(()=>q.remove(),9000);
+},5000);
+</script>
+</body>
+</html>
