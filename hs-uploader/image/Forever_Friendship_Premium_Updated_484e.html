@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Forever Friendship Premium</title>
+<style>
+*{box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{
+margin:0;min-height:100vh;overflow-x:hidden;text-align:center;color:white;
+background:linear-gradient(135deg,#667eea,#764ba2,#ff9a9e);
+}
+.hero{padding:45px}
+h1{font-size:64px;font-weight:1000;text-shadow:0 0 30px white}
+.subtitle{font-size:28px;font-weight:bold;animation:glow 2s infinite alternate}
+@keyframes glow{to{text-shadow:0 0 30px pink}}
+.cards{display:flex;justify-content:center;gap:45px;flex-wrap:wrap;margin:45px}
+.card{
+width:340px;padding:35px;border-radius:40px;
+background:#ffffff30;backdrop-filter:blur(18px);
+box-shadow:0 20px 50px #222;
+animation:float 4s infinite;
+}
+@keyframes float{50%{transform:translateY(-25px)}}
+.photo{
+width:230px;height:230px;border-radius:50%;object-fit:cover;
+border:10px solid white;box-shadow:0 0 40px #ffb6c1
+}
+.name{font-size:42px;font-weight:1000;margin:20px}
+button{
+padding:15px 35px;border:0;border-radius:40px;margin:10px;
+font-size:17px;font-weight:bold;cursor:pointer
+}
+.panel{
+max-width:800px;margin:40px auto;padding:35px;
+background:#ffffff25;border-radius:35px;backdrop-filter:blur(15px)
+}
+input,textarea{width:85%;padding:14px;border-radius:20px;border:0;margin:8px}
+.quote{
+position:fixed;font-size:28px;font-weight:900;
+animation:quote 12s linear forwards
+}
+@keyframes quote{from{left:-500px}to{left:110%}}
+.flower{
+position:fixed;top:-50px;font-size:45px;
+animation:fall 8s linear forwards
+}
+@keyframes fall{to{top:110vh;transform:rotate(720deg)}}
+.cartoon{
+font-size:100px;
+animation:bounce 2s infinite;
+}
+@keyframes bounce{50%{transform:translateY(-20px)}}
+.surprise{
+display:none;background:white;color:#764ba2;
+padding:30px;border-radius:30px;font-size:25px;font-weight:bold
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<h1>💖 FOREVER FRIENDSHIP 💖</h1>
+<div class="subtitle">✨ Two Hearts • One Beautiful Friendship Story ✨</div>
+
+<div class="cartoon">👫🌈🐻💞</div>
+
+<div class="cards">
+<div class="card">
+<img id="pic1" class="photo" src="https://via.placeholder.com/230">
+<div id="name1" class="name">Friend 1</div>
+</div>
+<div class="card">
+<img id="pic2" class="photo" src="https://via.placeholder.com/230">
+<div id="name2" class="name">Friend 2</div>
+</div>
+</div>
+
+<button onclick="document.getElementById('surprise').style.display='block'">🎁 Magical Surprise</button>
+
+<div id="surprise" class="surprise">
+🌹 "A true friend is a treasure that time can never replace."<br><br>
+💖 "Distance cannot break a bond created by beautiful memories."
+</div>
+
+<h2>🎵 Friendship Music</h2>
+<input type="file" id="musicFile" accept="audio/*"><br>
+<button onclick="audio.play()">▶ Play Music</button>
+<button onclick="audio.pause()">⏸ Pause Music</button>
+<audio id="audio"></audio>
+
+<div class="panel">
+<h2>⚙ Admin Friendship Studio</h2>
+<input id="n1" placeholder="Friend 1 Name">
+<button onclick="name1.innerHTML=n1.value">Change Friend 1 Name</button><br>
+
+<input id="n2" placeholder="Friend 2 Name">
+<button onclick="name2.innerHTML=n2.value">Change Friend 2 Name</button><br>
+
+<input type="file" id="p1">
+<button onclick="pic1.src=URL.createObjectURL(p1.files[0])">Change Friend 1 Picture</button><br>
+
+<input type="file" id="p2">
+<button onclick="pic2.src=URL.createObjectURL(p2.files[0])">Change Friend 2 Picture</button><br>
+
+<textarea id="customQuote" placeholder="Add your friendship quotation"></textarea><br>
+<button onclick="localStorage.friendship=name1.innerHTML+' & '+name2.innerHTML">
+💾 Save Information</button>
+
+<button onclick="link.innerHTML=location.href+'?friend='+btoa(name1.innerHTML+'-'+name2.innerHTML)">
+🔗 Generate Link</button>
+
+<p id="link"></p>
+</div>
+</div>
+
+<script>
+musicFile.onchange=()=>audio.src=URL.createObjectURL(musicFile.files[0]);
+
+setInterval(()=>{
+let f=document.createElement('div');
+f.className='flower';f.innerHTML=['🌸','🌹','🌺','💮'][Math.floor(Math.random()*4)];
+f.style.left=Math.random()*100+'%';
+document.body.appendChild(f);
+setTimeout(()=>f.remove(),8000);
+},400);
+
+setInterval(()=>{
+let q=document.createElement('div');
+q.className='quote';
+q.innerHTML="💞 "+(customQuote.value||[
+"Friendship is the flower of life 🌸",
+"Together forever, memories forever 💖",
+"Best friends make ordinary moments magical ✨",
+"Real friendship shines brighter than stars ⭐"
+][Math.floor(Math.random()*4)]);
+q.style.top=Math.random()*80+'vh';
+document.body.appendChild(q);
+setTimeout(()=>q.remove(),12000);
+},5000);
+</script>
+
+</body>
+</html>
