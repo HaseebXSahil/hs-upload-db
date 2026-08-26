@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Malik Mushahid × Abdul Sammad | Forever Friends</title>
+<style>
+:root{
+  --bg:#080611;--bg2:#120c22;--text:#fff;--muted:#c9c3d8;
+  --pink:#ff70b7;--purple:#9d7cff;--cyan:#6fdcff;--card:rgba(255,255,255,.075);
+  --border:rgba(255,255,255,.14);--shadow:0 24px 70px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(circle at 15% 10%,#291647 0,transparent 35%),radial-gradient(circle at 85% 20%,#17274b 0,transparent 35%),linear-gradient(145deg,var(--bg),var(--bg2));color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;overflow-x:hidden}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+#petals{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
+.petal{position:absolute;top:-50px;font-size:20px;animation:fall linear forwards;filter:drop-shadow(0 3px 7px rgba(255,105,180,.35));will-change:transform}
+.flowerGlow{position:fixed;pointer-events:none;z-index:49;width:7px;height:7px;border-radius:50%;background:#ffd8ec;box-shadow:0 0 14px #ff9dcc,0 0 28px #ff70b7;animation:flowerFloat linear forwards}
+@keyframes flowerFloat{to{transform:translate3d(var(--drift),110vh,0) scale(.2);opacity:0}}
+@keyframes fall{to{transform:translate3d(var(--drift),110vh,0) rotate(700deg);opacity:.15}}
+.noise{position:fixed;inset:0;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.container{width:min(1100px,92%);margin:auto}
+.glass{background:var(--card);border:1px solid var(--border);box-shadow:var(--shadow);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+#intro{position:fixed;inset:0;z-index:100;background:#07050d;display:grid;place-items:center;text-align:center;padding:25px;transition:opacity .8s,visibility .8s}
+#intro.hide{opacity:0;visibility:hidden}
+.intro-inner{max-width:700px}
+.kicker{letter-spacing:.25em;text-transform:uppercase;color:#bcaee0;font-size:12px}
+.intro-title{font-size:clamp(38px,8vw,76px);line-height:1.02;margin:18px 0;background:linear-gradient(100deg,#fff,#ff9bce,#a993ff);-webkit-background-clip:text;color:transparent}
+.btn{border:1px solid rgba(255,255,255,.2);color:#fff;background:linear-gradient(135deg,rgba(157,124,255,.9),rgba(255,112,183,.9));padding:13px 20px;border-radius:999px;box-shadow:0 12px 35px rgba(157,124,255,.25);transition:.25s}
+.btn:hover{transform:translateY(-2px) scale(1.02)}
+.btn.secondary{background:rgba(255,255,255,.07)}
+nav{position:fixed;z-index:40;top:15px;left:50%;transform:translateX(-50%);width:min(1000px,92%);padding:9px 12px;border-radius:999px;display:flex;justify-content:space-between;align-items:center}
+nav strong{font-size:14px}
+nav .links{display:flex;gap:5px}
+nav a{color:#ddd;text-decoration:none;padding:9px 12px;border-radius:999px;font-size:13px}
+nav a:hover{background:rgba(255,255,255,.1)}
+.hero{min-height:100vh;display:grid;place-items:center;padding:110px 0 60px;position:relative}
+.hero-content{text-align:center}
+.photos{display:flex;justify-content:center;align-items:center;gap:clamp(10px,5vw,55px);margin-bottom:25px}
+.photo-wrap{position:relative}
+.photo{width:clamp(135px,28vw,230px);height:clamp(135px,28vw,230px);object-fit:cover;border-radius:50%;border:3px solid rgba(255,255,255,.7);padding:5px;background:linear-gradient(135deg,#ff70b7,#9d7cff,#6fdcff);box-shadow:0 0 60px rgba(157,124,255,.25)}
+.name{font-weight:750;margin-top:12px;font-size:clamp(15px,3vw,20px)}
+.x{font-size:clamp(30px,7vw,65px);color:#ff9bce;text-shadow:0 0 30px #ff70b7}
+.hero h1{font-size:clamp(40px,8vw,78px);line-height:1;margin:18px 0;background:linear-gradient(100deg,#fff,#ff9bce,#a993ff);-webkit-background-clip:text;color:transparent}
+.hero p{color:var(--muted);font-size:clamp(16px,3vw,20px)}
+.section{padding:105px 0}
+.heading{text-align:center;margin-bottom:45px}
+.heading span{color:#c0b2dd;text-transform:uppercase;letter-spacing:.2em;font-size:11px}
+.heading h2{font-size:clamp(34px,6vw,54px);margin:10px 0}
+.heading p{color:var(--muted)}
+.timeline{max-width:800px;margin:auto;position:relative}
+.timeline:before{content:"";position:absolute;left:50%;top:0;bottom:0;width:2px;background:linear-gradient(#ff70b7,#9d7cff,#6fdcff);opacity:.6}
+.t-card{width:calc(50% - 35px);padding:22px;border-radius:22px;margin:25px 0;position:relative}
+.t-card:nth-child(odd){margin-right:auto}.t-card:nth-child(even){margin-left:auto}
+.t-card:after{content:"";position:absolute;top:30px;width:14px;height:14px;border-radius:50%;background:#ff9bce;box-shadow:0 0 18px #ff70b7}
+.t-card:nth-child(odd):after{right:-43px}.t-card:nth-child(even):after{left:-43px}
+.t-card h3{margin:0 0 8px}.t-card p{color:var(--muted);margin:0;line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.stat{padding:28px 15px;text-align:center;border-radius:22px}.stat b{font-size:34px;display:block}.stat small{color:var(--muted)}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.gallery img{width:100%;height:280px;object-fit:cover;border-radius:22px;border:1px solid var(--border);cursor:pointer;transition:.3s}
+.gallery img:hover{transform:scale(1.02)}
+.quiz{max-width:800px;margin:auto}.q-card{padding:28px;border-radius:25px;margin:16px 0}.q-card h3{margin-top:0}.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}.answer{padding:13px;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:#fff}.answer:hover{background:rgba(255,112,183,.14);border-color:#ff70b7}.result{margin-top:12px;color:#ffabd2;min-height:24px}
+.message{max-width:800px;margin:auto;padding:35px;border-radius:30px;text-align:center}.message-text{color:#eee;line-height:1.9;white-space:pre-line;min-height:120px}
+.final{min-height:80vh;display:grid;place-items:center;text-align:center}.final h2{font-size:clamp(38px,8vw,75px);margin:15px 0;background:linear-gradient(100deg,#fff,#ff9bce,#a993ff);-webkit-background-clip:text;color:transparent}
+footer{text-align:center;padding:40px;color:#9d96ac}
+#editor{position:fixed;inset:0;background:rgba(2,1,7,.72);z-index:90;display:none;align-items:center;justify-content:center;padding:18px}
+#editor.open{display:flex}
+.editor-box{width:min(650px,100%);max-height:90vh;overflow:auto;padding:25px;border-radius:25px}
+.field{margin:13px 0}.field label{display:block;color:#cfc8db;font-size:13px;margin-bottom:6px}.field input,.field textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid var(--border);border-radius:12px;padding:12px;color:white;outline:none}.field textarea{min-height:90px;resize:vertical}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:120;display:none;place-items:center;padding:20px}#lightbox.open{display:grid}#lightbox img{max-width:95vw;max-height:85vh;border-radius:18px}.close{position:fixed;right:20px;top:18px}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .8s,transform .8s}.reveal.show{opacity:1;transform:none}
+@media(max-width:700px){
+ nav .links{display:none}.hero{padding-top:90px}.photos{gap:8px}.x{font-size:25px}
+ .timeline:before{left:8px}.t-card,.t-card:nth-child(even),.t-card:nth-child(odd){width:calc(100% - 35px);margin-left:35px}
+ .t-card:after,.t-card:nth-child(odd):after,.t-card:nth-child(even):after{left:-34px;right:auto}
+ .stats{grid-template-columns:1fr 1fr}.gallery{grid-template-columns:1fr 1fr}.gallery img{height:190px}
+ .answers{grid-template-columns:1fr}.section{padding:80px 0}
+}
+</style>
+</head>
+<body>
+<div id="petals"></div><div class="noise"></div>
+
+<div id="intro">
+  <div class="intro-inner">
+    <div class="kicker">A little story about two friends</div>
+    <div class="intro-title">Some people enter your life...<br>and become your favorite chapter.</div>
+    <button class="btn" onclick="openStory()">Open Our Story ♥</button>
+  </div>
+</div>
+
+<nav class="glass">
+  <strong id="navNames">Malik × Abdul</strong>
+  <div class="links">
+    <a href="#story">Story</a><a href="#memories">Memories</a><a href="#quiz">Quiz</a><a href="#message">Message</a>
+  </div>
+  <button class="btn secondary" onclick="openEditor()">Edit ✦</button>
+</nav>
+
+<main>
+<section class="hero">
+<div class="container hero-content reveal">
+  <div class="photos">
+    <div class="photo-wrap"><img id="photo1" class="photo" alt="Malik Mushahid"><div id="name1" class="name">Malik Mushahid</div></div>
+    <div class="x">×</div>
+    <div class="photo-wrap"><img id="photo2" class="photo" alt="Abdul Sammad"><div id="name2" class="name">Abdul Sammad</div></div>
+  </div>
+  <div class="kicker">BEST FRIENDS</div>
+  <h1>Two Souls.<br>One Beautiful Friendship.</h1>
+  <p>Different personalities. One unforgettable bond.</p>
+  <a class="btn" href="#story">Explore Our Story ↓</a>
+</div>
+</section>
+
+<section id="story" class="section">
+<div class="container">
+ <div class="heading reveal"><span>Our journey</span><h2>Our Story</h2><p>A friendship made from memories, laughter and being there.</p></div>
+ <div class="timeline" id="timeline"></div>
+</div>
+</section>
+
+<section id="memories" class="section">
+<div class="container">
+ <div class="heading reveal"><span>Little moments</span><h2>Our Favorite Memories</h2><p>Add your own photos from the Edit panel.</p></div>
+ <div class="gallery" id="gallery"></div>
+</div>
+</section>
+
+<section class="section">
+<div class="container">
+ <div class="heading reveal"><span>Friendship in numbers</span><h2>Made of Memories</h2></div>
+ <div class="stats" id="stats"></div>
+</div>
+</section>
+
+<section id="quiz" class="section">
+<div class="container">
+ <div class="heading reveal"><span>Just for fun</span><h2>How Well Do We Know Each Other?</h2></div>
+ <div class="quiz" id="quizBox"></div>
+</div>
+</section>
+
+<section id="message" class="section">
+<div class="container">
+ <div class="heading reveal"><span>A little note</span><h2>Secret Message</h2></div>
+ <div class="message glass reveal">
+   <button class="btn" onclick="showMessage()">Open Secret Message 💌</button>
+   <div id="messageText" class="message-text"></div>
+ </div>
+</div>
+</section>
+
+<section id="musicSection" class="section">
+<div class="container">
+ <div class="heading reveal"><span>Your soundtrack</span><h2>Our Song</h2><p>Choose a song from the Edit panel, then play it here.</p></div>
+ <div class="message glass reveal">
+   <button class="btn" onclick="toggleMusic()">♪ <span id="musicBtn">Play Our Song</span></button>
+   <div id="musicStatus" style="margin-top:15px;color:#aaa">No music selected yet.</div>
+   <audio id="audioPlayer" controls style="width:100%;margin-top:18px;display:none"></audio>
+ </div>
+</div>
+</section>
+
+<section class="final">
+<div class="container reveal">
+ <div class="kicker">THE BEST CHAPTER</div>
+ <h2>Some friendships don't need a reason.</h2>
+ <p>They simply become a part of who we are.</p>
+ <h2 id="finalNames">Malik Mushahid ❤️ Abdul Sammad</h2>
+ <p>Forever & Always.</p>
+</div>
+</section>
+</main>
+<footer>Made with friendship ♥ <span id="footerNames">Malik Mushahid × Abdul Sammad</span></footer>
+
+<div id="editor">
+ <div class="editor-box glass">
+  <h2>Edit Your Friendship Website</h2>
+  <p style="color:#aaa">Everything below is saved in your browser.</p>
+  <div class="field"><label>Friend 1 name</label><input id="eName1"></div>
+  <div class="field"><label>Friend 1 picture URL</label><input id="ePhoto1" placeholder="https://..."></div>
+  <div class="field"><label>Or choose Friend 1 picture from device</label><input id="filePhoto1" type="file" accept="image/*"></div>
+  <div class="field"><label>Friend 2 name</label><input id="eName2"></div>
+  <div class="field"><label>Friend 2 picture URL</label><input id="ePhoto2" placeholder="https://..."></div>
+  <div class="field"><label>Or choose Friend 2 picture from device</label><input id="filePhoto2" type="file" accept="image/*"></div>
+  <div class="field"><label>Friendship date (YYYY-MM-DD)</label><input id="eDate" type="date"></div>
+  <h3>Timeline</h3>
+  <div id="timelineFields"></div>
+  <h3>Quiz Questions & Answers</h3>
+  <div id="quizFields"></div>
+  <h3>Memories Gallery</h3>
+  <div class="field"><label>Add memory photos from your device</label><input id="memoryFiles" type="file" accept="image/*" multiple></div>
+  <div id="memoryPreview" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0"></div>
+  <button class="btn secondary" type="button" onclick="clearMemories()">Clear Added Memories</button>
+  <h3>Music</h3>
+  <div class="field"><label>Choose music from your device</label><input id="musicFile" type="file" accept="audio/*"></div>
+  <button class="btn secondary" type="button" onclick="clearMusic()">Remove Music</button>
+  <h3>Statistics</h3>
+  <div id="statsFields"></div>
+  <div class="field"><label>Secret message</label><textarea id="eMessage"></textarea></div>
+  <div class="actions">
+    <button class="btn" onclick="saveEditor()">Save Changes</button>
+    <button class="btn secondary" onclick="closeEditor()">Cancel</button>
+    <button class="btn secondary" onclick="resetData()">Reset</button>
+  </div>
+ </div>
+</div>
+
+<div id="lightbox" onclick="this.classList.remove('open')"><button class="btn close">Close</button><img id="lightImg" alt="Memory"></div>
+
+<script>
+const defaultData={
+ name1:"Malik Mushahid",name2:"Abdul Sammad",
+ photo1:"https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=700&q=85",
+ photo2:"https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=85",
+ date:"2025-01-01",
+ timeline:[
+  ["01","The First Hello","Every unforgettable friendship starts with a simple hello."],
+  ["02","The First Memory","One ordinary moment became a memory worth keeping."],
+  ["03","The Crazy Moments","The best stories usually begin with: “Remember when we...?”"],
+  ["04","The Unforgettable Days","Some days become special simply because we were together."],
+  ["05","Always There","Good friends stay close through the easy days and the difficult ones."],
+  ["06","Forever Friends","Different paths, same bond. That is what makes this friendship special."]
+ ],
+ quiz:[
+  ["Who replies late?","Malik Mushahid","Abdul Sammad"],
+  ["Who gets angry first?","Malik Mushahid","Abdul Sammad"],
+  ["Who is more crazy?","Malik Mushahid","Abdul Sammad"],
+  ["Who laughs at terrible jokes?","Malik Mushahid","Abdul Sammad"],
+  ["Who is more adventurous?","Malik Mushahid","Abdul Sammad"],
+  ["Who would survive longer without their phone?","Malik Mushahid","Abdul Sammad"]
+ ],
+ stats:[["Friends Since","DATE"],["Days Together","DAYS"],["Memories","∞"],["Laughs","∞"]],
+ memories:[],
+ music:"",
+message:"Dear Best Friend,\\n\\nThank you for being there through every good day, every bad day, and every completely crazy moment.\\n\\nLife is better with a friend like you.\\n\\nNo matter where life takes us, this friendship will always be special.\\n\\nForever friends."
+};
+let data=JSON.parse(localStorage.getItem("friendshipData")||"null")||structuredClone(defaultData);
+
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function render(){
+ document.getElementById("name1").textContent=data.name1;document.getElementById("name2").textContent=data.name2;
+ document.getElementById("photo1").src=data.photo1;document.getElementById("photo2").src=data.photo2;
+ document.getElementById("navNames").textContent=data.name1+" × "+data.name2;
+ document.getElementById("finalNames").textContent=data.name1+" ❤️ "+data.name2;
+ document.getElementById("footerNames").textContent=data.name1+" × "+data.name2;
+ document.getElementById("timeline").innerHTML=data.timeline.map(x=>`<article class="t-card glass reveal"><h3>${esc(x[0])} — ${esc(x[1])}</h3><p>${esc(x[2])}</p></article>`).join("");
+ const galleryPhotos=[data.photo1,data.photo2,...(data.memories||[])];
+document.getElementById("gallery").innerHTML=galleryPhotos.map((p,i)=>`<img src="${esc(p)}" alt="Memory ${i+1}" onclick="lightbox(this.src)">`).join("")+
+ `<div class="glass" style="min-height:280px;border-radius:22px;display:grid;place-items:center;color:#aaa;padding:25px;text-align:center">Add more memories from the Edit panel.</div>`;
+const audio=document.getElementById("audioPlayer");
+if(data.music){audio.src=data.music;audio.style.display="block";document.getElementById("musicStatus").textContent="Music ready. Press play when you are ready."}else{audio.removeAttribute("src");audio.style.display="none";document.getElementById("musicStatus").textContent="No music selected yet."}
+ document.getElementById("stats").innerHTML=data.stats.map(s=>{
+   let value=s[1]; if(value==="DATE") value=data.date||"—"; if(value==="DAYS") value=daysSince(data.date);
+   return `<div class="stat glass"><b>${esc(value)}</b><small>${esc(s[0])}</small></div>`;
+ }).join("");
+ document.getElementById("quizBox").innerHTML=data.quiz.map((q,i)=>`<div class="q-card glass"><h3>${i+1}. ${esc(q[0])}</h3><div class="answers"><button class="answer" onclick="answer(${i},0)">${esc(q[1])}</button><button class="answer" onclick="answer(${i},1)">${esc(q[2])}</button></div><div class="result" id="r${i}"></div></div>`).join("");
+ document.getElementById("messageText").textContent="";
+ observe();
+}
+function daysSince(d){if(!d)return"—";return Math.max(0,Math.floor((new Date()-new Date(d+"T00:00:00"))/86400000)).toLocaleString()}
+function answer(i,n){document.getElementById("r"+i).textContent="✨ "+data.quiz[i][n]+" — sounds about right!"}
+function showMessage(){
+ const el=document.getElementById("messageText");el.textContent="";let text=data.message,i=0;
+ const timer=setInterval(()=>{el.textContent+=text[i++]||"";if(i>text.length)clearInterval(timer)},22);
+}
+function lightbox(src){document.getElementById("lightImg").src=src;document.getElementById("lightbox").classList.add("open")}
+function openStory(){document.getElementById("intro").classList.add("hide");setTimeout(()=>document.querySelector(".hero .reveal").classList.add("show"),400)}
+function openEditor(){
+ document.getElementById("eName1").value=data.name1;document.getElementById("eName2").value=data.name2;
+ document.getElementById("ePhoto1").value=data.photo1;document.getElementById("ePhoto2").value=data.photo2;document.getElementById("eDate").value=data.date;
+ document.getElementById("eMessage").value=data.message;
+document.getElementById("memoryPreview").innerHTML=(data.memories||[]).map((p,i)=>`<div style="position:relative"><img src="${esc(p)}" style="width:100%;height:80px;object-fit:cover;border-radius:8px"><button type="button" onclick="removeMemory(${i})" style="position:absolute;right:3px;top:3px;border:0;border-radius:50%;background:#000b;color:#fff">×</button></div>`).join("");
+ document.getElementById("timelineFields").innerHTML=data.timeline.map((x,i)=>`<div class="field"><label>Timeline ${i+1} title</label><input data-t="title" data-i="${i}" value="${esc(x[1])}"><label>Text</label><textarea data-t="text" data-i="${i}">${esc(x[2])}</textarea></div>`).join("");
+ document.getElementById("quizFields").innerHTML=data.quiz.map((q,i)=>`<div class="field"><label>Question ${i+1}</label><input data-q="question" data-i="${i}" value="${esc(q[0])}"><label>Answer A</label><input data-q="a" data-i="${i}" value="${esc(q[1])}"><label>Answer B</label><input data-q="b" data-i="${i}" value="${esc(q[2])}"></div>`).join("");
+ document.getElementById("statsFields").innerHTML=data.stats.map((s,i)=>`<div class="field"><label>Stat ${i+1} label</label><input data-s="label" data-i="${i}" value="${esc(s[0])}"><label>Value (use DATE or DAYS if desired)</label><input data-s="value" data-i="${i}" value="${esc(s[1])}"></div>`).join("");
+ document.getElementById("editor").classList.add("open");
+}
+function closeEditor(){document.getElementById("editor").classList.remove("open")}
+async function fileToDataURL(file){
+ return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)});
+}
+async function saveEditor(){
+ data.name1=document.getElementById("eName1").value.trim()||"Malik Mushahid";
+ data.name2=document.getElementById("eName2").value.trim()||"Abdul Sammad";
+ data.photo1=document.getElementById("ePhoto1").value.trim()||defaultData.photo1;
+ data.photo2=document.getElementById("ePhoto2").value.trim()||defaultData.photo2;
+ data.date=document.getElementById("eDate").value;
+ data.message=document.getElementById("eMessage").value;
+ document.querySelectorAll("[data-t]").forEach(el=>{let i=+el.dataset.i;if(el.dataset.t==="title")data.timeline[i][1]=el.value;else data.timeline[i][2]=el.value});
+ document.querySelectorAll("[data-q]").forEach(el=>{let i=+el.dataset.i;data.quiz[i][el.dataset.q==="question"?0:el.dataset.q==="a"?1:2]=el.value});
+ document.querySelectorAll("[data-s]").forEach(el=>{let i=+el.dataset.i;data.stats[i][el.dataset.s==="label"?0:1]=el.value});
+ const f1=document.getElementById("filePhoto1").files[0];
+const f2=document.getElementById("filePhoto2").files[0];
+if(f1) data.photo1=await fileToDataURL(f1);
+if(f2) data.photo2=await fileToDataURL(f2);
+
+const mf=[...document.getElementById("memoryFiles").files];
+for(const file of mf){data.memories=data.memories||[];data.memories.push(await fileToDataURL(file));}
+
+const music=document.getElementById("musicFile").files[0];
+if(music) data.music=await fileToDataURL(music);
+
+try{localStorage.setItem("friendshipData",JSON.stringify(data));}catch(e){console.warn("Browser storage limit reached:",e)}closeEditor();render();
+}
+function removeMemory(i){data.memories.splice(i,1);try{localStorage.setItem("friendshipData",JSON.stringify(data));}catch(e){}openEditor()}
+function clearMemories(){data.memories=[];try{localStorage.setItem("friendshipData",JSON.stringify(data));}catch(e){}openEditor()}
+function clearMusic(){data.music="";try{localStorage.setItem("friendshipData",JSON.stringify(data));}catch(e){}openEditor()}
+function toggleMusic(){
+ const a=document.getElementById("audioPlayer");
+ if(!a.src){alert("Please choose a music file from the Edit panel first.");return}
+ if(a.paused){a.play();document.getElementById("musicBtn").textContent="Pause Our Song"}
+ else{a.pause();document.getElementById("musicBtn").textContent="Play Our Song"}
+}
+function resetData(){if(confirm("Reset all edits?")){localStorage.removeItem("friendshipData");data=structuredClone(defaultData);closeEditor();render()}}
+function petals(){
+ const el=document.createElement("span");el.className="petal";
+ el.textContent=["🌸","🌺","🌷","🌼","✿","❀","💮"][Math.floor(Math.random()*7)];
+ el.style.left=Math.random()*100+"vw";
+ el.style.setProperty("--drift",(Math.random()*320-160)+"px");
+ el.style.animationDuration=(7+Math.random()*9)+"s";
+ el.style.fontSize=(13+Math.random()*18)+"px";
+ el.style.opacity=.55+Math.random()*.45;
+ document.getElementById("petals").appendChild(el);
+ setTimeout(()=>el.remove(),18000);
+}
+function glowingFlower(){
+ const el=document.createElement("span");el.className="flowerGlow";
+ el.style.left=Math.random()*100+"vw";el.style.top="-15px";
+ el.style.setProperty("--drift",(Math.random()*300-150)+"px");
+ el.style.animationDuration=(6+Math.random()*8)+"s";
+ document.getElementById("petals").appendChild(el);
+ setTimeout(()=>el.remove(),15000);
+}
+setInterval(petals,380);setInterval(glowingFlower,900);for(let i=0;i<25;i++)setTimeout(petals,i*100);
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add("show")}),{threshold:.12});
+function observe(){document.querySelectorAll(".reveal").forEach(e=>io.observe(e))}
+render();
+</script>
+</body>
+</html>
