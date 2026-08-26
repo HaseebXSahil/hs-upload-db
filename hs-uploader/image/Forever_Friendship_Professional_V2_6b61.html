@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Forever Friendship Premium</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@600;800&display=swap');
+*{box-sizing:border-box}
+body{
+margin:0;min-height:100vh;overflow-x:hidden;
+font-family:Poppins,sans-serif;text-align:center;color:white;
+background:linear-gradient(135deg,#141e30,#243b55,#8e2de2);
+}
+.hero{padding:35px}
+h1{
+font-family:Cinzel,serif;font-size:60px;
+text-shadow:0 0 25px #fff;
+}
+.subtitle{font-size:24px;font-weight:800}
+.glass{
+background:rgba(255,255,255,.15);
+backdrop-filter:blur(15px);
+border-radius:35px;padding:30px;
+box-shadow:0 20px 50px #0008;
+}
+.friends{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;margin:40px}
+.card{width:330px;animation:float 4s infinite}
+@keyframes float{50%{transform:translateY(-25px)}}
+.photo{
+width:230px;height:230px;border-radius:50%;
+object-fit:cover;border:8px solid white;
+box-shadow:0 0 40px #ff8bd1
+}
+.name{font-size:38px;font-weight:900;margin-top:15px}
+button{
+padding:15px 30px;border:0;border-radius:40px;
+font-size:17px;font-weight:bold;margin:8px;
+cursor:pointer;color:#5420a0
+}
+.quoteBox{
+font-size:28px;font-weight:900;
+min-height:80px;margin:25px
+}
+.word{
+position:fixed;font-size:28px;font-weight:900;
+animation:rise 12s linear forwards;opacity:.7
+}
+@keyframes rise{from{top:100vh}to{top:-100px}}
+.flower{
+position:fixed;top:-50px;font-size:40px;
+animation:fall 8s linear forwards
+}
+@keyframes fall{to{top:110vh;transform:rotate(720deg)}}
+.panel{max-width:800px;margin:30px auto}
+input,textarea{width:80%;padding:12px;border-radius:15px;border:0;margin:6px}
+.cartoon{font-size:100px;animation:float 3s infinite}
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>💎 Forever Friendship 💎</h1>
+<p class="subtitle">✨ A Beautiful Bond Written By Hearts 🫶✨</p>
+
+<div class="cartoon">🧸👫🌹💖</div>
+
+<div class="friends">
+<div class="glass card">
+<img id="pic1" class="photo" src="https://via.placeholder.com/230">
+<div id="name1" class="name">Friend One</div>
+</div>
+
+<div class="glass card">
+<img id="pic2" class="photo" src="https://via.placeholder.com/230">
+<div id="name2" class="name">Friend Two</div>
+</div>
+</div>
+
+<button onclick="surprise()">🎁 Open Friendship Surprise</button>
+<div class="glass quoteBox" id="quote"></div>
+
+<h2>🎵 Friendship Music</h2>
+<input type="file" id="musicFile" accept="audio/*"><br>
+<button onclick="audio.play()">▶ Play</button>
+<button onclick="audio.pause()">⏸ Pause</button>
+<audio id="audio"></audio>
+
+<div class="glass panel">
+<h2>👑 Admin Friendship Studio</h2>
+<input id="n1" placeholder="Friend 1 name"><br>
+<button onclick="name1.innerHTML=n1.value">Change Friend 1 Name</button>
+<br>
+<input id="n2" placeholder="Friend 2 name"><br>
+<button onclick="name2.innerHTML=n2.value">Change Friend 2 Name</button>
+<br>
+<input type="file" id="p1">
+<button onclick="pic1.src=URL.createObjectURL(p1.files[0])">Friend 1 Picture Change</button><br>
+<input type="file" id="p2">
+<button onclick="pic2.src=URL.createObjectURL(p2.files[0])">Friend 2 Picture Change</button><br>
+<textarea id="custom" placeholder="Your friendship quote"></textarea><br>
+<button onclick="save()">💾 Save Information</button>
+<button onclick="share()">🔗 Generate Link</button>
+<p id="link"></p>
+</div>
+</div>
+
+<script>
+musicFile.onchange=()=>audio.src=URL.createObjectURL(musicFile.files[0]);
+
+function surprise(){
+let text="A true friend is a priceless treasure. They bring smiles in sadness, light in darkness, and memories that stay forever. 💖✨";
+quote.innerHTML="";
+let i=0;
+let timer=setInterval(()=>{
+quote.innerHTML+=text[i++];
+if(i>=text.length)clearInterval(timer);
+},50);
+}
+
+function save(){
+localStorage.friendship=JSON.stringify({a:name1.innerHTML,b:name2.innerHTML});
+alert("Saved Successfully 💎");
+}
+
+function share(){
+link.innerHTML=location.href+"?friend="+btoa(name1.innerHTML+"-"+name2.innerHTML);
+}
+
+setInterval(()=>{
+let e=document.createElement("div");
+e.className="word";
+e.innerHTML=["FOREVER BOND 💖","BEST FRIENDS ✨","MEMORIES 🌹","TRUE LOVE 🫶"][Math.floor(Math.random()*4)];
+e.style.left=Math.random()*90+"%";
+document.body.appendChild(e);
+setTimeout(()=>e.remove(),12000);
+},1000);
+
+setInterval(()=>{
+let f=document.createElement("div");
+f.className="flower";
+f.innerHTML=["🌸","🌹","🌺","✨"][Math.floor(Math.random()*4)];
+f.style.left=Math.random()*100+"%";
+document.body.appendChild(f);
+setTimeout(()=>f.remove(),8000);
+},400);
+</script>
+</body>
+</html>
