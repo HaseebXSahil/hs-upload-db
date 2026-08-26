@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ff5c8a">
+<title>Our Beautiful Friendship 💖</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top,#ffe6f0 0,#fff5f8 35%,#f7eaff 100%);color:#43263b;min-height:100vh;overflow-x:hidden}
+#flowers{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:999}
+.flower{position:absolute;top:-50px;animation:fall linear forwards;opacity:.85;user-select:none}
+@keyframes fall{0%{transform:translateY(-60px) rotate(0)}100%{transform:translateY(110vh) rotate(720deg)}}
+header{min-height:92vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
+.hero{max-width:900px;width:100%;padding:35px 20px}
+.heart{font-size:70px;animation:heartbeat 1.5s infinite}
+@keyframes heartbeat{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+h1{font-size:clamp(38px,8vw,78px);background:linear-gradient(90deg,#ff3f7f,#9d4edd,#ff3f7f);background-size:200%;-webkit-background-clip:text;color:transparent;animation:gradient 4s linear infinite;margin:15px 0}
+@keyframes gradient{to{background-position:200%}}
+.subtitle{font-size:20px;line-height:1.6;color:#76566b;margin-bottom:25px}
+.btn{border:0;padding:13px 20px;border-radius:30px;background:linear-gradient(135deg,#ff4f87,#9d4edd);color:white;font-size:15px;font-weight:bold;cursor:pointer;box-shadow:0 8px 20px #d77aa355;transition:.25s;margin:5px}
+.btn:hover{transform:translateY(-3px) scale(1.02)}
+.btn.secondary{background:white;color:#b52d68;border:1px solid #ffd0e0}
+section{max-width:1100px;margin:auto;padding:70px 20px}
+.section-title{text-align:center;margin-bottom:35px}
+.section-title h2{font-size:38px;color:#8f315f}
+.section-title p{color:#816578;margin-top:8px}
+.friends{display:grid;grid-template-columns:repeat(2,1fr);gap:25px}
+.friend-card{background:#ffffffcc;backdrop-filter:blur(12px);border:1px solid white;border-radius:30px;padding:25px;text-align:center;box-shadow:0 15px 40px #9b4d7b18;transition:.3s}
+.friend-card:hover{transform:translateY(-8px)}
+.profile{width:170px;height:170px;margin:auto;border-radius:50%;overflow:hidden;border:6px solid white;box-shadow:0 10px 30px #9d4edd44;background:linear-gradient(135deg,#ffc1d9,#d7b7ff);display:flex;align-items:center;justify-content:center}
+.profile img{width:100%;height:100%;object-fit:cover}
+.default-avatar{font-size:70px}
+.friend-name{font-size:27px;margin:18px 0 10px;color:#8d315c;font-weight:bold}
+.friend-card p{color:#755c6d;line-height:1.6}
+.message{background:linear-gradient(135deg,#fff,#fff2f7);border-radius:30px;padding:35px;text-align:center;box-shadow:0 15px 40px #9b4d7b18}
+.message p{font-size:21px;line-height:1.8;color:#65485b}
+.questions{display:grid;gap:18px}
+.question{background:white;padding:25px;border-radius:22px;box-shadow:0 10px 30px #9b4d7b14}
+.question h3{color:#9a3765;margin-bottom:10px}
+.answer{color:#765d6e;line-height:1.6}
+.memory-controls{text-align:center;margin-bottom:25px}
+.memory-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.memory{aspect-ratio:1/1;border-radius:20px;overflow:hidden;background:#ffe8f1;box-shadow:0 10px 25px #9b4d7b1c}
+.memory img{width:100%;height:100%;object-fit:cover;transition:.4s}
+.memory:hover img{transform:scale(1.08)}
+.music-box{background:white;border-radius:30px;padding:30px;text-align:center;box-shadow:0 15px 40px #9b4d7b18}
+.music-name{margin:15px;color:#8c3b62;font-weight:bold;overflow-wrap:anywhere}
+audio{width:100%;max-width:600px}
+.editor{background:#ffffffd9;border-radius:30px;padding:30px;box-shadow:0 15px 40px #9b4d7b18}
+.editor label{display:block;margin:15px 0 7px;color:#823456;font-weight:bold}
+.editor input,.editor textarea{width:100%;border:1px solid #f0c9d9;border-radius:15px;padding:13px;font-size:15px;outline:none;background:#fffafd}
+.editor textarea{min-height:100px;resize:vertical}
+footer{text-align:center;padding:45px 20px;color:#876477}
+.footer-heart{color:#ff4f87;font-size:25px}
+.toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%) translateY(100px);background:#43263b;color:white;padding:13px 22px;border-radius:30px;z-index:2000;transition:.3s;opacity:0}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+@media(max-width:700px){.friends{grid-template-columns:1fr}.memory-grid{grid-template-columns:repeat(2,1fr)}section{padding:50px 15px}.section-title h2{font-size:30px}.message{padding:25px 18px}.message p{font-size:18px}.profile{width:145px;height:145px}}
+
+/* ================================
+   HIDDEN WORD MAGIC SURPRISE
+================================ */
+.magic-section{
+    text-align:center;
+    padding-top:25px;
+}
+.magic-button{
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(135deg,#6d28d9,#ec4899,#f59e0b);
+    background-size:200% 200%;
+    animation:magicGradient 4s ease infinite;
+    font-size:16px;
+    padding:15px 26px;
+}
+@keyframes magicGradient{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+.magic-hint{
+    margin-top:12px;
+    color:#856276;
+    font-size:14px;
+}
+#magicOverlay{
+    position:fixed;
+    inset:0;
+    z-index:5000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+    background:rgba(36,14,38,.72);
+    backdrop-filter:blur(10px);
+    opacity:0;
+    visibility:hidden;
+    transition:.45s ease;
+}
+#magicOverlay.active{
+    opacity:1;
+    visibility:visible;
+}
+.magic-card{
+    width:min(700px,100%);
+    min-height:330px;
+    position:relative;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.7);
+    border-radius:35px;
+    padding:55px 30px 40px;
+    text-align:center;
+    background:linear-gradient(145deg,rgba(255,255,255,.97),rgba(255,235,246,.96));
+    box-shadow:0 30px 100px rgba(0,0,0,.35);
+    transform:scale(.7) rotate(-2deg);
+    transition:.55s cubic-bezier(.2,.8,.2,1);
+}
+#magicOverlay.active .magic-card{
+    transform:scale(1) rotate(0);
+}
+.magic-spark{
+    position:absolute;
+    font-size:22px;
+    animation:sparkFloat 2.5s ease-in-out infinite;
+    pointer-events:none;
+}
+@keyframes sparkFloat{
+    0%,100%{transform:translateY(0) rotate(0);opacity:.35}
+    50%{transform:translateY(-18px) rotate(20deg);opacity:1}
+}
+.magic-title{
+    color:#9b2f68;
+    font-size:28px;
+    margin-bottom:20px;
+}
+.magic-quote{
+    position:relative;
+    z-index:2;
+    color:#513446;
+    font-family:Georgia,serif;
+    font-size:clamp(22px,5vw,34px);
+    line-height:1.55;
+    opacity:0;
+    transform:translateY(20px);
+    transition:.8s ease .45s;
+}
+#magicOverlay.active .magic-quote{
+    opacity:1;
+    transform:translateY(0);
+}
+.magic-signature{
+    margin-top:22px;
+    color:#b04a78;
+    font-weight:bold;
+    opacity:0;
+    transition:.8s ease 1s;
+}
+#magicOverlay.active .magic-signature{
+    opacity:1;
+}
+.magic-close{
+    position:absolute;
+    right:15px;
+    top:15px;
+    width:42px;
+    height:42px;
+    border:0;
+    border-radius:50%;
+    background:#fff;
+    color:#9b2f68;
+    font-size:22px;
+    cursor:pointer;
+    box-shadow:0 5px 18px #9b2f6822;
+    z-index:5;
+}
+.magic-word{
+    position:fixed;
+    z-index:5001;
+    pointer-events:none;
+    color:white;
+    font-weight:bold;
+    text-shadow:0 0 12px rgba(255,180,230,.9);
+    animation:wordMagic 2.8s ease-out forwards;
+}
+@keyframes wordMagic{
+    0%{
+        opacity:0;
+        transform:translate(-50%,-50%) scale(.2) rotate(-15deg);
+    }
+    15%{opacity:1}
+    70%{opacity:1}
+    100%{
+        opacity:0;
+        transform:translate(-50%,-170%) scale(1.2) rotate(12deg);
+    }
+}
+
+</style>
+</head>
+<body>
+<div id="flowers"></div>
+
+<input type="file" id="image1Input" accept="image/*" hidden>
+<input type="file" id="image2Input" accept="image/*" hidden>
+<input type="file" id="memoryInput" accept="image/*" multiple hidden>
+<input type="file" id="musicInput" accept="audio/*" hidden>
+
+<header>
+<div class="hero">
+<div class="heart">💖</div>
+<h1 id="mainTitle">Our Beautiful Friendship</h1>
+<p class="subtitle" id="heroText">Some friendships are not made by blood, they are made by beautiful memories, endless laughter and a special bond. 🌸</p>
+<button class="btn" onclick="scrollToSection('friends')">Meet The Friends 💕</button>
+<button class="btn secondary" onclick="scrollToSection('memories')">View Memories 📸</button>
+</div>
+</header>
+
+<section id="friends">
+<div class="section-title"><h2>👥 Best Friends</h2><p>Two friends, one beautiful story.</p></div>
+<div class="friends">
+<div class="friend-card">
+<div class="profile"><img id="image1" alt="Friend 1" style="display:none"><div id="avatar1" class="default-avatar">👨‍🦱</div></div>
+<div class="friend-name" id="name1">Malik Mushahid</div>
+<p id="bio1">A friend who makes every ordinary moment special. ❤️</p>
+<button class="btn" onclick="document.getElementById('image1Input').click()">🖼️ Change Image</button>
+</div>
+<div class="friend-card">
+<div class="profile"><img id="image2" alt="Friend 2" style="display:none"><div id="avatar2" class="default-avatar">👨‍🦱</div></div>
+<div class="friend-name" id="name2">Abdul Sammad</div>
+<p id="bio2">The kind of friend who turns memories into unforgettable moments. 💜</p>
+<button class="btn" onclick="document.getElementById('image2Input').click()">🖼️ Change Image</button>
+</div>
+</div>
+</section>
+
+<section>
+<div class="section-title"><h2>💌 A Little Message</h2></div>
+<div class="message"><p id="friendMessage">"A true friend knows all your stories, but a best friend helped you write them." 🌷</p></div>
+</section>
+
+<section>
+<div class="section-title"><h2>❓ Our Friendship</h2><p>Questions that describe our bond.</p></div>
+<div class="questions">
+<div class="question"><h3 id="q1">What makes our friendship special?</h3><div class="answer" id="a1">Trust, understanding, crazy conversations and countless memories. ❤️</div></div>
+<div class="question"><h3 id="q2">What is our favorite memory?</h3><div class="answer" id="a2">Every moment spent together becomes a memory worth remembering. 🌸</div></div>
+<div class="question"><h3 id="q3">Will this friendship last forever?</h3><div class="answer" id="a3">No matter where life takes us, the memories will always stay with us. 💖</div></div>
+</div>
+</section>
+
+<section id="memories">
+<div class="section-title"><h2>📸 Our Memories</h2><p>Add your favorite pictures from your phone.</p></div>
+<div class="memory-controls">
+<button class="btn" onclick="document.getElementById('memoryInput').click()">➕ Add Memories From Gallery</button>
+<button class="btn secondary" onclick="clearMemories()">🗑️ Clear Memories</button>
+</div>
+<div class="memory-grid" id="memoryGrid"></div>
+</section>
+
+<section>
+<div class="section-title"><h2>🎵 Our Song</h2><p>Import a song from your phone.</p></div>
+<div class="music-box">
+<div style="font-size:55px">🎶</div>
+<div class="music-name" id="musicName">No music selected</div>
+<audio id="audioPlayer" controls></audio><br>
+<button class="btn" onclick="document.getElementById('musicInput').click()">🎵 Import Music From Device</button>
+<button class="btn secondary" onclick="removeMusic()">Remove Music</button>
+</div>
+</section>
+
+<section>
+<div class="section-title"><h2>⚙️ Customize Website</h2><p>Change names, questions and messages.</p></div>
+<div class="editor">
+<label>Friend 1 Name</label><input id="editName1" value="Malik Mushahid" oninput="changeText('name1',this.value)">
+<label>Friend 2 Name</label><input id="editName2" value="Abdul Sammad" oninput="changeText('name2',this.value)">
+<label>Friend 1 Bio</label><textarea oninput="changeText('bio1',this.value)">A friend who makes every ordinary moment special. ❤️</textarea>
+<label>Friend 2 Bio</label><textarea oninput="changeText('bio2',this.value)">The kind of friend who turns memories into unforgettable moments. 💜</textarea>
+<label>Main Title</label><input value="Our Beautiful Friendship" oninput="changeText('mainTitle',this.value)">
+<label>Friendship Message</label><textarea oninput="changeText('friendMessage',this.value)">"A true friend knows all your stories, but a best friend helped you write them." 🌷</textarea>
+<label>Question 1</label><input value="What makes our friendship special?" oninput="changeText('q1',this.value)">
+<label>Answer 1</label><textarea oninput="changeText('a1',this.value)">Trust, understanding, crazy conversations and countless memories. ❤️</textarea>
+<label>Question 2</label><input value="What is our favorite memory?" oninput="changeText('q2',this.value)">
+<label>Answer 2</label><textarea oninput="changeText('a2',this.value)">Every moment spent together becomes a memory worth remembering. 🌸</textarea>
+<label>Question 3</label><input value="Will this friendship last forever?" oninput="changeText('q3',this.value)">
+<label>Answer 3</label><textarea oninput="changeText('a3',this.value)">No matter where life takes us, the memories will always stay with us. 💖</textarea>
+<br>
+<button class="btn" onclick="saveAll()">💾 Save Changes</button>
+<button class="btn secondary" onclick="resetWebsite()">🔄 Reset Website</button>
+</div>
+</section>
+
+
+<!-- HIDDEN WORD MAGIC -->
+<section class="magic-section">
+    <div class="section-title">
+        <h2>✨ Hidden Surprise</h2>
+        <p>There is a little friendship message waiting for you...</p>
+    </div>
+
+    <button class="btn magic-button" onclick="openWordMagic()">
+        ✨ Reveal The Word Magic
+    </button>
+
+    <div class="magic-hint">Tap it when you're ready for a surprise 💫</div>
+</section>
+
+<!-- MAGIC SURPRISE OVERLAY -->
+<div id="magicOverlay" aria-hidden="true">
+    <div class="magic-card">
+        <button class="magic-close" onclick="closeWordMagic()" aria-label="Close">×</button>
+
+        <div class="magic-spark" style="left:10%;top:18%">✦</div>
+        <div class="magic-spark" style="right:12%;top:25%;animation-delay:.5s">✧</div>
+        <div class="magic-spark" style="left:18%;bottom:18%;animation-delay:1s">💖</div>
+        <div class="magic-spark" style="right:18%;bottom:15%;animation-delay:1.4s">✨</div>
+
+        <div class="magic-title">A Little Word Magic ✨</div>
+
+        <div class="magic-quote">
+            “Some people enter your life as friends,
+            and somehow become a beautiful part of your story.
+            May our laughter stay loud, our memories stay forever,
+            and our friendship never fade.” 💖
+        </div>
+
+        <div class="magic-signature">
+            Made with friendship, memories & a little magic 🌸
+        </div>
+    </div>
+</div>
+
+<footer><div class="footer-heart">💖 🌸 💖</div><p style="margin-top:10px">Made with love for a beautiful friendship.</p></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const editableIds=["name1","name2","bio1","bio2","mainTitle","friendMessage","q1","a1","q2","a2","q3","a3"];
+
+function scrollToSection(id){document.getElementById(id).scrollIntoView({behavior:"smooth"})}
+function showToast(message){const t=document.getElementById("toast");t.textContent=message;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
+
+function changeText(id,value){document.getElementById(id).textContent=value;try{localStorage.setItem("friend_"+id,value)}catch(e){}}
+
+function setupImageInput(inputId,imageId,avatarId,storageKey){
+document.getElementById(inputId).addEventListener("change",function(e){
+const file=e.target.files[0];if(!file)return;
+if(!file.type.startsWith("image/")){showToast("Please select an image.");return}
+const reader=new FileReader();
+reader.onload=function(event){
+document.getElementById(imageId).src=event.target.result;
+document.getElementById(imageId).style.display="block";
+document.getElementById(avatarId).style.display="none";
+try{localStorage.setItem(storageKey,event.target.result)}catch(error){showToast("Image is too large to save permanently.")}
+showToast("Profile picture changed ❤️");
+};
+reader.readAsDataURL(file);
+});
+}
+setupImageInput("image1Input","image1","avatar1","friend_image_1");
+setupImageInput("image2Input","image2","avatar2","friend_image_2");
+
+document.getElementById("memoryInput").addEventListener("change",function(e){
+const files=Array.from(e.target.files);if(!files.length)return;
+files.forEach(file=>{
+if(!file.type.startsWith("image/"))return;
+const reader=new FileReader();
+reader.onload=function(event){addMemoryImage(event.target.result);saveMemory(event.target.result)};
+reader.readAsDataURL(file);
+});
+showToast(files.length+" memory photo(s) added 📸");this.value="";
+});
+
+function addMemoryImage(src){
+const grid=document.getElementById("memoryGrid");
+const div=document.createElement("div");div.className="memory";
+const img=document.createElement("img");img.src=src;img.alt="Friendship memory";
+div.appendChild(img);grid.appendChild(div);
+}
+
+function saveMemory(src){
+let memories=[];try{memories=JSON.parse(localStorage.getItem("friend_memories")||"[]")}catch(e){}
+memories.push(src);if(memories.length>30)memories=memories.slice(-30);
+try{localStorage.setItem("friend_memories",JSON.stringify(memories))}catch(e){showToast("Storage full. Photo works for this session.")}
+}
+
+function loadMemories(){
+let memories=[];try{memories=JSON.parse(localStorage.getItem("friend_memories")||"[]")}catch(e){}
+memories.forEach(addMemoryImage);
+}
+
+function clearMemories(){
+if(!confirm("Remove all added memory photos?"))return;
+localStorage.removeItem("friend_memories");location.reload();
+}
+
+document.getElementById("musicInput").addEventListener("change",function(e){
+const file=e.target.files[0];if(!file)return;
+if(!file.type.startsWith("audio/")){showToast("Please select an audio file.");return}
+const url=URL.createObjectURL(file);
+document.getElementById("audioPlayer").src=url;
+document.getElementById("musicName").textContent="🎵 "+file.name;
+showToast("Music loaded successfully 🎵");
+});
+
+function removeMusic(){
+const p=document.getElementById("audioPlayer");p.pause();p.removeAttribute("src");p.load();
+document.getElementById("musicName").textContent="No music selected";
+document.getElementById("musicInput").value="";
+showToast("Music removed.");
+}
+
+function loadText(){
+editableIds.forEach(id=>{const v=localStorage.getItem("friend_"+id);if(v!==null)document.getElementById(id).textContent=v});
+const n1=localStorage.getItem("friend_name1"),n2=localStorage.getItem("friend_name2");
+if(n1)document.getElementById("editName1").value=n1;
+if(n2)document.getElementById("editName2").value=n2;
+}
+
+function saveAll(){editableIds.forEach(id=>localStorage.setItem("friend_"+id,document.getElementById(id).textContent));showToast("All changes saved successfully 💾")}
+
+function loadProfileImages(){
+const i1=localStorage.getItem("friend_image_1");
+if(i1){document.getElementById("image1").src=i1;document.getElementById("image1").style.display="block";document.getElementById("avatar1").style.display="none"}
+const i2=localStorage.getItem("friend_image_2");
+if(i2){document.getElementById("image2").src=i2;document.getElementById("image2").style.display="block";document.getElementById("avatar2").style.display="none"}
+}
+
+function resetWebsite(){
+if(!confirm("Reset all saved names, pictures and memories?"))return;
+localStorage.clear();location.reload();
+}
+
+const flowerSymbols=["🌸","🌺","🌷","🌼","💮","🌹","🍃","💖"];
+function createFlower(){
+const flower=document.createElement("div");flower.className="flower";
+flower.textContent=flowerSymbols[Math.floor(Math.random()*flowerSymbols.length)];
+flower.style.left=Math.random()*100+"vw";
+flower.style.fontSize=(14+Math.random()*18)+"px";
+flower.style.animationDuration=(5+Math.random()*7)+"s";
+flower.style.opacity=.4+Math.random()*.6;
+document.getElementById("flowers").appendChild(flower);
+setTimeout(()=>flower.remove(),13000);
+}
+setInterval(createFlower,450);
+
+loadText();loadProfileImages();loadMemories();
+
+/* ================================
+   WORD MAGIC SURPRISE
+================================ */
+function openWordMagic(){
+    const overlay=document.getElementById("magicOverlay");
+    overlay.classList.add("active");
+    overlay.setAttribute("aria-hidden","false");
+
+    const words=[
+        "Friendship",
+        "Memories",
+        "Forever",
+        "Laughter",
+        "Trust",
+        "Together",
+        "Best Friends",
+        "Beautiful",
+        "Always",
+        "💖"
+    ];
+
+    for(let i=0;i<28;i++){
+        setTimeout(()=>{
+            createMagicWord(words[Math.floor(Math.random()*words.length)]);
+        },i*55);
+    }
+
+    showToast("✨ Surprise unlocked!");
+}
+
+function createMagicWord(text){
+    const el=document.createElement("div");
+    el.className="magic-word";
+    el.textContent=text;
+    el.style.left=(10+Math.random()*80)+"vw";
+    el.style.top=(45+Math.random()*45)+"vh";
+    el.style.fontSize=(13+Math.random()*18)+"px";
+    el.style.animationDuration=(1.8+Math.random()*1.8)+"s";
+    document.body.appendChild(el);
+
+    setTimeout(()=>el.remove(),4200);
+}
+
+function closeWordMagic(){
+    const overlay=document.getElementById("magicOverlay");
+    overlay.classList.remove("active");
+    overlay.setAttribute("aria-hidden","true");
+}
+
+document.getElementById("magicOverlay").addEventListener("click",function(e){
+    if(e.target===this) closeWordMagic();
+});
+
+document.addEventListener("keydown",function(e){
+    if(e.key==="Escape") closeWordMagic();
+});
+
+</script>
+</body>
+</html>
