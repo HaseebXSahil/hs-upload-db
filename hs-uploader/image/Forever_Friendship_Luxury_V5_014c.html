@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Forever Friendship V5</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@600;800&display=swap');
+
+*{box-sizing:border-box}
+body{
+margin:0;min-height:100vh;overflow-x:hidden;
+background:#050816;color:white;
+font-family:Poppins,sans-serif;text-align:center;
+}
+
+.light{
+position:fixed;border-radius:50%;
+filter:blur(60px);
+animation:move 8s infinite alternate;
+z-index:-1;
+}
+.l1{width:300px;height:300px;background:#6c63ff;top:5%;left:10%}
+.l2{width:350px;height:350px;background:#ff4d8d;right:5%;top:40%}
+.l3{width:250px;height:250px;background:#ffd166;bottom:5%;left:40%}
+
+@keyframes move{
+to{transform:translate(80px,-60px)}
+}
+
+h1{
+font-family:"Playfair Display",serif;
+font-size:70px;
+letter-spacing:5px;
+color:#ffd166;
+text-shadow:0 0 30px #ffd166;
+}
+
+.subtitle{
+font-size:24px;
+letter-spacing:3px;
+}
+
+.friends{
+display:flex;
+justify-content:center;
+gap:50px;
+flex-wrap:wrap;
+margin:50px;
+}
+
+.friend{
+width:360px;
+padding:35px;
+background:rgba(255,255,255,.08);
+border-radius:35px;
+border:2px solid rgba(255,209,102,.5);
+backdrop-filter:blur(20px);
+animation:float 5s infinite;
+}
+
+@keyframes float{
+50%{transform:translateY(-25px)}
+}
+
+.photo{
+width:260px;
+height:260px;
+border-radius:50%;
+object-fit:cover;
+border:8px solid #ffd166;
+box-shadow:0 0 40px #ff4d8d;
+animation:glow 3s infinite alternate;
+}
+
+@keyframes glow{
+to{box-shadow:0 0 70px #6c63ff}
+}
+
+.name{
+font-size:42px;
+font-weight:800;
+margin-top:20px;
+}
+
+button{
+padding:16px 35px;
+border:0;
+border-radius:40px;
+font-weight:bold;
+font-size:17px;
+margin:10px;
+cursor:pointer;
+background:#ffd166;
+color:#111;
+}
+
+#surprise{
+display:none;
+font-family:"Playfair Display",serif;
+font-size:45px;
+color:#ffd166;
+margin:40px;
+animation:appear 2s;
+}
+
+@keyframes appear{
+from{opacity:0;transform:scale(.5)}
+to{opacity:1}
+}
+
+.panel{
+max-width:800px;
+margin:40px auto;
+padding:30px;
+background:#ffffff15;
+border-radius:30px;
+}
+
+input,textarea{
+padding:14px;
+width:80%;
+border-radius:15px;
+border:0;
+margin:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="light l1"></div>
+<div class="light l2"></div>
+<div class="light l3"></div>
+
+<h1>Forever Friendship</h1>
+<p class="subtitle">A Special Connection Beyond Time</p>
+
+<div class="friends">
+
+<div class="friend">
+<img id="img1" class="photo" src="https://via.placeholder.com/260">
+<div id="name1" class="name">Friend One</div>
+</div>
+
+<div class="friend">
+<img id="img2" class="photo" src="https://via.placeholder.com/260">
+<div id="name2" class="name">Friend Two</div>
+</div>
+
+</div>
+
+<button onclick="surprise()">Open Surprise</button>
+
+<div id="surprise"></div>
+
+<h2>Friendship Music</h2>
+<input type="file" id="music" accept="audio/*"><br>
+<button onclick="audio.play()">Play</button>
+<button onclick="audio.pause()">Pause</button>
+<audio id="audio"></audio>
+
+<div class="panel">
+<h2>Admin Studio</h2>
+
+<input id="n1" placeholder="Friend 1 Name">
+<button onclick="name1.innerHTML=n1.value">Change</button><br>
+
+<input id="n2" placeholder="Friend 2 Name">
+<button onclick="name2.innerHTML=n2.value">Change</button><br>
+
+<input type="file" id="p1">
+<button onclick="img1.src=URL.createObjectURL(p1.files[0])">Picture 1</button><br>
+
+<input type="file" id="p2">
+<button onclick="img2.src=URL.createObjectURL(p2.files[0])">Picture 2</button><br>
+
+<textarea id="message" placeholder="Secret surprise message"></textarea><br>
+
+<button onclick="save()">Save</button>
+<button onclick="share()">Generate Link</button>
+<p id="link"></p>
+
+</div>
+
+<script>
+
+music.onchange=()=>audio.src=URL.createObjectURL(music.files[0]);
+
+function surprise(){
+let t=message.value || "A beautiful friendship is a masterpiece created by trust, memories and endless moments.";
+surpriseBox=document.getElementById("surprise");
+surpriseBox.style.display="block";
+surpriseBox.innerHTML="";
+let i=0;
+let x=setInterval(()=>{
+surpriseBox.innerHTML+=t[i++];
+if(i>=t.length)clearInterval(x);
+},60);
+}
+
+function save(){
+localStorage.data=JSON.stringify({a:name1.innerHTML,b:name2.innerHTML});
+alert("Saved");
+}
+
+function share(){
+link.innerHTML=location.href+"?friend="+btoa(name1.innerHTML+"-"+name2.innerHTML);
+}
+
+</script>
+
+</body>
+</html>
