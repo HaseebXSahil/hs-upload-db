@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SMSFlow OTP</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#070713;color:#e2e8f0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;background-image:radial-gradient(ellipse 70% 55% at 10% -10%,hsl(272 72% 47%/.18),transparent 60%),radial-gradient(ellipse 60% 50% at 92% 108%,hsl(181 100% 41%/.14),transparent 60%)}
+.w{width:100%;max-width:440px;display:flex;flex-direction:column;gap:18px}
+.h{text-align:center}
+.h h1{font-size:22px;background:linear-gradient(135deg,#22d3ee,#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent}
+.h p{color:#94a3b8;font-size:12px;margin-top:4px}
+.c{background:linear-gradient(150deg,hsl(240 20% 10%/.92),hsl(240 25% 5%/.95));border:1px solid hsl(240 17% 18%);border-radius:16px;padding:22px;box-shadow:0 4px 24px -6px rgb(2 6 23/.55);display:flex;flex-direction:column;gap:18px}
+.row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:hsl(240 17% 14%/.6);border:1px solid hsl(240 17% 18%)}
+.ic{width:38px;height:38px;border-radius:11px;background:#2563eb;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.m{flex:1;min-width:0}
+.m .s{font-size:11px;color:#94a3b8}
+.m .n{font-family:ui-monospace,monospace;font-size:15px;color:#f1f5f9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.b{border:1px solid hsl(240 17% 18%);background:transparent;color:#e2e8f0;padding:7px 11px;border-radius:8px;font-size:12px;cursor:pointer;flex-shrink:0}
+.b:hover{background:hsl(240 17% 20%/.6)}
+.b.p{background:#059669;border-color:#059669;color:#fff;width:100%;justify-content:center;padding:11px;font-size:14px;font-weight:600}
+.ok{padding:18px;border-radius:14px;text-align:center;background:hsl(152 76% 40%/.1);border:1px solid hsl(152 76% 40%/.4)}
+.ok .l{font-size:11px;color:hsl(152 76% 60%/.8);margin-bottom:4px}
+.ok .c2{font-size:34px;font-weight:700;color:#6ee7b7;font-family:ui-monospace,monospace;letter-spacing:.3em;word-break:break-all}
+.wt{padding:18px;border-radius:14px;text-align:center;background:hsl(240 17% 14%/.6);border:1px solid hsl(240 17% 18%)}
+.wt .ph{font-size:32px;color:#475569;font-family:ui-monospace,monospace;letter-spacing:.3em}
+.wt .h2{font-size:11px;color:#64748b;margin-top:8px}
+.st{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:600;font-size:14px}
+.tm{display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:8px;border:1px solid hsl(240 17% 18%);background:hsl(240 17% 14%/.6);margin:0 auto}
+.tm.u{background:hsl(0 72% 51%/.1);border-color:hsl(0 72% 51%/.4)}
+.tm .t{font-family:ui-monospace,monospace;font-weight:600;font-size:13px}
+.tm.u .t{color:#f87171}
+.bd{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;border:1px solid hsl(240 17% 18%);background:hsl(240 17% 14%/.6)}
+.bd.ok2{background:hsl(152 76% 40%/.15);border-color:hsl(152 76% 40%/.4);color:#6ee7b7}
+.bd.w2{color:#fbbf24}
+.bd.b2{color:#f87171}
+.ct{display:flex;justify-content:center}
+.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+.hd{display:none}
+</style>
+</head>
+<body>
+<div class="w">
+  <div class="h"><h1>SMSFlow OTP</h1><p>Live OTP viewer — auto-refresh</p></div>
+  <div id="loading" class="c" style="text-align:center;padding:40px"><div class="spin" style="width:30px;height:30px;border:3px solid #06b6d4;border-top-color:transparent;border-radius:50%;margin:0 auto"></div></div>
+  <div id="err" class="c hd" style="text-align:center;padding:32px"><div style="font-size:18px;color:#f1f5f9;margin-bottom:6px">Link not found</div><div id="ert" style="color:#94a3b8;font-size:13px"></div></div>
+  <div id="main" class="c hd">
+    <div class="row"><div class="ic">📱</div><div class="m"><div class="s" id="sv">Facebook</div><div class="n" id="pn">—</div></div><button class="b" onclick="cp(document.getElementById('pn').textContent,this)">Copy</button></div>
+    <div id="ar"></div>
+    <div class="ct"><span id="bd" class="bd">Waiting</span></div>
+  </div>
+  <button class="b" style="width:100%" onclick="poll()">↻ Refresh now</button>
+</div>
+<script>
+const FU='https://sms-flow-node.base44.app/functions/getOtpByToken';
+const p=location.pathname.replace(/^\/+|\/+$/g,'');
+const token=p||new URLSearchParams(location.search).get('token');
+let d=null,pt=null,played=false;
+function pd(s){if(!s)return Date.now();const t=String(s);if(/[zZ]$/.test(t)||/[+-]\d\d:?\d\d$/.test(t))return new Date(t).getTime();return new Date(t+'Z').getTime()}
+function rem(){return d&&d.created_date?Math.max(0,20*60*1000-(Date.now()-pd(d.created_date))):0}
+function fm(ms){const m=Math.floor(ms/60000),s=Math.floor((ms%60000)/1000);return m+':'+String(s).padStart(2,'0')}
+function snd(){try{const c=new(AudioContext||webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.setValueAtTime(.001,c.currentTime);g.gain.exponentialRampToValueAtTime(.2,c.currentTime+.02);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.5);o.start();o.stop(c.currentTime+.5)}catch(e){}}
+function cp(t,b){navigator.clipboard.writeText(t).then(()=>{const o=b.textContent;b.textContent='Copied';setTimeout(()=>b.textContent=o,1500)})}
+function render(){
+  document.getElementById('loading').classList.add('hd');document.getElementById('err').classList.add('hd');document.getElementById('main').classList.remove('hd');
+  document.getElementById('pn').textContent=d.phone_number||'—';
+  document.getElementById('sv').textContent=d.service_name||'Facebook';
+  const rcv=d.status==='code_received'||d.status==='completed',can=d.status==='cancelled',wt=d.status==='waiting';
+  const r=rem(),exp=can?(Date.now()-pd(d.created_date))>=20*60*1000:(wt&&r<=0),urg=r<60000;
+  const ar=document.getElementById('ar'),bd=document.getElementById('bd');
+  if(rcv){if(!played){snd();played=true}ar.innerHTML='<div class="st" style="color:#34d399">✓ OTP Received</div><div class="ok" style="margin-top:12px"><div class="l">Your verification code</div><div class="c2">'+(d.otp_code||'')+'</div></div><button class="b p" style="margin-top:12px" onclick="cp(\''+(d.otp_code||'')+'\',this)">Copy OTP Code</button>';bd.className='bd ok2';bd.textContent='Received'}
+  else if(exp){ar.innerHTML='<div class="wt" style="background:hsl(240 17% 20%/.3)"><div style="color:#94a3b8;font-weight:600">Number Expired</div><div style="color:#64748b;font-size:12px;margin-top:6px">20 min ho gaye — OTP nahi aaya</div></div>';bd.className='bd';bd.textContent='Expired'}
+  else if(can){ar.innerHTML='<div class="wt" style="background:hsl(0 72% 51%/.1);border-color:hsl(0 72% 51%/.4)"><div style="color:#fca5a5;font-weight:600">Number cancelled</div><div style="color:#94a3b8;font-size:12px;margin-top:6px">Credit refunded</div></div>';bd.className='bd b2';bd.textContent='Cancelled'}
+  else{ar.innerHTML='<div class="st" style="color:#fbbf24"><div class="spin" style="width:14px;height:14px;border:2px solid #fbbf24;border-top-color:transparent;border-radius:50%"></div>Waiting for OTP...</div><div class="wt" style="margin-top:12px"><div class="ph">- - - - - -</div><div class="h2">Code yahan automatic appear hoga</div></div><div class="ct" style="margin-top:12px"><div class="tm '+(urg?'u':'')+'"><span class="t" id="tv">'+fm(r)+'</span><span style="font-size:11px;color:#64748b">left</span></div></div>';bd.className='bd w2';bd.textContent='Waiting'}
+}
+async function poll(){
+  if(!token){document.getElementById('loading').classList.add('hd');document.getElementById('err').classList.remove('hd');document.getElementById('ert').textContent='No token in URL';if(pt)clearInterval(pt);return}
+  try{const r=await fetch(FU,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({token})});const j=await r.json();if(!r.ok)throw new Error(j.error||'Not found');d=j;render();const done=d.status==='code_received'||d.status==='completed'||d.status==='cancelled';if(done&&pt){clearInterval(pt);pt=null}}catch(e){document.getElementById('loading').classList.add('hd');document.getElementById('main').classList.add('hd');document.getElementById('err').classList.remove('hd');document.getElementById('ert').textContent=e.message;if(pt){clearInterval(pt);pt=null}}
+}
+poll();pt=setInterval(poll,4000);
+setInterval(()=>{const t=document.getElementById('tv');if(t&&d&&d.status==='waiting'){const r=rem();t.textContent=fm(r);const el=t.closest('.tm');if(el){r<60000?el.classList.add('u'):el.classList.remove('u')}if(r<=0)poll()}},1000);
+</script>
+</body>
+</html>
