@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MirrorStyle — Stylish Mirror Pic Maker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Pacifico&family=Playfair+Display:wght@500;700&family=Poppins:wght@400;600;800&family=Righteous&family=Space+Grotesk:wght@500;700&family=UnifrakturCook:wght@700&display=swap');
+:root{--bg:#080910;--panel:#11131c;--line:#292d3a;--text:#fff;--muted:#9ca3b5;--accent:#9b72ff}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 50% 0,#26203f 0,#080910 42%);color:var(--text);font-family:Poppins,Arial,sans-serif}
+header{height:70px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:#090b12e8;backdrop-filter:blur(12px)}
+.logo{font-size:23px;font-weight:800}.logo span{color:#a47cff}
+header small{color:var(--muted)}
+.wrap{width:min(1180px,94%);margin:30px auto 60px}
+h1{text-align:center;font-size:clamp(32px,6vw,58px);margin:35px 0 10px}
+.subtitle{text-align:center;color:var(--muted);margin:0 auto 30px}
+.editor{display:grid;grid-template-columns:390px 1fr;gap:22px}
+.panel{background:#11131ce8;border:1px solid var(--line);border-radius:18px;padding:20px}
+.panel h2{font-size:18px;margin:0 0 15px}
+label{display:block;font-weight:600;margin:13px 0 7px}
+input[type=text],select,input[type=color]{width:100%;padding:11px;border:1px solid #363b49;border-radius:9px;background:#090c13;color:#fff;outline:0}
+input[type=range]{width:100%}
+input[type=file]{display:none}
+.upload{display:block;text-align:center;padding:16px;border:2px dashed #3b4050;border-radius:11px;color:#c2c8d6;cursor:pointer}
+.upload:hover{border-color:var(--accent)}
+.designs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.design{padding:10px 5px;border:1px solid #343947;border-radius:8px;background:#0b0e15;color:#dce1ec;cursor:pointer;font-size:12px}
+.design.active{border-color:#a080ff;background:#1a1430}
+.colors{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions{display:flex;gap:9px;margin-top:18px}.btn{flex:1;border:0;border-radius:10px;padding:13px;background:#292e3c;color:#fff;font-weight:700;cursor:pointer}.btn.primary{background:linear-gradient(90deg,#7555ff,#ae6dff)}
+.canvas-wrap{min-height:650px;display:flex;align-items:center;justify-content:center;background:#090b11;border-radius:16px;padding:20px;overflow:hidden}
+canvas{max-width:100%;max-height:75vh;border-radius:8px;box-shadow:0 15px 50px #000}
+.tip{font-size:12px;color:#7f8798;line-height:1.5;margin-top:12px}
+@media(max-width:850px){.editor{grid-template-columns:1fr}.canvas-wrap{min-height:430px}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">Mirror<span>Style</span></div>
+<small>Stylish Mirror Pic Maker</small>
+</header>
+
+<main class="wrap">
+<h1>Make Your Mirror Pic <span style="color:#a47cff">Stylish</span></h1>
+<p class="subtitle">Upload a photo, choose a design, add your name and download your finished picture.</p>
+
+<div class="editor">
+<section class="panel">
+<h2>1. Your Photo</h2>
+<label class="upload" for="photo">📷 Choose Mirror Photo</label>
+<input id="photo" type="file" accept="image/*">
+
+<h2 style="margin-top:25px">2. Your Name</h2>
+<input id="name" type="text" maxlength="35" placeholder="Enter your name" value="YOUR NAME">
+
+<label>Font</label>
+<select id="font">
+<option value="Poppins">Poppins</option>
+<option value="Playfair Display">Playfair Display</option>
+<option value="Pacifico">Pacifico</option>
+<option value="Bebas Neue">Bebas Neue</option>
+<option value="Righteous">Righteous</option>
+<option value="Space Grotesk">Space Grotesk</option>
+<option value="UnifrakturCook">UnifrakturCook</option>
+</select>
+
+<label>Text Size</label>
+<input id="size" type="range" min="20" max="140" value="60">
+
+<div class="colors">
+<div><label>Text Color</label><input id="color" type="color" value="#ffffff"></div>
+<div><label>Shadow</label><input id="shadow" type="color" value="#000000"></div>
+</div>
+
+<h2 style="margin-top:22px">3. Design</h2>
+<div class="designs">
+<button class="design active" data-design="luxury">✦ Luxury</button>
+<button class="design" data-design="neon">⚡ Neon</button>
+<button class="design" data-design="minimal">○ Minimal</button>
+<button class="design" data-design="street">★ Street</button>
+<button class="design" data-design="heart">♡ Love</button>
+<button class="design" data-design="retro">◈ Retro</button>
+</div>
+
+<label>Text Position</label>
+<select id="position">
+<option value="bottom">Bottom</option>
+<option value="top">Top</option>
+<option value="center">Center</option>
+</select>
+
+<div class="actions">
+<button class="btn" id="reset">Reset</button>
+<button class="btn primary" id="download">⬇ Download PNG</button>
+</div>
+<p class="tip">Everything is processed in your browser. Your selected photo is not uploaded to a server by this page.</p>
+</section>
+
+<section class="panel canvas-wrap">
+<canvas id="canvas" width="900" height="1100"></canvas>
+</section>
+</div>
+</main>
+
+<script>
+const canvas=document.getElementById("canvas"),ctx=canvas.getContext("2d");
+const photo=document.getElementById("photo"),nameInput=document.getElementById("name");
+const font=document.getElementById("font"),size=document.getElementById("size");
+const color=document.getElementById("color"),shadow=document.getElementById("shadow");
+const position=document.getElementById("position");
+let image=null,design="luxury";
+
+function fitImage(img){
+ const maxW=900,maxH=1100,scale=Math.min(maxW/img.width,maxH/img.height,1);
+ const w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));
+ canvas.width=w;canvas.height=h;
+ draw();
+}
+function roundedRect(x,y,w,h,r){
+ ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+}
+function draw(){
+ const w=canvas.width,h=canvas.height;
+ ctx.clearRect(0,0,w,h);
+ if(image){
+  const scale=Math.max(w/image.width,h/image.height);
+  const iw=image.width*scale,ih=image.height*scale;
+  ctx.drawImage(image,(w-iw)/2,(h-ih)/2,iw,ih);
+ }else{
+  const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,"#292044");g.addColorStop(1,"#0a0b11");
+  ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  ctx.fillStyle="#ffffff";ctx.textAlign="center";ctx.font="700 28px Poppins";ctx.fillText("Upload a mirror photo",w/2,h/2-15);
+  ctx.font="16px Poppins";ctx.fillStyle="#aeb5c4";ctx.fillText("Your design preview will appear here",w/2,h/2+22);
+  drawFrame();return;
+ }
+ applyDesign();
+ drawName();
+ drawFrame();
+}
+function applyDesign(){
+ const w=canvas.width,h=canvas.height;
+ if(design==="neon"){
+  ctx.fillStyle="rgba(25,0,45,.22)";ctx.fillRect(0,0,w,h);
+  const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,"rgba(255,0,200,.18)");g.addColorStop(1,"rgba(0,220,255,.18)");ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ }
+ if(design==="retro"){
+  ctx.fillStyle="rgba(255,190,80,.12)";ctx.fillRect(0,0,w,h);
+ }
+ if(design==="street"){
+  ctx.fillStyle="rgba(0,0,0,.18)";ctx.fillRect(0,0,w,h);
+ }
+ if(design==="minimal"){
+  const g=ctx.createLinearGradient(0,h*.55,0,h);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.65)");ctx.fillStyle=g;ctx.fillRect(0,h*.45,w,h*.55);
+ }
+ if(design==="luxury"){
+  const g=ctx.createLinearGradient(0,h*.55,0,h);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(1,"rgba(0,0,0,.72)");ctx.fillStyle=g;ctx.fillRect(0,h*.45,w,h*.55);
+ }
+ if(design==="heart"){
+  const g=ctx.createLinearGradient(0,h*.45,0,h);g.addColorStop(0,"rgba(60,0,25,0)");g.addColorStop(1,"rgba(80,0,35,.65)");ctx.fillStyle=g;ctx.fillRect(0,h*.45,w,h*.55);
+ }
+}
+function drawName(){
+ const w=canvas.width,h=canvas.height;
+ const text=nameInput.value.trim()||"YOUR NAME";
+ let fontSize=Number(size.value);
+ fontSize=Math.max(20,Math.min(fontSize,w/Math.max(3,text.length*.5)));
+ ctx.font=`700 ${fontSize}px "${font.value}", sans-serif`;
+ ctx.textAlign="center";ctx.textBaseline="middle";
+ let y=position.value==="top"?fontSize*1.5:position.value==="center"?h/2:h-fontSize*1.7;
+ let x=w/2;
+ ctx.shadowColor=shadow.value;ctx.shadowBlur=design==="neon"?18:10;ctx.shadowOffsetY=design==="street"?5:3;
+ ctx.fillStyle=color.value;ctx.strokeStyle="rgba(0,0,0,.25)";
+ if(design==="street"){ctx.lineWidth=Math.max(2,fontSize/16);ctx.strokeText(text,x,y);ctx.fillText(text,x,y)}
+ else if(design==="neon"){
+  ctx.shadowColor=color.value;ctx.shadowBlur=25;ctx.fillText(text,x,y);ctx.shadowBlur=8;ctx.fillText(text,x,y)
+ }else{ctx.fillText(text,x,y)}
+ ctx.shadowColor="transparent";ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+}
+function drawFrame(){
+ const w=canvas.width,h=canvas.height;
+ ctx.save();
+ if(design==="luxury"){
+  ctx.strokeStyle="rgba(255,215,120,.95)";ctx.lineWidth=Math.max(3,w/180);ctx.strokeRect(12,12,w-24,h-24);
+  ctx.strokeStyle="rgba(255,255,255,.45)";ctx.lineWidth=1;ctx.strokeRect(22,22,w-44,h-44);
+ }
+ if(design==="neon"){
+  ctx.shadowColor="#b65cff";ctx.shadowBlur=18;ctx.strokeStyle="#cf77ff";ctx.lineWidth=Math.max(3,w/180);ctx.strokeRect(12,12,w-24,h-24);ctx.shadowBlur=0;
+ }
+ if(design==="minimal"){
+  ctx.strokeStyle="rgba(255,255,255,.75)";ctx.lineWidth=2;ctx.strokeRect(15,15,w-30,h-30);
+ }
+ if(design==="street"){
+  ctx.strokeStyle="#fff";ctx.lineWidth=Math.max(4,w/120);ctx.setLineDash([16,10]);ctx.strokeRect(12,12,w-24,h-24);ctx.setLineDash([]);
+ }
+ if(design==="heart"){
+  ctx.strokeStyle="rgba(255,120,180,.9)";ctx.lineWidth=Math.max(3,w/170);ctx.strokeRect(12,12,w-24,h-24);
+  ctx.fillStyle="rgba(255,130,190,.9)";ctx.font=`${Math.max(22,w/20)}px Arial`;ctx.textAlign="left";ctx.fillText("♥",30,55);
+  ctx.textAlign="right";ctx.fillText("♥",w-30,55);
+ }
+ if(design==="retro"){
+  ctx.strokeStyle="#ffd27d";ctx.lineWidth=8;ctx.strokeRect(12,12,w-24,h-24);ctx.strokeStyle="#5d315e";ctx.lineWidth=3;ctx.strokeRect(25,25,w-50,h-50);
+ }
+ ctx.restore();
+}
+
+photo.addEventListener("change",e=>{
+ const file=e.target.files[0];if(!file)return;
+ if(!file.type.startsWith("image/")){alert("Please select an image file.");return}
+ const reader=new FileReader();
+ reader.onload=()=>{const img=new Image();img.onload=()=>{image=img;fitImage(img)};img.src=reader.result};
+ reader.readAsDataURL(file);
+});
+[nameInput,font,size,color,shadow,position].forEach(el=>el.addEventListener("input",draw));
+document.querySelectorAll(".design").forEach(btn=>btn.addEventListener("click",()=>{
+ document.querySelectorAll(".design").forEach(x=>x.classList.remove("active"));
+ btn.classList.add("active");design=btn.dataset.design;draw();
+}));
+document.getElementById("reset").onclick=()=>{
+ image=null;photo.value="";nameInput.value="YOUR NAME";font.value="Poppins";size.value=60;color.value="#ffffff";shadow.value="#000000";position.value="bottom";design="luxury";
+ document.querySelectorAll(".design").forEach(x=>x.classList.remove("active"));document.querySelector('[data-design="luxury"]').classList.add("active");draw();
+};
+document.getElementById("download").onclick=()=>{
+ const link=document.createElement("a");
+ const safe=(nameInput.value.trim()||"mirror-style").replace(/[^a-z0-9-_]+/gi,"-").toLowerCase();
+ link.download=safe+"-mirror-pic.png";link.href=canvas.toDataURL("image/png");link.click();
+};
+draw();
+</script>
+</body>
+</html>
