@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VidAI — Multilingual Video Generator</title>
+<style>
+:root{--bg:#070a11;--panel:#101522;--line:#252c3b;--muted:#9ba5b8;--primary:#795cff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 0,#15152b 0,#070a11 42%);color:#fff;font-family:Inter,Arial,sans-serif}
+header{height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 6%;background:#090d16e8;backdrop-filter:blur(12px);position:sticky;top:0;z-index:5}
+.logo{font-size:25px;font-weight:900}.logo span{color:#896dff}.nav{display:flex;gap:22px;align-items:center}.nav a{color:#aeb7c8;text-decoration:none}.nav a:hover{color:#fff}
+button{font:inherit}.btn{border:0;border-radius:10px;padding:11px 16px;background:#242b3a;color:#fff;cursor:pointer}.btn.primary{background:linear-gradient(90deg,#7057ff,#a061ff);font-weight:800}.btn:disabled{opacity:.5;cursor:not-allowed}
+.hero{text-align:center;padding:70px 18px 35px}.hero h1{font-size:clamp(40px,7vw,72px);line-height:1.02;margin:0 0 20px}.gradient{background:linear-gradient(90deg,#9a7dff,#e08cff);-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{max-width:720px;margin:auto;color:var(--muted);font-size:18px;line-height:1.7}
+.wrap{width:min(1080px,92%);margin:20px auto 70px}.panel{background:#101522e8;border:1px solid var(--line);border-radius:20px;padding:26px;box-shadow:0 25px 90px #0006}
+.authbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px}.user{color:#b9c2d1}.usage{font-size:13px;color:#aeb7c8}
+label{display:block;font-weight:700;margin:0 0 8px}textarea,input,select{width:100%;background:#080c14;color:#fff;border:1px solid #303849;border-radius:11px;padding:13px;outline:0}textarea{height:190px;resize:vertical;line-height:1.5}textarea:focus,input:focus,select:focus{border-color:#8168ff}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:17px}.field small{display:block;color:#788398;margin-top:6px}.generate{width:100%;margin-top:20px;padding:16px}
+.status{display:none;text-align:center;padding:22px;color:#b6c0d0}.spinner{width:34px;height:34px;border:4px solid #303849;border-top-color:#8a6cff;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 10px}@keyframes spin{to{transform:rotate(360deg)}}
+.result{display:none;margin-top:22px}.result video{width:100%;border-radius:13px;background:#000}.history{margin-top:28px}.history h2{font-size:20px}.item{display:flex;justify-content:space-between;align-items:center;gap:15px;border-top:1px solid var(--line);padding:14px 0}.item small{color:#8e98aa}.empty{color:#7e889a}
+.features{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}.feature{padding:22px;background:#0e1420;border:1px solid var(--line);border-radius:16px}.feature b{display:block;margin:8px 0}.feature p{color:#929caf;line-height:1.6;margin:0}
+.modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:20px;z-index:20}.modal-card{width:min(430px,100%);background:#101522;border:1px solid var(--line);border-radius:18px;padding:25px}.modal-card h2{margin-top:0}.modal-card form{display:grid;gap:13px}.modal-actions{display:flex;gap:10px}.switch{text-align:center;color:#9aa4b6;margin-top:14px}.switch a{color:#a18dff;cursor:pointer}
+footer{text-align:center;color:#6f7a8e;border-top:1px solid var(--line);padding:26px}
+@media(max-width:700px){.nav{display:none}.grid,.features{grid-template-columns:1fr}.panel{padding:18px}.authbar{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">Vid<span>AI</span></div>
+<div class="nav"><a href="#create">Create</a><a href="#history">History</a><button class="btn" id="loginBtn">Login</button></div>
+</header>
+
+<section class="hero">
+<h1>Create videos in <span class="gradient">any language.</span></h1>
+<p>Write a script, choose a multilingual voice and render an HD narrated MP4. Free accounts get a daily generation allowance.</p>
+</section>
+
+<main class="wrap">
+<section class="panel" id="create">
+<div class="authbar">
+<div><strong>Video Creator</strong><div class="usage" id="usage">Login to start generating.</div></div>
+<div><span class="user" id="userEmail"></span> <button class="btn" id="logoutBtn" style="display:none">Logout</button></div>
+</div>
+
+<label for="script">Script / video text</label>
+<textarea id="script" placeholder="Example: Welcome to our channel. Today we will learn how solar energy works..."></textarea>
+
+<div class="grid">
+<div class="field"><label>Language</label><select id="language"></select></div>
+<div class="field"><label>Voice</label><select id="gender"><option value="female">Female</option><option value="male">Male</option></select></div>
+<div class="field"><label>Quality</label><select id="quality"><option value="720p">HD 720p</option><option value="1080p">Full HD 1080p</option></select></div>
+</div>
+
+<button class="btn primary generate" id="generate">✨ Generate Video</button>
+
+<div class="status" id="status"><div class="spinner"></div><div id="statusText">Generating narration and rendering video…</div></div>
+
+<div class="result" id="result">
+<video id="video" controls></video>
+<a id="download" class="btn primary" style="display:inline-block;margin-top:12px;text-decoration:none" href="#">⬇ Download MP4</a>
+</div>
+
+<div class="history" id="history">
+<h2>Your videos</h2><div id="historyList" class="empty">Login to see your video history.</div>
+</div>
+
+<div class="features">
+<div class="feature">🌍<b>Multilingual</b><p>Preset voices cover English, Urdu, Hindi, Arabic, Spanish and more.</p></div>
+<div class="feature">🎙️<b>Natural narration</b><p>Server-side TTS creates the narration audio used by FFmpeg.</p></div>
+<div class="feature">📺<b>HD MP4</b><p>Render 720p or 1080p with AAC audio and a browser-ready MP4.</p></div>
+</div>
+</section>
+</main>
+
+<footer>© 2026 VidAI</footer>
+
+<div class="modal" id="modal">
+<div class="modal-card">
+<h2 id="modalTitle">Login</h2>
+<form id="authForm">
+<input id="email" type="email" placeholder="Email" required>
+<input id="password" type="password" placeholder="Password (8+ characters)" minlength="8" required>
+<div class="modal-actions"><button type="button" class="btn" id="closeModal">Cancel</button><button class="btn primary" id="authSubmit">Login</button></div>
+</form>
+<div class="switch"><span id="switchText">Don't have an account?</span> <a id="switchMode">Register</a></div>
+</div>
+</div>
+
+<script>
+let authMode="login", loggedIn=false;
+
+const $=id=>document.getElementById(id);
+const modal=$("modal"), authForm=$("authForm");
+
+function openAuth(mode="login"){authMode=mode;$("modalTitle").textContent=mode==="login"?"Login":"Create account";$("authSubmit").textContent=mode==="login"?"Login":"Register";$("switchText").textContent=mode==="login"?"Don't have an account?":"Already have an account?";$("switchMode").textContent=mode==="login"?"Register":"Login";modal.style.display="flex"}
+$("loginBtn").onclick=()=>openAuth("login");
+$("closeModal").onclick=()=>modal.style.display="none";
+$("switchMode").onclick=()=>openAuth(authMode==="login"?"register":"login");
+
+async function api(url,opts={}){
+ const r=await fetch(url,{credentials:"include",...opts});
+ const data=await r.json().catch(()=>({}));
+ if(!r.ok) throw new Error(data.error||"Request failed");
+ return data;
+}
+
+async function refresh(){
+ try{
+  const data=await api("/api/auth/me");
+  loggedIn=!!data.user;
+  $("loginBtn").style.display=loggedIn?"none":"inline-block";
+  $("logoutBtn").style.display=loggedIn?"inline-block":"none";
+  $("userEmail").textContent=loggedIn?data.user.email:"";
+  $("usage").textContent=loggedIn?`Free videos today: ${data.usage.used}/${data.usage.limit} · ${data.usage.remaining} remaining`:"Login to start generating.";
+  if(loggedIn) loadHistory(); else $("historyList").textContent="Login to see your video history.";
+ }catch(e){console.error(e)}
+}
+authForm.onsubmit=async e=>{
+ e.preventDefault();
+ try{
+  const endpoint=authMode==="login"?"/api/auth/login":"/api/auth/register";
+  const data=await api(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:$("email").value,password:$("password").value})});
+  modal.style.display="none";authForm.reset();refresh();
+ }catch(e){alert(e.message)}
+};
+$("logoutBtn").onclick=async()=>{await api("/api/auth/logout",{method:"POST"});refresh()};
+
+async function loadLanguages(){
+ const voices=await api("/api/voices");
+ $("language").innerHTML="";
+ for(const [code,v] of Object.entries(voices)){
+  const o=document.createElement("option");o.value=code;o.textContent=v.label;$("language").appendChild(o);
+ }
+}
+
+async function loadHistory(){
+ const videos=await api("/api/videos");
+ const box=$("historyList");
+ if(!videos.length){box.textContent="No videos yet.";return}
+ box.innerHTML=videos.map(v=>`
+ <div class="item">
+  <div><strong>${escapeHtml(v.title)}</strong><br><small>${v.language} · ${v.quality} · ${v.duration}s · ${new Date(v.created_at+"Z").toLocaleString()}</small></div>
+  <a class="btn" href="/api/videos/${v.id}/download">Download</a>
+ </div>`).join("");
+}
+
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+$("generate").onclick=async()=>{
+ if(!loggedIn){openAuth("login");return}
+ const text=$("script").value.trim();
+ if(!text){alert("Enter a script first.");return}
+ $("generate").disabled=true;$("status").style.display="block";$("result").style.display="none";
+ $("statusText").textContent="Generating multilingual narration…";
+ try{
+  $("statusText").textContent="Rendering HD MP4 with FFmpeg…";
+  const data=await api("/api/videos",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+   text,language:$("language").value,gender:$("gender").value,quality:$("quality").value
+  })});
+  $("video").src=data.downloadUrl;
+  $("download").href=data.downloadUrl;
+  $("result").style.display="block";$("status").style.display="none";
+  $("usage").textContent=`Free videos today: ${data.usage.used}/${data.usage.limit} · ${data.usage.remaining} remaining`;
+  loadHistory();
+ }catch(e){
+  $("status").style.display="none";alert(e.message);
+ }finally{$("generate").disabled=false}
+};
+
+loadLanguages();refresh();
+</script>
+</body>
+</html>
