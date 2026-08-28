@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MirrorStyle — Stylish Mirror Pic Maker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@600;800&family=Great+Vibes&family=Lobster&family=Pacifico&family=Playfair+Display:wght@600;800&family=Poppins:wght@400;600;800&family=Righteous&family=Space+Grotesk:wght@600;800&family=UnifrakturCook:wght@700&display=swap');
+:root{--bg:#07080e;--card:#11131e;--card2:#0d0f18;--line:#34205a;--purple:#a65cff;--pink:#ff4fc3;--muted:#a6a5b8}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% -10%,#32204e 0,#090a10 38%);color:#fff;font-family:Poppins,Arial,sans-serif}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 3%;border-bottom:1px solid #262333;background:#080910ee;position:sticky;top:0;z-index:10;backdrop-filter:blur(12px)}
+.brand{font-size:29px;font-weight:800;font-style:italic}.brand span{color:#d75eff}.headbtn{background:#141723;border:1px solid #343747;color:#fff;border-radius:9px;padding:10px 15px;font-weight:700}
+.top{width:min(1500px,96%);margin:auto;padding:24px 0 45px}.intro{text-align:center}.intro h1{font-size:clamp(34px,5vw,62px);margin:15px 0 5px}.intro h1 span{color:#cb62ff}.intro p{color:var(--muted);margin:0 0 25px}
+.layout{display:grid;grid-template-columns:300px minmax(350px,1fr) 300px;gap:14px;align-items:start}.col{display:flex;flex-direction:column;gap:14px}.panel{background:linear-gradient(180deg,#121520f2,#0d1019f2);border:1px solid var(--line);border-radius:13px;padding:14px;box-shadow:0 10px 40px #0005}.panel h3{font-size:14px;margin:0 0 12px}.num{display:inline-grid;place-items:center;width:23px;height:23px;border-radius:50%;background:linear-gradient(135deg,#a24eff,#f44fc3);margin-right:6px;font-size:12px}
+.upload{border:1px dashed #7045a1;border-radius:10px;padding:25px 10px;text-align:center;display:block;cursor:pointer;background:#0b0d15}.upload:hover{background:#151021}.upload b{display:block;margin:5px}.upload small{color:var(--muted)}input[type=file]{display:none}
+.design-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.design{aspect-ratio:1;border-radius:7px;border:1px solid #363848;background:#171923;color:#fff;cursor:pointer;position:relative;overflow:hidden;padding:3px}.design.active{border:2px solid #bd65ff;box-shadow:0 0 13px #a85bff66}.thumb{height:100%;border-radius:5px;display:grid;place-items:center;font-size:17px;font-weight:800}
+.t1{background:radial-gradient(circle,#ff8bd9,#3b163e)}.t2{background:radial-gradient(circle,#ff6ad4,#111)}.t3{background:linear-gradient(135deg,#d29c48,#19130a)}.t4{background:radial-gradient(circle,#a25cff,#0a0a16)}.t5{background:linear-gradient(#301d3f,#07080d)}.t6{background:radial-gradient(circle,#43dfff,#091325)}.t7{background:linear-gradient(135deg,#e6e6e6,#222)}.t8{background:linear-gradient(135deg,#ff9f3f,#2d0c00)}.t9{background:radial-gradient(circle,#ff3c8c,#1b0613)}.t10{background:linear-gradient(135deg,#eee,#333)}.t11{background:radial-gradient(circle,#72ffca,#0a1e19)}.t12{background:linear-gradient(135deg,#ffef9a,#5b2a00)}.t13{background:radial-gradient(circle,#8b6bff,#12072a)}.t14{background:linear-gradient(135deg,#ff7b9c,#281018)}.t15{background:linear-gradient(135deg,#3e3e48,#050506)}.t16{background:radial-gradient(circle,#fff,#4a4a4a)}.t17{background:linear-gradient(135deg,#ff6b36,#5c102b)}.t18{background:radial-gradient(circle,#52a8ff,#061226)}.t19{background:linear-gradient(135deg,#a8ff78,#12240b)}.t20{background:linear-gradient(135deg,#ffb8f4,#281129)}.t21{background:linear-gradient(135deg,#d8b36b,#24190b)}.t22{background:radial-gradient(circle,#b78cff,#090514)}.t23{background:linear-gradient(135deg,#ff668a,#21070e)}.t24{background:radial-gradient(circle,#5ce5ff,#041319)}
+.namebox input,.namebox select,.control select{width:100%;background:#090b12;color:#fff;border:1px solid #343747;border-radius:8px;padding:10px;margin-bottom:8px}.fonts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:180px;overflow:auto}.fontbtn{height:45px;border:1px solid #343747;border-radius:7px;background:#0d0f17;color:#fff;cursor:pointer;font-size:16px}.fontbtn.active{border-color:#ff5bd3;background:#21142b}
+.canvas-panel{padding:12px;min-height:650px}.canvas-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.change{background:#141722;border:1px solid #4d315f;color:#fff;border-radius:8px;padding:8px 12px;cursor:pointer}.canvas-wrap{height:calc(100vh - 190px);min-height:560px;max-height:850px;display:flex;align-items:center;justify-content:center;background:#07080d;border-radius:10px;overflow:hidden}.canvas-wrap canvas{max-width:100%;max-height:100%;box-shadow:0 15px 60px #000;display:block}
+.colors{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.swatch{height:26px;border-radius:6px;border:2px solid transparent;cursor:pointer}.swatch.active{border-color:#fff;outline:2px solid #a65cff}.gradient{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:7px}.grad{height:27px;border-radius:6px;border:2px solid transparent;cursor:pointer}.grad.active{border-color:#fff;outline:2px solid #a65cff}
+.effects{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.effect{padding:9px 3px;background:#151823;color:#fff;border:1px solid #303545;border-radius:7px;cursor:pointer}.effect.active{border-color:#a65cff}
+.pos{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;width:120px;margin:auto}.pos button{height:28px;background:#181b26;border:1px solid #343747;border-radius:5px;color:#aaa;cursor:pointer}.pos button.active{background:#6f43a5;color:#fff;border-color:#d178ff}
+.range{width:100%}.row{display:flex;justify-content:space-between;color:#aaa;font-size:11px}.name-styles{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.ns{height:58px;border:1px solid #353847;background:#0c0f17;color:#fff;border-radius:8px;cursor:pointer;font-size:18px}.ns small{display:block;font:10px Poppins;color:#999}.hd{width:100%;padding:14px;border:0;border-radius:9px;background:linear-gradient(90deg,#a54eff,#f348c3);color:#fff;font-weight:800;cursor:pointer;font-size:15px}
+.bottom{margin-top:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{background:#11131d;border:1px solid #2b2042;border-radius:10px;text-align:center;padding:15px}.stat b{display:block;font-size:18px;color:#d86aff}.stat small{color:#999}
+@media(max-width:1050px){.layout{grid-template-columns:260px 1fr}.right{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr)}.canvas-wrap{height:650px}}
+@media(max-width:720px){header small{display:none}.layout{grid-template-columns:1fr}.right{display:flex}.canvas-wrap{height:560px;min-height:400px}.design-grid{grid-template-columns:repeat(6,1fr)}.bottom{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="brand">Mirror<span>Style</span></div><div><button class="headbtn" onclick="alert('Upload a photo → choose a design → enter your name → choose a name style → download HD.')">❔ How to use</button></div></header>
+
+<main class="top">
+<div class="intro"><h1>Stylish Mirror Pic <span>Maker</span> ✨</h1><p>Create awesome mirror pics with 100+ fonts and 20+ stylish designs.</p></div>
+
+<div class="layout">
+<div class="col">
+<section class="panel">
+<h3><span class="num">1</span>UPLOAD YOUR PHOTO</h3>
+<label class="upload" for="photo">⬆️<b>Click to Upload</b><small>or Drag & Drop<br>JPG, PNG, WEBP (Max. 15MB)</small></label>
+<input id="photo" type="file" accept="image/jpeg,image/png,image/webp">
+</section>
+
+<section class="panel">
+<h3><span class="num">2</span>CHOOSE DESIGN</h3>
+<div class="design-grid" id="designs"></div>
+</section>
+
+<section class="panel namebox">
+<h3><span class="num">3</span>ADD YOUR NAME / TEXT</h3>
+<input id="text" maxlength="40" value="Your Name" placeholder="Your name">
+<select id="font">
+<option>Great Vibes</option><option>Pacifico</option><option>Lobster</option><option>Cinzel</option><option>Playfair Display</option><option>Poppins</option><option>Righteous</option><option>Bebas Neue</option><option>Space Grotesk</option><option>UnifrakturCook</option>
+</select>
+<div class="fonts" id="fonts"></div>
+</section>
+</div>
+
+<section class="panel canvas-panel">
+<div class="canvas-top"><button class="change" onclick="document.getElementById('photo').click()">↗ Change Photo</button><span id="zoomLabel">100%</span></div>
+<div class="canvas-wrap"><canvas id="canvas" width="720" height="900"></canvas></div>
+</section>
+
+<div class="col right">
+<section class="panel">
+<h3><span class="num">4</span>CUSTOMIZE TEXT</h3>
+<label style="font-size:12px">Text Color</label><div class="colors" id="colors"></div>
+<label style="font-size:12px">Gradient</label><div class="gradient" id="gradients"></div>
+<label style="font-size:12px">Text Effects</label><div class="effects" id="effects"></div>
+<label style="font-size:12px">Text Size</label><input id="textSize" class="range" type="range" min="20" max="120" value="60">
+<label style="font-size:12px">Text Position</label><div class="pos" id="positions"></div>
+<label style="font-size:12px">Text Rotation</label><input id="rotation" class="range" type="range" min="-25" max="25" value="0">
+</section>
+
+<section class="panel">
+<h3><span class="num">5</span>PHOTO EFFECTS</h3>
+<div class="effects" id="filters"></div>
+<label style="font-size:12px">Effect Strength</label><input id="filterStrength" class="range" type="range" min="0" max="100" value="60">
+</section>
+
+<section class="panel">
+<h3><span class="num">6</span>BACKGROUND / FRAME</h3>
+<div class="effects" id="frames"></div>
+<label style="font-size:12px">Frame Width</label><input id="frameWidth" class="range" type="range" min="0" max="35" value="8">
+</section>
+
+<section class="panel">
+<h3>✨ NAME STYLES — ONE CLICK</h3>
+<div class="name-styles" id="nameStyles"></div>
+<button class="hd" id="download">⬇ Download HD</button>
+</section>
+</div>
+</div>
+
+<div class="bottom">
+<div class="stat"><b>20+</b><small>Mirror Designs</small></div>
+<div class="stat"><b>100+</b><small>Stylish Fonts & combinations</small></div>
+<div class="stat"><b>HD</b><small>High Quality PNG Download</small></div>
+</div>
+</main>
+
+<script>
+const C=document.getElementById('canvas'),ctx=C.getContext('2d');
+const $=id=>document.getElementById(id);
+let img=null,design=0,textColor='#fff',gradient=null,effect='neon',filter='none',frame='luxury',pos='bottom',nameStyle='neon';
+
+const designs=[
+['✦','t1','Luxury Glow'],['♡','t2','Love Heart'],['◆','t3','Gold Royal'],['✧','t4','Purple Dream'],
+['✦','t5','Dark Elegant'],['⚡','t6','Ice Neon'],['○','t7','Silver Mirror'],['★','t8','Fire'],
+['♥','t9','Pink Love'],['◇','t10','Chrome'],['✿','t11','Nature'],['✦','t12','Golden'],
+['☾','t13','Galaxy'],['♡','t14','Romance'],['▣','t15','Street'],['✧','t16','Crystal'],
+['◆','t17','Sunset'],['◈','t18','Ocean'],['✿','t19','Fresh'],['♥','t20','Candy'],
+['✦','t21','Vintage Gold'],['✧','t22','Mystic'],['♡','t23','Rose'],['⚡','t24','Electric']
+];
+$('designs').innerHTML=designs.map((d,i)=>`<button class="design ${i===0?'active':''}" data-i="${i}"><div class="thumb ${d[1]}">${d[0]}</div></button>`).join('');
+
+const fontList=['Great Vibes','Pacifico','Lobster','Cinzel','Playfair Display','Poppins','Righteous','Bebas Neue','Space Grotesk','UnifrakturCook'];
+$('fonts').innerHTML=fontList.map(f=>`<button class="fontbtn" data-font="${f}" style="font-family:'${f}'">Aa</button>`).join('');
+
+const sw=['#fff','#000','#ff4fae','#ff3131','#ff8a00','#ffd21f','#8cff21','#21d9d9','#2584ff','#a04fff','#ff4fe6'];
+$('colors').innerHTML=sw.map(c=>`<button class="swatch" style="background:${c}" data-c="${c}"></button>`).join('');
+const gs=[['#ff8be8','#fff'],['#ff3c9d','#7d4cff'],['#00eaff','#4d6cff'],['#8dff5b','#00d9ff'],['#ffd15c','#ff7b00'],['#fff','#aaa'],['#ff5b5b','#ffd15c'],['#a65cff','#ff4fc3']];
+$('gradients').innerHTML=gs.map((g,i)=>`<button class="grad" data-a="${g[0]}" data-b="${g[1]}" style="background:linear-gradient(90deg,${g[0]},${g[1]})"></button>`).join('');
+
+const eff=[['none','None'],['shadow','Shadow'],['neon','Neon'],['glow','Glow'],['outline','Outline'],['3d','3D']];
+$('effects').innerHTML=eff.map(x=>`<button class="effect ${x[0]==='neon'?'active':''}" data-effect="${x[0]}">${x[1]}</button>`).join('');
+const filt=['none','bright','dark','warm','cool','vintage','mono','pink','green','blue'];
+$('filters').innerHTML=filt.map(x=>`<button class="effect ${x==='none'?'active':''}" data-filter="${x}">${x[0].toUpperCase()+x.slice(1)}</button>`).join('');
+const frames=['luxury','neon','minimal','street','hearts','retro'];
+$('frames').innerHTML=frames.map(x=>`<button class="effect ${x==='luxury'?'active':''}" data-frame="${x}">${x[0].toUpperCase()+x.slice(1)}</button>`).join('');
+const positions=['tl','tc','tr','ml','mc','mr','bl','bc','br'];
+$('positions').innerHTML=positions.map(x=>`<button data-pos="${x}" class="${x==='bc'?'active':''}">•</button>`).join('');
+const styles=[['Neon','#ff55d8'],['Gold','#ffd15c'],['Love','#ff4fae'],['Luxury','#fff0a0'],['Fire','#ff8a00'],['Ice','#54e9ff'],['Purple','#b070ff'],['Galaxy','#6c9cff'],['Chrome','#fff'],['Nature','#8cff65'],['Sunset','#ff7c9e'],['Aesthetic','#e7c7ff']];
+$('nameStyles').innerHTML=styles.map(s=>`<button class="ns" data-style="${s[0]}" style="color:${s[1]}">${s[0]}<small>Apply</small></button>`).join('');
+
+function setImage(file){
+ if(!file||!/^image\\/(jpeg|png|webp)$/.test(file.type)){alert('Please choose a JPG, PNG or WEBP image.');return}
+ if(file.size>15*1024*1024){alert('Maximum image size is 15MB.');return}
+ const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{img=im;render()};im.src=r.result};r.readAsDataURL(file)
+}
+$('photo').onchange=e=>setImage(e.target.files[0]);
+document.querySelector('.upload').addEventListener('dragover',e=>{e.preventDefault()});
+document.querySelector('.upload').addEventListener('drop',e=>{e.preventDefault();setImage(e.dataTransfer.files[0])});
+
+function coverImage(){
+ if(!img)return;
+ const scale=Math.max(C.width/img.width,C.height/img.height);
+ const w=img.width*scale,h=img.height*scale;
+ ctx.drawImage(img,(C.width-w)/2,(C.height-h)/2,w,h);
+}
+function photoFilter(){
+ const s=Number($('filterStrength').value)/100;
+ if(filter==='none')return;
+ const w=C.width,h=C.height;
+ ctx.save();
+ let f='';
+ if(filter==='bright')f=`brightness(${1+s*.5}) contrast(${1+s*.15})`;
+ if(filter==='dark')f=`brightness(${1-s*.45})`;
+ if(filter==='warm')f=`sepia(${s*.35}) saturate(${1+s*.45})`;
+ if(filter==='cool')f=`saturate(${1+s*.3}) hue-rotate(${s*12}deg)`;
+ if(filter==='vintage')f=`sepia(${s*.55}) contrast(${1+s*.1}) saturate(${1-s*.15})`;
+ if(filter==='mono')f=`grayscale(${s}) contrast(${1+s*.15})`;
+ if(filter==='pink')f=`sepia(${s*.25}) saturate(${1+s*.7}) hue-rotate(${s*315}deg)`;
+ if(filter==='green')f=`saturate(${1+s*.7}) hue-rotate(${s*45}deg)`;
+ if(filter==='blue')f=`saturate(${1+s*.65}) hue-rotate(${s*170}deg)`;
+ const copy=document.createElement('canvas');copy.width=w;copy.height=h;const q=copy.getContext('2d');q.filter=f;q.drawImage(C,0,0);ctx.globalAlpha=.9;ctx.drawImage(copy,0,0);ctx.globalAlpha=1;ctx.restore();
+}
+function decor(){
+ const w=C.width,h=C.height;
+ ctx.save();
+ if(design%4===0){let g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'rgba(255,90,210,.16)');g.addColorStop(1,'rgba(100,50,255,.1)');ctx.fillStyle=g;ctx.fillRect(0,0,w,h)}
+ if(design%4===1){ctx.fillStyle='rgba(255,20,140,.12)';ctx.fillRect(0,0,w,h);for(let i=0;i<14;i++){ctx.font='28px Arial';ctx.fillStyle='rgba(255,130,210,.55)';ctx.fillText('♥',(i*71)%w,(i*113)%h)}}
+ if(design%4===2){ctx.fillStyle='rgba(255,190,70,.12)';ctx.fillRect(0,0,w,h)}
+ if(design%4===3){ctx.fillStyle='rgba(80,70,255,.13)';ctx.fillRect(0,0,w,h)}
+ ctx.restore();
+}
+function textXY(){
+ const w=C.width,h=C.height,s=Number($('textSize').value);
+ const x={l:w*.12,c:w*.5,r:w*.88},y={t:h*.13,m:h*.5,b:h*.86};
+ const a=pos[0]==='t'?'t':pos[0]==='m'?'m':'b',b=pos[1]==='l'?'l':pos[1]==='r'?'r':'c';
+ return [x[b],y[a]];
+}
+function drawText(){
+ const txt=$('text').value||'Your Name',s=Number($('textSize').value),[x,y]=textXY();
+ ctx.save();ctx.translate(x,y);ctx.rotate(Number($('rotation').value)*Math.PI/180);ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.font=`700 ${s}px "${$('font').value}",sans-serif`;
+ if(effect==='shadow'){ctx.shadowColor='#000';ctx.shadowBlur=12;ctx.shadowOffsetX=6;ctx.shadowOffsetY=6}
+ if(effect==='neon'){ctx.shadowColor=textColor;ctx.shadowBlur=24}
+ if(effect==='glow'){ctx.shadowColor=textColor;ctx.shadowBlur=38}
+ if(effect==='outline'){ctx.lineWidth=Math.max(2,s/16);ctx.strokeStyle='#000';ctx.strokeText(txt,0,0)}
+ if(effect==='3d'){ctx.fillStyle='#000';ctx.fillText(txt,7,8)}
+ if(gradient){const g=ctx.createLinearGradient(-s*2,0,s*2,0);g.addColorStop(0,gradient[0]);g.addColorStop(1,gradient[1]);ctx.fillStyle=g}else ctx.fillStyle=textColor;
+ ctx.fillText(txt,0,0);ctx.restore();
+}
+function drawFrame(){
+ const w=C.width,h=C.height,n=Number($('frameWidth').value);
+ ctx.save();
+ if(frame==='luxury'){ctx.strokeStyle='#e7b967';ctx.lineWidth=n;ctx.strokeRect(n,n,w-2*n,h-2*n);ctx.strokeStyle='rgba(255,255,255,.65)';ctx.lineWidth=2;ctx.strokeRect(n+9,n+9,w-2*n-18,h-2*n-18)}
+ if(frame==='neon'){ctx.shadowColor='#d65cff';ctx.shadowBlur=25;ctx.strokeStyle='#e06cff';ctx.lineWidth=Math.max(3,n/2);ctx.strokeRect(10,10,w-20,h-20)}
+ if(frame==='minimal'){ctx.strokeStyle='rgba(255,255,255,.8)';ctx.lineWidth=2;ctx.strokeRect(12,12,w-24,h-24)}
+ if(frame==='street'){ctx.strokeStyle='#fff';ctx.lineWidth=Math.max(3,n/2);ctx.setLineDash([18,10]);ctx.strokeRect(10,10,w-20,h-20)}
+ if(frame==='hearts'){ctx.strokeStyle='#ff63bb';ctx.lineWidth=Math.max(3,n/2);ctx.strokeRect(10,10,w-20,h-20);ctx.font='35px Arial';ctx.fillStyle='#ff63bb';ctx.fillText('♥',25,50);ctx.fillText('♥',w-58,50)}
+ if(frame==='retro'){ctx.strokeStyle='#ffd27d';ctx.lineWidth=Math.max(6,n);ctx.strokeRect(10,10,w-20,h-20);ctx.strokeStyle='#6b365d';ctx.lineWidth=3;ctx.strokeRect(24,24,w-48,h-48)}
+ ctx.restore();
+}
+function render(){
+ ctx.clearRect(0,0,C.width,C.height);
+ if(img)coverImage();else{let g=ctx.createLinearGradient(0,0,C.width,C.height);g.addColorStop(0,'#33214b');g.addColorStop(1,'#07080e');ctx.fillStyle=g;ctx.fillRect(0,0,C.width,C.height);ctx.fillStyle='#fff';ctx.textAlign='center';ctx.font='700 28px Poppins';ctx.fillText('Upload your mirror photo',C.width/2,C.height/2)}
+ if(img)photoFilter();decor();drawText();drawFrame();
+}
+document.querySelectorAll('.design').forEach(b=>b.onclick=()=>{design=Number(b.dataset.i);document.querySelectorAll('.design').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
+document.querySelectorAll('.fontbtn').forEach(b=>b.onclick=()=>{$('font').value=b.dataset.font;document.querySelectorAll('.fontbtn').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
+document.querySelectorAll('.swatch').forEach(b=>b.onclick=()=>{textColor=b.dataset.c;gradient=null;document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
+document.querySelectorAll('.grad').forEach(b=>b.onclick=()=>{gradient=[b.dataset.a,b.dataset.b];render()});
+document.querySelectorAll('[data-effect]').forEach(b=>b.onclick=()=>{effect=b.dataset.effect;document.querySelectorAll('[data-effect]').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
+document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
+document.querySelectorAll('[data-frame]').forEach(b=>b.onclick=()=>{frame=b.dataset.frame;document.querySelectorAll('[data-frame]').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
+document.querySelectorAll('[data-pos]').forEach(b=>b.onclick=()=>{pos=b.dataset.pos;document.querySelectorAll('[data-pos]').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
+document.querySelectorAll('.ns').forEach(b=>b.onclick=()=>{
+ const n=b.dataset.style;nameStyle=n;
+ const map={Neon:['#ff55d8','#8e5bff'],Gold:['#ffe48a','#b97821'],Love:['#ff4fae','#ff88c8'],Luxury:['#fff4a8','#fff'],Fire:['#ff8a00','#ff3b00'],Ice:['#7cf7ff','#368dff'],Purple:['#cf78ff','#7045ff'],Galaxy:['#75aaff','#d06dff'],Chrome:['#fff','#777'],Nature:['#b8ff7d','#24c879'],Sunset:['#ff8a9e','#ffb36a'],Aesthetic:['#fff','#ff9be8']};
+ gradient=map[n]||null;effect=n==='Neon'||n==='Ice'?'neon':'glow';render();
+});
+['text','font','textSize','rotation','filterStrength','frameWidth'].forEach(id=>$(id).addEventListener('input',render));
+$('download').onclick=()=>{
+ const oldW=C.width,oldH=C.height; // Render at 2x for a genuinely larger downloadable PNG.
+ const copy=document.createElement('canvas');copy.width=oldW*2;copy.height=oldH*2;const cc=copy.getContext('2d');cc.drawImage(C,0,0,copy.width,copy.height);
+ const a=document.createElement('a');a.download=(($('text').value||'mirror-pic').replace(/[^a-z0-9-_]+/gi,'-').toLowerCase())+'-HD.png';a.href=copy.toDataURL('image/png');a.click();
+};
+document.querySelector('[data-font="Great Vibes"]').classList.add('active');
+document.querySelector('[data-c="#fff"]').classList.add('active');
+render();
+</script>
+</body>
+</html>
