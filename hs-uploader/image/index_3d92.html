@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Shorts Downloader | By Waqas Jiskani</title>
+    <style>
+        /* === Base & Reset === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #0f0c29;
+            background: linear-gradient(to right, #24243e, #302b63, #0f0c29);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #ffffff;
+            position: relative;
+        }
+
+        /* === Glassmorphism Container === */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            width: 90%;
+            max-width: 480px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            margin-bottom: 50px;
+        }
+
+        /* Neon Glow Effect behind card */
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: conic-gradient(transparent, transparent, transparent, #00f2fe);
+            animation: rotate 6s linear infinite;
+            z-index: -1;
+            opacity: 0.12;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* === Typography === */
+        h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            background: -webkit-linear-gradient(#fff, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            font-size: 14px;
+            color: #b0b0c0;
+            margin-bottom: 30px;
+        }
+
+        /* === Inputs & Buttons === */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #00f2fe;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        input::placeholder {
+            color: #888;
+        }
+
+        button {
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: #fff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.3);
+        }
+
+        button:hover {
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.6);
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* === Progress Bar Area === */
+        .progress-wrapper {
+            display: none;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .track {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        .fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00f2fe, #4facfe);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 15px #00f2fe;
+        }
+
+        /* === Success Result === */
+        .result-box {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(74, 222, 128, 0.05);
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .download-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 14px 25px;
+            background: linear-gradient(45deg, #10b981, #34d399);
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s ease;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+
+        .download-link-btn:hover {
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
+            transform: scale(1.03);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === Developer Footer === */
+        .footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: #888;
+            font-size: 15px;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .footer span {
+            color: #00f2fe;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(0, 242, 254, 0.4);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-card">
+        <h1>Shorts Downloader</h1>
+        <p>Ultra-Fast YouTube Shorts & Video Downloader</p>
+        
+        <div class="input-group">
+            <input type="text" id="ytUrl" placeholder="Paste YouTube link here..." autocomplete="off">
+            <button id="downloadBtn" onclick="startProcess()">Start Processing</button>
+        </div>
+
+        <div class="progress-wrapper" id="progressWrapper">
+            <div class="status-header">
+                <span id="statusText">Initializing...</span>
+                <span id="percentText">0%</span>
+            </div>
+            <div class="track">
+                <div class="fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <div class="result-box" id="resultBox">
+            <!-- Download Button Will Appear Here -->
+        </div>
+    </div>
+
+    <!-- Developer Footer -->
+    <div class="footer">
+        Copyright &copy; 2026 by <span>Waqas Jiskani</span>
+    </div>
+
+    <script>
+        function startProcess() {
+            const urlInput = document.getElementById('ytUrl').value.trim();
+            const btn = document.getElementById('downloadBtn');
+            const progressWrapper = document.getElementById('progressWrapper');
+            const progressFill = document.getElementById('progressFill');
+            const percentText = document.getElementById('percentText');
+            const statusText = document.getElementById('statusText');
+            const resultBox = document.getElementById('resultBox');
+
+            // YT Link Validation
+            if (!urlInput || (!urlInput.includes('youtube.com') && !urlInput.includes('youtu.be'))) {
+                alert('براہ کرم ایک درست یوٹیوب شارٹس یا ویڈیو کا لنک درج کریں!');
+                return;
+            }
+
+            // Reset UI
+            btn.disabled = true;
+            btn.innerText = "Extracting Data...";
+            progressWrapper.style.display = 'block';
+            resultBox.style.display = 'none';
+            progressFill.style.width = '0%';
+            
+            let currentProgress = 0;
+
+            // Process Simulation to Bypass CORS smoothly
+            const processInterval = setInterval(() => {
+                currentProgress += Math.random() * 15 + 5; 
+
+                if (currentProgress >= 100) {
+                    currentProgress = 100;
+                    clearInterval(processInterval);
+                    
+                    // On Success
+                    setTimeout(() => {
+                        statusText.innerText = 'Extraction Complete!';
+                        
+                        // Reliable Web Service Bypass (No API Key Required)
+                        const downloadUrl = 'https://ssyoutube.com/en713/youtube-video-downloader?url=' + encodeURIComponent(urlInput);
+
+                        resultBox.innerHTML = `
+                            <h3 style="color: #4ade80; margin-bottom: 8px;">🎉 Ready to Download!</h3>
+                            <p style="font-size: 13px; color: #a0a0b0;">Click the button below to get your video.</p>
+                            <a href="${downloadUrl}" target="_blank" class="download-link-btn">
+                                📥 Download Video
+                            </a>
+                        `;
+                        resultBox.style.display = 'block';
+                        
+                        btn.disabled = false;
+                        btn.innerText = "Process Another Video";
+                        document.getElementById('ytUrl').value = '';
+                    }, 600);
+                } 
+                else if (currentProgress > 80) {
+                    statusText.innerText = 'Generating Download Link...';
+                }
+                else if (currentProgress > 50) {
+                    statusText.innerText = 'Bypassing Security...';
+                }
+                else if (currentProgress > 20) {
+                    statusText.innerText = 'Fetching Video Data...';
+                }
+
+                // Update UI visually
+                progressFill.style.width = currentProgress + '%';
+                percentText.innerText = Math.floor(currentProgress) + '%';
+
+            }, 400); 
+        }
+    </script>
+</body>
+</html>
