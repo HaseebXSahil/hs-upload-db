@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sora2 Video Generator - Direct API Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 750px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            font-size: 2.2em;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-generate:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(118, 75, 162, 0.4);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .result-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #000;
+        }
+
+        .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 6px solid #e0e0e0;
+            border-top: 6px solid #764ba2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-text {
+            text-align: center;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .status-text strong {
+            color: #764ba2;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c0392b;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            border-left: 4px solid #c0392b;
+        }
+
+        .error-message.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .info-box {
+            background: #e8f0fe;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #1a73e8;
+            border-left: 4px solid #1a73e8;
+        }
+
+        .quick-prompts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .quick-prompt-btn {
+            padding: 6px 14px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .quick-prompt-btn:hover {
+            background: #764ba2;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .branding {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            color: #888;
+            font-size: 13px;
+        }
+
+        .branding a {
+            color: #764ba2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .branding a:hover {
+            text-decoration: underline;
+        }
+
+        .response-details {
+            background: #f1f3f5;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+            word-break: break-all;
+            display: none;
+        }
+
+        .response-details.active {
+            display: block;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group button,
+        .btn-group a {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 20px;
+            text-align: center;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-download {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-download:hover {
+            background: #218838;
+            transform: scale(1.02);
+        }
+
+        .btn-copy {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-copy:hover {
+            background: #5a6268;
+            transform: scale(1.02);
+        }
+
+        .btn-new {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-new:hover {
+            background: #138496;
+            transform: scale(1.02);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.6em;
+            }
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn-group button,
+            .btn-group a {
+                width: 100%;
+            }
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 15px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar.active {
+            display: block;
+        }
+
+        .progress-bar .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.5s;
+            animation: progressAnimation 180s linear forwards;
+        }
+
+        @keyframes progressAnimation {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Sora2 Video Generator</h1>
+        <p class="subtitle">Direct API Testing - Text to Video Generation</p>
+
+        <!-- Prompt Input -->
+        <div class="form-group">
+            <label>📝 Video Description (Prompt)</label>
+            <textarea id="promptInput" placeholder="Describe the video you want to generate...">A beautiful sunset over a futuristic city with flying cars and neon lights</textarea>
+        </div>
+
+        <!-- Aspect Ratio -->
+        <div class="form-group">
+            <label>📐 Aspect Ratio</label>
+            <select id="aspectRatio">
+                <option value="16:9">16:9 (Widescreen)</option>
+                <option value="9:16">9:16 (Portrait)</option>
+                <option value="1:1">1:1 (Square)</option>
+                <option value="4:3">4:3 (Standard)</option>
+                <option value="21:9">21:9 (Cinematic)</option>
+            </select>
+        </div>
+
+        <!-- Quick Prompts -->
+        <div class="form-group">
+            <label>⚡ Quick Prompts</label>
+            <div class="quick-prompts">
+                <button class="quick-prompt-btn" onclick="setPrompt('A robot dancing in a cyberpunk city at night with neon lights')">🤖 Cyberpunk Robot</button>
+                <button class="quick-prompt-btn" onclick="setPrompt('A cat flying through space with stars and galaxies')">🐱 Space Cat</button>
+                <button class="quick-prompt-btn" onclick="setPrompt('Underwater city with mermaids and colorful coral reefs')">🧜 Underwater City</button>
+                <button class="quick-prompt-btn" onclick="setPrompt('A dragon flying over a medieval castle at sunset')">🐉 Dragon Castle</button>
+                <button class="quick-prompt-btn" onclick="setPrompt('A futuristic sports car driving through rain at night')">🏎️ Sports Car</button>
+                <button class="quick-prompt-btn" onclick="setPrompt('A beautiful girl walking in a magical forest with fireflies')">🧚 Magical Forest</button>
+            </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button class="btn-generate" id="generateBtn" onclick="generateVideo()">
+            🚀 Generate Video
+        </button>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar" id="progressBar">
+            <div class="progress" id="progress"></div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loadingDiv">
+            <div class="spinner"></div>
+            <p class="status-text">⏳ Generating your video... Please wait</p>
+            <p class="status-text" style="font-size: 13px; color: #888; margin-top: 5px;">
+                This may take <strong>2-3 minutes</strong>
+            </p>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message" id="errorDiv"></div>
+
+        <!-- Result -->
+        <div class="result-container" id="resultContainer">
+            <div class="video-wrapper">
+                <video id="videoPlayer" controls playsinline>
+                    <source id="videoSource" src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <div class="btn-group">
+                <a id="downloadLink" href="#" download="sora2-video.mp4" class="btn-download">
+                    ⬇️ Download Video
+                </a>
+                <button onclick="copyLink()" class="btn-copy">
+                    📋 Copy Link
+                </button>
+                <button onclick="resetAll()" class="btn-new">
+                    🔄 New Video
+                </button>
+            </div>
+
+            <div class="info-box">
+                💡 <strong>Success!</strong> Video generated successfully. You can download or copy the link.
+            </div>
+
+            <div class="response-details" id="responseDetails">
+                <strong>Response URL:</strong><br>
+                <span id="videoUrlDisplay"></span>
+            </div>
+        </div>
+
+        <!-- Branding -->
+        <div class="branding">
+            Developed by <a href="#" target="_blank">Ramzan Ahsan</a> | 
+            Join <a href="https://chat.whatsapp.com/FiZBn0BykHX47d1iHLOay1" target="_blank">WhatsApp Group</a>
+        </div>
+    </div>
+
+    <script>
+        let currentVideoUrl = '';
+        let isGenerating = false;
+
+        function setPrompt(text) {
+            document.getElementById('promptInput').value = text;
+        }
+
+        async function generateVideo() {
+            if (isGenerating) return;
+
+            const prompt = document.getElementById('promptInput').value.trim();
+            const aspect = document.getElementById('aspectRatio').value;
+
+            // Validation
+            if (!prompt) {
+                showError('❌ Please enter a video description/prompt');
+                return;
+            }
+
+            if (prompt.length < 5) {
+                showError('❌ Prompt is too short. Please provide more details.');
+                return;
+            }
+
+            // Reset UI
+            isGenerating = true;
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('generateBtn').textContent = '⏳ Generating...';
+            document.getElementById('loadingDiv').classList.add('active');
+            document.getElementById('resultContainer').classList.remove('active');
+            document.getElementById('errorDiv').classList.remove('active');
+            document.getElementById('errorDiv').style.display = 'none';
+            document.getElementById('progressBar').classList.add('active');
+
+            try {
+                // Direct API Call to Sora2 Backend
+                const response = await fetch('https://zecora0.serv00.net/ai/Sora2_s4.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        aspect: aspect
+                    })
+                });
+
+                // Check if response is OK
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('API Response:', data);
+
+                // Hide loading
+                document.getElementById('loadingDiv').classList.remove('active');
+                document.getElementById('progressBar').classList.remove('active');
+
+                // Check for video URL in response
+                if (data.UrlVideo || data.url || data.video) {
+                    currentVideoUrl = data.UrlVideo || data.url || data.video;
+                    
+                    // Show video
+                    const videoSrc = document.getElementById('videoSource');
+                    const videoPlayer = document.getElementById('videoPlayer');
+                    const downloadLink = document.getElementById('downloadLink');
+
+                    videoSrc.src = currentVideoUrl;
+                    videoPlayer.load();
+                    downloadLink.href = currentVideoUrl;
+
+                    // Show response details
+                    document.getElementById('videoUrlDisplay').textContent = currentVideoUrl;
+                    document.getElementById('responseDetails').classList.add('active');
+
+                    document.getElementById('resultContainer').classList.add('active');
+                    
+                    // Auto play video
+                    videoPlayer.play().catch(e => console.log('Auto-play blocked:', e));
+
+                } else if (data.error) {
+                    showError('❌ API Error: ' + data.error);
+                } else {
+                    showError('❌ No video URL received from server. Please try again.');
+                }
+
+            } catch (error) {
+                document.getElementById('loadingDiv').classList.remove('active');
+                document.getElementById('progressBar').classList.remove('active');
+                showError('❌ Network Error: ' + error.message + '\nPlease check if the server is accessible.');
+                console.error('Error:', error);
+            } finally {
+                isGenerating = false;
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('generateBtn').textContent = '🚀 Generate Video';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorDiv');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            errorDiv.classList.add('active');
+        }
+
+        function copyLink() {
+            if (currentVideoUrl) {
+                navigator.clipboard.writeText(currentVideoUrl).then(() => {
+                    showToast('✅ Video link copied to clipboard!');
+                }).catch(() => {
+                    // Fallback
+                    const textArea = document.createElement('textarea');
+                    textArea.value = currentVideoUrl;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showToast('✅ Video link copied!');
+                });
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #333;
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                font-size: 14px;
+                z-index: 1000;
+                animation: fadeIn 0.3s ease;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        function resetAll() {
+            document.getElementById('resultContainer').classList.remove('active');
+            document.getElementById('responseDetails').classList.remove('active');
+            document.getElementById('videoSource').src = '';
+            currentVideoUrl = '';
+            document.getElementById('promptInput').focus();
+        }
+
+        // Enter key support (Ctrl+Enter to generate)
+        document.getElementById('promptInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                e.preventDefault();
+                generateVideo();
+            }
+        });
+
+        // Character counter
+        document.getElementById('promptInput').addEventListener('input', function() {
+            const count = this.value.length;
+            // Optional: Add character counter display
+        });
+    </script>
+</body>
+</html>
