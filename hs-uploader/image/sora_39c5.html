@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sora2 Video Generator - Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+
+        .api-key-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .api-key-input:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+
+        .btn-generate {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(118, 75, 162, 0.4);
+        }
+
+        .btn-generate:active {
+            transform: translateY(0);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            display: none;
+        }
+
+        .result-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 10px;
+            background: #000;
+        }
+
+        .video-wrapper video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e0e0e0;
+            border-top: 5px solid #764ba2;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c0392b;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            border-left: 4px solid #c0392b;
+        }
+
+        .error-message.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .info-box {
+            background: #e8f0fe;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #1a73e8;
+            border-left: 4px solid #1a73e8;
+        }
+
+        .branding {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            color: #888;
+            font-size: 13px;
+        }
+
+        .branding a {
+            color: #764ba2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .branding a:hover {
+            text-decoration: underline;
+        }
+
+        .quick-prompts {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .quick-prompt-btn {
+            padding: 5px 12px;
+            background: #e9ecef;
+            border: none;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #555;
+        }
+
+        .quick-prompt-btn:hover {
+            background: #764ba2;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Sora2 Video Generator</h1>
+        <p class="subtitle">Text to Video Generation - AI Powered</p>
+
+        <!-- API Key Input -->
+        <div class="form-group">
+            <label>🔑 API Key</label>
+            <input type="text" class="api-key-input" id="apiKey" 
+                   value="ramzan-7day-demo-key-xyz" placeholder="Enter your API key">
+        </div>
+
+        <!-- Prompt Input -->
+        <div class="form-group">
+            <label>📝 Video Description (Prompt)</label>
+            <textarea id="promptInput" placeholder="Describe the video you want to generate...">A beautiful sunset over a futuristic city with flying cars and neon lights</textarea>
+        </div>
+
+        <!-- Quick Prompts -->
+        <div class="form-group">
+            <label>⚡ Quick Prompts</label>
+            <div class="quick-prompts">
+                <button class="quick-prompt-btn" onclick="setPrompt('A robot dancing in a cyberpunk city at night')">🤖 Robot</button>
+                <button class="quick-prompt-btn" onclick="setPrompt('A cat flying through space with stars')">🐱 Space Cat</button>
+                <button class="quick-prompt-btn" onclick="setPrompt('Underwater city with mermaids and colorful fish')">🧜 Underwater</button>
+                <button class="quick-prompt-btn" onclick="setPrompt('A dragon flying over a medieval castle')">🐉 Dragon</button>
+                <button class="quick-prompt-btn" onclick="setPrompt('A futuristic sports car driving in the rain')">🏎️ Sports Car</button>
+            </div>
+        </div>
+
+        <!-- Generate Button -->
+        <button class="btn-generate" id="generateBtn" onclick="generateVideo()">
+            🚀 Generate Video
+        </button>
+
+        <!-- Loading -->
+        <div class="loading" id="loadingDiv">
+            <div class="spinner"></div>
+            <p class="status-text">⏳ Generating your video... Please wait (2-3 minutes)</p>
+            <p class="status-text" style="font-size: 12px; color: #999;">This may take some time</p>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message" id="errorDiv"></div>
+
+        <!-- Result -->
+        <div class="result-container" id="resultContainer">
+            <div class="video-wrapper">
+                <video id="videoPlayer" controls autoplay playsinline>
+                    <source id="videoSource" src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div style="margin-top: 15px;">
+                <a id="downloadLink" href="#" download="sora2-video.mp4" style="display: inline-block; padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                    ⬇️ Download Video
+                </a>
+                <button onclick="copyLink()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: 10px;">
+                    📋 Copy Link
+                </button>
+            </div>
+            <div class="info-box">
+                💡 <strong>Note:</strong> Video generation may take 2-3 minutes. The video will be available for download once generated.
+            </div>
+        </div>
+
+        <!-- Branding -->
+        <div class="branding">
+            Developed by <a href="#" target="_blank">Ramzan Ahsan</a> | 
+            Join <a href="https://chat.whatsapp.com/FiZBn0BykHX47d1iHLOay1" target="_blank">WhatsApp Group</a>
+        </div>
+    </div>
+
+    <script>
+        let currentVideoUrl = '';
+
+        function setPrompt(text) {
+            document.getElementById('promptInput').value = text;
+        }
+
+        async function generateVideo() {
+            const apiKey = document.getElementById('apiKey').value.trim();
+            const prompt = document.getElementById('promptInput').value.trim();
+
+            // Validation
+            if (!apiKey) {
+                showError('❌ Please enter your API key');
+                return;
+            }
+
+            if (!prompt) {
+                showError('❌ Please enter a video description/prompt');
+                return;
+            }
+
+            // UI Updates
+            document.getElementById('generateBtn').disabled = true;
+            document.getElementById('generateBtn').textContent = '⏳ Generating...';
+            document.getElementById('loadingDiv').classList.add('active');
+            document.getElementById('resultContainer').classList.remove('active');
+            document.getElementById('errorDiv').classList.remove('active');
+            document.getElementById('errorDiv').style.display = 'none';
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        key: apiKey,
+                        model: 'sora2-video',  // Sora2 model
+                        text: prompt
+                    })
+                });
+
+                const data = await response.json();
+
+                // Hide loading
+                document.getElementById('loadingDiv').classList.remove('active');
+
+                if (data.status === 'success' && data.result) {
+                    // Show video
+                    currentVideoUrl = data.result;
+                    const videoSrc = document.getElementById('videoSource');
+                    const videoPlayer = document.getElementById('videoPlayer');
+                    const downloadLink = document.getElementById('downloadLink');
+
+                    videoSrc.src = currentVideoUrl;
+                    videoPlayer.load();
+                    downloadLink.href = currentVideoUrl;
+
+                    document.getElementById('resultContainer').classList.add('active');
+                } else {
+                    showError(data.error || '❌ Failed to generate video. Please try again.');
+                }
+
+            } catch (error) {
+                document.getElementById('loadingDiv').classList.remove('active');
+                showError('❌ Network error: ' + error.message);
+                console.error('Error:', error);
+            } finally {
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('generateBtn').textContent = '🚀 Generate Video';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorDiv');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            errorDiv.classList.add('active');
+        }
+
+        function copyLink() {
+            if (currentVideoUrl) {
+                navigator.clipboard.writeText(currentVideoUrl).then(() => {
+                    alert('✅ Video link copied to clipboard!');
+                }).catch(() => {
+                    // Fallback
+                    const textArea = document.createElement('textarea');
+                    textArea.value = currentVideoUrl;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('✅ Video link copied!');
+                });
+            }
+        }
+
+        // Enter key support for textarea
+        document.getElementById('promptInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                generateVideo();
+            }
+        });
+
+        // Load saved API key from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedKey = localStorage.getItem('sora2_api_key');
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+            }
+        });
+
+        // Save API key on change
+        document.getElementById('apiKey').addEventListener('change', function() {
+            localStorage.setItem('sora2_api_key', this.value);
+        });
+    </script>
+</body>
+</html>
