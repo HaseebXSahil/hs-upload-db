@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DEVELOPER CONTROL CENTER</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase SDK v8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #0a0d12;
+            --bg-surface: #121721;
+            --bg-surface-elevated: #1a212d;
+            --border-color: #263142;
+            --border-hover: #36455d;
+            --accent-primary: #0284c7;
+            --accent-glow: rgba(2, 132, 199, 0.15);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --status-success: #10b981;
+            --status-warning: #f59e0b;
+            --status-danger: #ef4444;
+            --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-sans); -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-base); color: var(--text-primary); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+        
+        /* Preloader Animation Styles */
+        #panel-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-base);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .loader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .loader-logo-ring {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-logo-ring::before,
+        .loader-logo-ring::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .loader-logo-ring::before {
+            inset: 0;
+            border: 3px solid transparent;
+            border-top-color: var(--accent-primary);
+            border-right-color: var(--accent-primary);
+            animation: spinRing 1.2s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+        }
+
+        .loader-logo-ring::after {
+            inset: -8px;
+            border: 2px solid transparent;
+            border-bottom-color: rgba(2, 132, 199, 0.3);
+            border-left-color: rgba(2, 132, 199, 0.3);
+            animation: spinRingReverse 1.8s linear infinite;
+        }
+
+        .loader-icon {
+            font-size: 28px;
+            color: var(--accent-primary);
+            animation: pulseIcon 1.5s ease-in-out infinite;
+        }
+
+        .loader-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--text-primary);
+            text-transform: uppercase;
+        }
+
+        .loader-progress-bar {
+            width: 180px;
+            height: 4px;
+            background: var(--bg-surface-elevated);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+
+        .loader-progress-fill {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+            animation: loadingProgress 1.5s infinite;
+        }
+
+        .loader-subtext {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+        }
+
+        @keyframes spinRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes spinRingReverse {
+            0% { transform: rotate(360deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        @keyframes pulseIcon {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+
+        @keyframes loadingProgress {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Hide loader class */
+        #panel-loader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .app-layout { display: flex; width: 100vw; min-height: 100vh; }
+        .app-sidebar { width: 260px; background: var(--bg-surface); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; flex-shrink: 0; z-index: 90; }
+        .sidebar-brand { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; }
+        .brand-icon { width: 36px; height: 36px; background: var(--accent-primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
+        .brand-info h1 { font-size: 14px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .brand-info p { font-size: 11px; color: var(--text-secondary); }
+
+        .nav-section-title { padding: 16px 20px 8px 20px; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+        .nav-menu { list-style: none; padding: 0 12px; display: flex; flex-direction: column; gap: 4px; }
+        .nav-item { padding: 10px 14px; border-radius: 6px; color: var(--text-secondary); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.15s ease; }
+        .nav-item:hover { background: var(--bg-surface-elevated); color: var(--text-primary); }
+        .nav-item.active { background: var(--accent-glow); color: var(--accent-primary); border: 1px solid rgba(2, 132, 199, 0.3); }
+
+        .app-main { flex-grow: 1; display: flex; flex-direction: column; min-width: 0; }
+        .app-header { height: 60px; background: var(--bg-surface); border-bottom: 1px solid var(--border-color); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 80; }
+        .header-title { font-size: 15px; font-weight: 600; }
+        .system-status { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--status-success); background: rgba(16, 185, 129, 0.1); padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .status-dot { width: 8px; height: 8px; background-color: var(--status-success); border-radius: 50%; display: inline-block; }
+
+        .content-body { padding: 24px; max-width: 1200px; width: 100%; margin: 0 auto; }
+        .section-pane { display: none; }
+        .section-pane.active { display: block; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; gap: 8px; }
+        .stat-header { display: flex; justify-content: space-between; align-items: center; color: var(--text-secondary); font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        .stat-value { font-size: 26px; font-weight: 700; color: var(--text-primary); font-family: var(--font-mono); }
+
+        .panel { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; padding: 24px; margin-bottom: 24px; }
+        .panel-header { margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .panel-title { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 6px; color: var(--text-secondary); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-control { width: 100%; padding: 10px 14px; background: var(--bg-base); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-primary); font-size: 14px; outline: none; }
+        .form-control:focus { border-color: var(--accent-primary); }
+
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+
+        .btn { padding: 10px 18px; background: var(--accent-primary); border: 1px solid transparent; color: #ffffff; font-weight: 600; font-size: 13px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:hover { opacity: 0.9; }
+        .btn-block { width: 100%; }
+        .btn-secondary { background: var(--bg-surface-elevated); color: var(--text-primary); border: 1px solid var(--border-color); }
+
+        .table-container { width: 100%; overflow-x: auto; border: 1px solid var(--border-color); border-radius: 6px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th, td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); font-size: 13px; }
+        th { background: var(--bg-surface-elevated); color: var(--text-secondary); font-weight: 600; font-size: 11px; text-transform: uppercase; }
+
+        .key-text { font-family: var(--font-mono); font-weight: 600; color: var(--text-primary); }
+        .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; font-family: var(--font-mono); }
+        .badge-pending { background: rgba(245, 158, 11, 0.1); color: var(--status-warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+        .badge-active { background: rgba(16, 185, 129, 0.1); color: var(--status-success); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .badge-expired { background: rgba(239, 68, 68, 0.1); color: var(--status-danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+
+        .action-cell { display: flex; gap: 6px; }
+        .btn-icon { padding: 6px 10px; border-radius: 4px; background: var(--bg-surface-elevated); border: 1px solid var(--border-color); color: var(--text-secondary); font-size: 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+        .btn-icon:hover { color: var(--text-primary); }
+        .btn-icon-danger:hover { color: var(--status-danger); background: rgba(239, 68, 68, 0.1); }
+
+        .modal-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(2px); z-index: 1000; justify-content: center; align-items: center; padding: 16px; }
+        .modal-card { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; width: 100%; max-width: 440px; padding: 20px; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .close-btn { background: none; border: none; color: var(--text-muted); font-size: 18px; cursor: pointer; }
+
+        .toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg-surface-elevated); border: 1px solid var(--border-color); color: var(--text-primary); padding: 12px 18px; border-radius: 6px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; z-index: 1100; transform: translateY(100px); opacity: 0; transition: all 0.2s ease; }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast-success { border-left: 3px solid var(--status-success); }
+
+        .mobile-nav { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: var(--bg-surface); border-top: 1px solid var(--border-color); z-index: 100; }
+        .mobile-nav-items { display: flex; justify-content: space-around; padding: 8px 0; }
+        .mobile-nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); font-size: 10px; font-weight: 600; cursor: pointer; }
+        .mobile-nav-btn.active { color: var(--accent-primary); }
+
+        @media (max-width: 768px) {
+            .app-sidebar { display: none; }
+            .mobile-nav { display: block; }
+            .content-body { padding: 16px; padding-bottom: 80px; }
+            .grid-3 { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Panel Preloader Overlay -->
+    <div id="panel-loader">
+        <div class="loader-content">
+            <div class="loader-logo-ring">
+                <i class="fa-solid fa-terminal loader-icon"></i>
+            </div>
+            <div class="loader-title">SOYAB CONTROL PANEL</div>
+            <div class="loader-progress-bar">
+                <div class="loader-progress-fill"></div>
+            </div>
+            <div class="loader-subtext">INITIALIZING SYSTEM...</div>
+        </div>
+    </div>
+
+    <div class="app-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-icon"><i class="fa-solid fa-terminal"></i></div>
+                <div class="brand-info">
+                    <h1>SOB DEV</h1>
+                    <p>Developer Control Center</p>
+                </div>
+            </div>
+
+            <div class="nav-section-title">Overview</div>
+            <ul class="nav-menu">
+                <li class="nav-item active" onclick="switchSection('sec-overview', this)">
+                    <i class="fa-solid fa-chart-pie"></i> Overview Dashboard
+                </li>
+            </ul>
+
+            <div class="nav-section-title">Key Center</div>
+            <ul class="nav-menu">
+                <li class="nav-item" onclick="switchSection('sec-create', this)">
+                    <i class="fa-solid fa-key"></i> Create Key
+                </li>
+                <li class="nav-item" onclick="switchSection('sec-control', this)">
+                    <i class="fa-solid fa-sliders"></i> Key Manager
+                </li>
+            </ul>
+
+            <div class="nav-section-title">System</div>
+            <ul class="nav-menu">
+                <li class="nav-item" onclick="switchSection('sec-apk', this)">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> App Update
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="app-main">
+            <header class="app-header">
+                <div class="header-title" id="page-header-title">Overview Dashboard</div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="system-status">
+                        <span class="status-dot"></span> ONLINE
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-body">
+
+                <!-- SECTION 0: OVERVIEW -->
+                <div id="sec-overview" class="section-pane active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header"><span>Total Keys</span><i class="fa-solid fa-database"></i></div>
+                            <div class="stat-value" id="stat-total">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header"><span>Active</span><i class="fa-solid fa-circle-check" style="color: var(--status-success);"></i></div>
+                            <div class="stat-value" id="stat-active" style="color: var(--status-success);">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header"><span>Pending</span><i class="fa-solid fa-clock" style="color: var(--status-warning);"></i></div>
+                            <div class="stat-value" id="stat-pending" style="color: var(--status-warning);">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header"><span>Expired</span><i class="fa-solid fa-circle-xmark" style="color: var(--status-danger);"></i></div>
+                            <div class="stat-value" id="stat-expired" style="color: var(--status-danger);">0</div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <div class="panel-title"><i class="fa-solid fa-layer-group"></i> Quick Actions</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <button class="btn" onclick="switchSection('sec-create')"><i class="fa-solid fa-plus"></i> Create New Key</button>
+                            <button class="btn btn-secondary" onclick="switchSection('sec-control')"><i class="fa-solid fa-list"></i> Key Manager</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 1: CREATE KEY -->
+                <div id="sec-create" class="section-pane">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <div class="panel-title"><i class="fa-solid fa-key"></i> Create Password Key</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Password / Access Key</label>
+                            <input type="text" id="new_key" class="form-control" placeholder="e.g. SOB-ACCESS-101">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Access Duration</label>
+                            <div class="grid-3">
+                                <div>
+                                    <input type="number" id="inp_days" class="form-control" value="0" min="0">
+                                    <label style="margin-top: 4px; text-align: center;">Days</label>
+                                </div>
+                                <div>
+                                    <input type="number" id="inp_hours" class="form-control" value="0" min="0">
+                                    <label style="margin-top: 4px; text-align: center;">Hours</label>
+                                </div>
+                                <div>
+                                    <input type="number" id="inp_mins" class="form-control" value="0" min="0">
+                                    <label style="margin-top: 4px; text-align: center;">Minutes</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-block" onclick="addKey()"><i class="fa-solid fa-plus"></i> Generate Access Key</button>
+                        <p id="key-status" style="margin-top:12px; text-align:center; font-weight:600; font-size: 13px;"></p>
+                    </div>
+                </div>
+
+                <!-- SECTION 2: KEY MANAGER -->
+                <div id="sec-control" class="section-pane">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <div class="panel-title"><i class="fa-solid fa-sliders"></i> Key Manager</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="position: relative;">
+                            <input type="text" id="search_input" class="form-control" placeholder="Search keys..." onkeyup="filterKeys()">
+                        </div>
+
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Key / Password</th>
+                                        <th>Remaining Time / Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="key-list-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION 3: APP UPDATE -->
+                <div id="sec-apk" class="section-pane">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <div class="panel-title"><i class="fa-solid fa-cloud-arrow-up"></i> App Release Manager</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Release Version Code</label>
+                            <input type="text" id="version" class="form-control" placeholder="e.g. 2.5">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Download Link URL</label>
+                            <input type="text" id="link" class="form-control" placeholder="https://">
+                        </div>
+
+                        <div class="form-group">
+                            <label>System Notice Message</label>
+                            <textarea id="sms" class="form-control" rows="4" placeholder="Enter notice for application..."></textarea>
+                        </div>
+
+                        <button class="btn" onclick="updateApkSettings()"><i class="fa-solid fa-floppy-disk"></i> Save Release Config</button>
+                        <p id="apk-status" style="margin-top:12px; font-weight:600; font-size: 13px;"></p>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Nav Bar -->
+    <nav class="mobile-nav">
+        <div class="mobile-nav-items">
+            <a class="mobile-nav-btn active" onclick="switchSection('sec-overview', this)"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+            <a class="mobile-nav-btn" onclick="switchSection('sec-create', this)"><i class="fa-solid fa-key"></i> Create</a>
+            <a class="mobile-nav-btn" onclick="switchSection('sec-control', this)"><i class="fa-solid fa-sliders"></i> Keys</a>
+            <a class="mobile-nav-btn" onclick="switchSection('sec-apk', this)"><i class="fa-solid fa-cloud-arrow-up"></i> Update</a>
+        </div>
+    </nav>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fa-solid fa-pen-to-square"></i> Edit Key</div>
+                <button class="close-btn" onclick="closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <input type="hidden" id="edit_old_key">
+
+            <div class="form-group">
+                <label>Password / Key Name</label>
+                <input type="text" id="edit_key_name" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label>Time Adjustment Action</label>
+                <select id="time_action" class="form-control">
+                    <option value="add">➕ Add Duration (+)</option>
+                    <option value="sub">➖ Reduce Duration (-)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Duration Adjustment</label>
+                <div class="grid-3">
+                    <div>
+                        <input type="number" id="edit_days" class="form-control" value="0" min="0">
+                        <label style="margin-top: 4px; text-align: center;">Days</label>
+                    </div>
+                    <div>
+                        <input type="number" id="edit_hours" class="form-control" value="0" min="0">
+                        <label style="margin-top: 4px; text-align: center;">Hours</label>
+                    </div>
+                    <div>
+                        <input type="number" id="edit_mins" class="form-control" value="0" min="0">
+                        <label style="margin-top: 4px; text-align: center;">Mins</label>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button class="btn" onclick="saveEditKey()">Apply Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fa-solid fa-circle-check" style="color: var(--status-success);"></i>
+        <span id="toast-message">Notification message</span>
+    </div>
+
+<script>
+    // Panel Loader Hider Logic
+    window.addEventListener('load', () => {
+        const loader = document.getElementById('panel-loader');
+        setTimeout(() => {
+            loader.classList.add('fade-out');
+        }, 1500); // 1.5 Seconds Animation delay
+    });
+
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBLoft_2a0hbngico53RV7-Jv070Q2df5s",
+      authDomain: "soyabowner-26240.firebaseapp.com",
+      databaseURL: "https://soyabowner-26240-default-rtdb.firebaseio.com",
+      projectId: "soyabowner-26240",
+      storageBucket: "soyabowner-26240.firebasestorage.app",
+      messagingSenderId: "86050198212",
+      appId: "1:86050198212:android:e9e205717f6e772ad66f91"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Helper: Toast Notification
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        document.getElementById('toast-message').innerText = message;
+        toast.classList.add('show', 'toast-success');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    // Navigation Switcher
+    function switchSection(secId, elem) {
+        document.querySelectorAll('.section-pane').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.mobile-nav-btn').forEach(i => i.classList.remove('active'));
+        
+        document.getElementById(secId).classList.add('active');
+        if(elem) elem.classList.add('active');
+
+        const titleMap = {
+            'sec-overview': 'Overview Dashboard',
+            'sec-create': 'Create Access Key',
+            'sec-control': 'Key Manager',
+            'sec-apk': 'App Release Manager'
+        };
+        document.getElementById('page-header-title').innerText = titleMap[secId] || 'Developer Control Center';
+    }
+
+    // Global Database Stores
+    let allKeysData = {};
+    let activeRenderKeys = {};
+
+    db.ref("keys").on('value', (snapshot) => {
+        if (snapshot.exists()) {
+            allKeysData = snapshot.val();
+            filterKeys(); 
+        } else {
+            allKeysData = {};
+            renderEmptyTable();
+            updateOverviewStats({});
+        }
+    });
+
+    function renderEmptyTable() {
+        const tableBody = document.getElementById('key-list-table');
+        tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color: var(--text-muted); padding: 24px;">No access keys found</td></tr>`;
+    }
+
+    // Generate Key Function
+    function addKey() {
+        const keyVal = document.getElementById('new_key').value.trim();
+        const days = parseInt(document.getElementById('inp_days').value) || 0;
+        const hours = parseInt(document.getElementById('inp_hours').value) || 0;
+        const mins = parseInt(document.getElementById('inp_mins').value) || 0;
+        const status = document.getElementById('key-status');
+
+        if (!keyVal) {
+            status.style.color = 'var(--status-danger)';
+            status.innerText = 'Please enter Key/Password!';
+            return;
+        }
+
+        if (days === 0 && hours === 0 && mins === 0) {
+            status.style.color = 'var(--status-danger)';
+            status.innerText = 'Please set valid access duration!';
+            return;
+        }
+
+        const totalMs = ((days * 24 * 60 * 60) + (hours * 60 * 60) + (mins * 60)) * 1000;
+
+        const payload = {
+            key: keyVal,
+            durationMs: totalMs,
+            expireTime: 0,
+            deviceId: ""
+        };
+
+        db.ref("keys/" + keyVal).set(payload).then(() => {
+            status.style.color = 'var(--status-success)';
+            status.innerText = 'Access Key Created Successfully!';
+            showToast('Access Key Created Successfully');
+            document.getElementById('new_key').value = '';
+            document.getElementById('inp_days').value = '0';
+            document.getElementById('inp_hours').value = '0';
+            document.getElementById('inp_mins').value = '0';
+        });
+    }
+
+    function updateOverviewStats(keysObj) {
+        const now = Date.now();
+        let total = 0, active = 0, pending = 0, expired = 0;
+
+        for (let k in keysObj) {
+            total++;
+            const data = keysObj[k];
+            if (!data.expireTime || data.expireTime === 0) {
+                pending++;
+            } else {
+                if (data.expireTime - now <= 0) {
+                    expired++;
+                } else {
+                    active++;
+                }
+            }
+        }
+
+        document.getElementById('stat-total').innerText = total;
+        document.getElementById('stat-active').innerText = active;
+        document.getElementById('stat-pending').innerText = pending;
+        document.getElementById('stat-expired').innerText = expired;
+    }
+
+    function formatTimeLeft(ms) {
+        if (ms <= 0) return "Expired";
+        let seconds = Math.floor((ms / 1000) % 60);
+        let minutes = Math.floor((ms / (1000 * 60)) % 60);
+        let hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+        let days = Math.floor(ms / (1000 * 60 * 60 * 24));
+
+        let res = "";
+        if (days > 0) res += days + "d ";
+        if (hours > 0 || days > 0) res += hours + "h ";
+        res += minutes + "m " + seconds + "s";
+        return res;
+    }
+
+    // Live Render Interval Loop
+    setInterval(() => {
+        const now = Date.now();
+        for (let keyName in activeRenderKeys) {
+            const el = document.getElementById("status-" + keyName.replace(/\s+/g, '_'));
+            if (el) {
+                const data = activeRenderKeys[keyName];
+                if (!data.expireTime || data.expireTime === 0) {
+                    el.className = "badge badge-pending";
+                    el.innerHTML = `<i class="fa-solid fa-clock"></i> Not Activated (${formatTimeLeft(data.durationMs)})`;
+                } else {
+                    const diff = data.expireTime - now;
+                    if (diff <= 0) {
+                        el.className = "badge badge-expired";
+                        el.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> Expired`;
+                    } else {
+                        el.className = "badge badge-active";
+                        el.innerHTML = `<i class="fa-solid fa-bolt"></i> ${formatTimeLeft(diff)}`;
+                    }
+                }
+            }
+        }
+        updateOverviewStats(allKeysData);
+    }, 1000);
+
+    function renderKeys(keysObj) {
+        activeRenderKeys = keysObj;
+        const tableBody = document.getElementById('key-list-table');
+        
+        tableBody.innerHTML = '';
+        const now = Date.now();
+        
+        for (let keyName in keysObj) {
+            const data = keysObj[keyName];
+            let statusBadge = "";
+            const safeKeyId = "status-" + keyName.replace(/\s+/g, '_');
+            
+            if (!data.expireTime || data.expireTime === 0) {
+                statusBadge = `<span id="${safeKeyId}" class='badge badge-pending'><i class="fa-solid fa-clock"></i> Not Activated (${formatTimeLeft(data.durationMs)})</span>`;
+            } else {
+                const diff = data.expireTime - now;
+                if (diff <= 0) {
+                    statusBadge = `<span id="${safeKeyId}" class='badge badge-expired'><i class="fa-solid fa-circle-xmark"></i> Expired</span>`;
+                } else {
+                    statusBadge = `<span id="${safeKeyId}" class='badge badge-active'><i class="fa-solid fa-bolt"></i> ${formatTimeLeft(diff)}</span>`;
+                }
+            }
+
+            const copyText = data.key || keyName;
+
+            tableBody.innerHTML += `
+                <tr>
+                    <td><span class="key-text">${data.key || keyName}</span></td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <div class="action-cell">
+                            <button class="btn-icon" onclick="copyData('${encodeURIComponent(copyText)}')"><i class="fa-regular fa-copy"></i> Copy</button>
+                            <button class="btn-icon" onclick="openEditModal('${data.key || keyName}')"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button class="btn-icon" onclick="unlinkDevice('${data.key || keyName}')"><i class="fa-solid fa-link-slash"></i> Unlink</button>
+                            <button class="btn-icon btn-icon-danger" onclick="deleteKey('${data.key || keyName}')"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+        }
+    }
+
+    function filterKeys() {
+        const query = document.getElementById('search_input').value.toLowerCase();
+        const filtered = {};
+        for (let k in allKeysData) {
+            if (k.toLowerCase().includes(query)) {
+                filtered[k] = allKeysData[k];
+            }
+        }
+        renderKeys(filtered);
+    }
+
+    // Modal Handlers & Actions
+    function openEditModal(keyName) {
+        db.ref("keys/" + keyName).once('value', (snapshot) => {
+            if(!snapshot.exists()) return;
+            const data = snapshot.val();
+            document.getElementById('edit_old_key').value = keyName;
+            document.getElementById('edit_key_name').value = data.key || keyName;
+            document.getElementById('edit_days').value = 0;
+            document.getElementById('edit_hours').value = 0;
+            document.getElementById('edit_mins').value = 0;
+            document.getElementById('editModal').style.display = 'flex';
+        });
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+    function saveEditKey() {
+        const oldKey = document.getElementById('edit_old_key').value;
+        const newKey = document.getElementById('edit_key_name').value.trim();
+        const action = document.getElementById('time_action').value;
+        const days = parseInt(document.getElementById('edit_days').value) || 0;
+        const hours = parseInt(document.getElementById('edit_hours').value) || 0;
+        const mins = parseInt(document.getElementById('edit_mins').value) || 0;
+
+        if (!newKey) {
+            alert("Password / Key cannot be empty!");
+            return;
+        }
+
+        let deltaMs = ((days * 24 * 60 * 60) + (hours * 60 * 60) + (mins * 60)) * 1000;
+        if (action === 'sub') {
+            deltaMs = -deltaMs;
+        }
+
+        db.ref("keys/" + oldKey).once('value', (snapshot) => {
+            if(!snapshot.exists()) return;
+            let data = snapshot.val();
+            data.key = newKey;
+            delete data.username;
+
+            const now = Date.now();
+
+            if (data.expireTime && data.expireTime > 0) {
+                if (data.expireTime < now) {
+                    if (deltaMs > 0) data.expireTime = now + deltaMs;
+                } else {
+                    data.expireTime += deltaMs;
+                    if (data.expireTime < now) data.expireTime = now;
+                }
+            } else {
+                data.durationMs = (data.durationMs || 0) + deltaMs;
+                if (data.durationMs < 0) data.durationMs = 0;
+            }
+
+            if (oldKey !== newKey) {
+                db.ref("keys/" + oldKey).remove();
+            }
+
+            db.ref("keys/" + newKey).set(data).then(() => {
+                closeEditModal();
+                showToast("Key updated successfully!");
+            });
+        });
+    }
+
+    function unlinkDevice(keyName) {
+        if(confirm("Unlink device for key: '" + keyName + "'? User will be able to login on a new device.")) {
+            db.ref("keys/" + keyName).update({ deviceId: "" }).then(() => {
+                showToast("Device unlinked successfully!");
+            });
+        }
+    }
+
+    function copyData(encodedText) {
+        const text = decodeURIComponent(encodedText);
+        navigator.clipboard.writeText(text);
+        showToast("Key copied to clipboard!");
+    }
+
+    function deleteKey(keyName) {
+        if(confirm("Delete key: '" + keyName + "'?")) {
+            db.ref("keys/" + keyName).remove().then(() => {
+                showToast("Key removed from database");
+            });
+        }
+    }
+
+    // App Release Settings
+    const updateRef = db.ref("update");
+    updateRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if(data) {
+            document.getElementById('version').value = data.version || '';
+            document.getElementById('link').value = data.link || '';
+            document.getElementById('sms').value = data.sms || '';
+        }
+    });
+
+    function updateApkSettings() {
+        updateRef.update({
+            version: document.getElementById('version').value,
+            link: document.getElementById('link').value,
+            sms: document.getElementById('sms').value
+        }).then(() => {
+            const status = document.getElementById('apk-status');
+            status.style.color = 'var(--status-success)';
+            status.innerText = 'Release Configuration Saved!';
+            showToast('Release Configuration Saved!');
+        });
+    }
+</script>
+</body>
+</html>
