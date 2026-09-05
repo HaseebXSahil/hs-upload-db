@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#160b18">
+<title>Will You Be Mine? ❤️</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;500;600&display=swap');
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,sans-serif;background:#120912;color:#fff}
+body{overflow-x:hidden;background:
+radial-gradient(circle at 20% 10%,rgba(255,120,170,.22),transparent 30%),
+radial-gradient(circle at 85% 30%,rgba(255,210,120,.13),transparent 28%),
+linear-gradient(145deg,#100710,#241021 55%,#0d0710)}
+button,input,textarea{font:inherit}button{cursor:pointer}
+.app{min-height:100vh;position:relative}.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:28px 18px;position:relative;overflow:hidden}
+.hidden{display:none!important}.container{width:min(980px,100%);position:relative;z-index:3}
+.glass{background:rgba(255,255,255,.075);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 24px 80px rgba(0,0,0,.35);border-radius:28px}
+h1,h2,h3{font-family:"Cormorant Garamond",serif;margin:.2em 0}h1{font-size:clamp(54px,12vw,108px);line-height:.88}h2{font-size:clamp(40px,8vw,70px)}h3{font-size:32px}
+p{line-height:1.7;color:rgba(255,255,255,.82)}.urdu{font-family:"Noto Nastaliq Urdu",serif;direction:rtl;line-height:2.2}
+.eyebrow{letter-spacing:.22em;text-transform:uppercase;font-size:11px;color:#f5c8d9}
+.btn{border:0;border-radius:999px;padding:14px 22px;color:#fff;background:linear-gradient(135deg,#d94f88,#9b4dca);box-shadow:0 10px 35px rgba(217,79,136,.25);font-weight:700;transition:.25s transform,.25s box-shadow}
+.btn:hover{transform:translateY(-2px);box-shadow:0 15px 45px rgba(217,79,136,.35)}
+.btn.secondary{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);box-shadow:none}
+.btn.gold{background:linear-gradient(135deg,#c9944b,#f1d59b);color:#25120c}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:24px}
+.hero{text-align:center}.hero-card{padding:48px 22px}.hero p{max-width:620px;margin:22px auto}
+.glow-heart{font-size:75px;filter:drop-shadow(0 0 25px rgba(255,100,160,.65));animation:pulse 1.8s infinite}
+@keyframes pulse{50%{transform:scale(1.12)}}
+.particles,.petals{position:absolute;inset:0;pointer-events:none;overflow:hidden}.particle{position:absolute;width:5px;height:5px;border-radius:50%;background:#fff;opacity:.45;animation:float 8s linear infinite}
+@keyframes float{from{transform:translateY(110vh);opacity:0}20%{opacity:.6}to{transform:translateY(-20vh);opacity:0}}
+.petal{position:absolute;font-size:22px;animation:fall 8s linear infinite;opacity:.6}@keyframes fall{to{transform:translate3d(80px,110vh,0) rotate(540deg)}}
+.editor{padding:24px}.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:12px;color:#e7bfd0;text-transform:uppercase;letter-spacing:.12em}.field input,.field textarea{width:100%;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:15px;padding:13px 14px;outline:none}.field textarea{min-height:100px;resize:vertical}
+.preview{padding:22px;margin-top:16px}.preview strong{color:#f5c8d9}.file-note{font-size:12px;color:#bcaeb8}
+.progress{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:20;background:rgba(0,0,0,.3);padding:7px 13px;border-radius:999px;font-size:12px;border:1px solid rgba(255,255,255,.12)}
+.surprise{text-align:center}.surprise-card{padding:38px 22px;max-width:850px;margin:auto}
+.envelope{width:min(350px,80vw);height:220px;margin:20px auto;position:relative;perspective:800px}
+.env-body{position:absolute;inset:0;background:linear-gradient(145deg,#b94d78,#5f2b64);border-radius:18px;box-shadow:0 20px 60px #0007}
+.env-flap{position:absolute;left:0;right:0;top:0;height:120px;background:#d66b96;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:1s;z-index:2}.envelope.open .env-flap{transform:rotateX(180deg)}
+.letter{position:absolute;z-index:1;left:8%;right:8%;top:20px;height:170px;background:#fff3f7;color:#4d2638;border-radius:10px;padding:22px;transition:1s;transform:translateY(40px)}.envelope.open .letter{transform:translateY(-65px)}
+.memory-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}.memory{background:rgba(255,255,255,.08);padding:10px;border-radius:18px;transform:rotate(var(--r));box-shadow:0 15px 35px #0005}.memory img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px}.caption{font-family:"Cormorant Garamond",serif;font-size:18px;margin:8px}
+.cupid{min-height:340px;position:relative;margin:20px auto;max-width:720px}.bow{font-size:110px;position:absolute;left:8%;top:100px;transform:rotate(-12deg)}.arrow{position:absolute;left:21%;top:155px;font-size:75px;transform:rotate(-7deg);transition:1.3s cubic-bezier(.2,.8,.2,1)}.target{position:absolute;right:10%;top:105px;font-size:105px;filter:drop-shadow(0 0 25px #f45b9c);transition:.4s}.cupid.shoot .arrow{left:73%}.cupid.shoot .target{animation:hit .7s 1.1s 2}@keyframes hit{50%{transform:scale(1.3) rotate(8deg)}}
+.cards{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:25px}.reason{width:190px;min-height:150px;padding:20px;border-radius:22px;background:rgba(255,255,255,.08);border:1px solid #fff2;animation:cardIn .7s both}@keyframes cardIn{from{opacity:0;transform:translateY(20px) rotateX(40deg)}}
+.final{background:radial-gradient(circle at center,rgba(255,80,150,.18),transparent 45%)}.answer{font-size:clamp(34px,8vw,68px);margin:25px 0}
+.music{position:fixed;bottom:14px;left:14px;z-index:30;padding:9px 12px;border-radius:999px;background:rgba(0,0,0,.4);border:1px solid #fff2;display:flex;gap:8px;align-items:center}.music button{background:none;border:0;color:#fff}.music input{width:100px}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}.conf{position:absolute;top:-20px;font-size:24px;animation:conf 3s linear forwards}@keyframes conf{to{transform:translateY(110vh) rotate(720deg)}}
+.sharebox{margin-top:18px;padding:18px;background:rgba(255,255,255,.06);border-radius:20px}.shareurl{width:100%;background:#080509;color:#fff;border:1px solid #fff2;border-radius:12px;padding:12px}
+@media(max-width:700px){.editor-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.memory-grid{grid-template-columns:1fr 1fr}.bow{left:0}.arrow{left:12%}.target{right:0}.cupid.shoot .arrow{left:65%}.hero-card,.surprise-card{padding:30px 16px}}
+</style>
+</head>
+<body>
+<div class="app">
+<div id="particles" class="particles"></div><div id="petals" class="petals"></div>
+<div id="progress" class="progress hidden">1 / 7</div>
+
+<section id="editor" class="screen">
+<div class="container">
+<div class="glass editor">
+<div class="eyebrow">Create your love story</div>
+<h2>Will You Be Mine? <span>💗</span></h2>
+<p>Edit the names, message and memories, then save and generate a shareable link.</p>
+<div class="editor-grid">
+<div class="field"><label>Boy's Name</label><input id="boy" placeholder="Boy Name"></div>
+<div class="field"><label>Girl's Name</label><input id="girl" placeholder="Girl Name"></div>
+<div class="field full"><label>Proposal Message</label><textarea id="message" placeholder="Write your personal proposal message..."></textarea></div>
+<div class="field full"><label>Urdu Quotations</label><textarea id="quotes" class="urdu" placeholder="اپنی پسند کی اردو محبت کی بات لکھیں..."></textarea></div>
+<div class="field full"><label>Reasons I Love You</label><textarea id="reasons" placeholder="Your Smile — Because your smile makes my day&#10;Your Heart — Because your heart feels like home&#10;Your Presence — Because everything is better with you"></textarea></div>
+<div class="field"><label>Memory Pictures</label><input id="photos" type="file" accept="image/*" multiple><div class="file-note">Images are embedded into the share link. Keep the number/size reasonable.</div></div>
+<div class="field"><label>Our Song</label><input id="audio" type="file" accept="audio/*"><div class="file-note">Audio is embedded into the share link. Large files can make links too long.</div></div>
+</div>
+<div class="actions">
+<button class="btn secondary" onclick="previewDraft()">Preview 👀</button>
+<button class="btn" onclick="saveProposal()">Save Proposal ❤️</button>
+</div>
+<div id="shareArea" class="sharebox hidden">
+<strong>Your Love Story Is Ready! 💗</strong>
+<p>Send this link to your special person:</p>
+<input id="shareUrl" class="shareurl" readonly>
+<div class="actions">
+<button class="btn" onclick="copyLink()">Copy Link 🔗</button>
+<button class="btn gold" onclick="shareLink()">Share ❤️</button>
+</div>
+<p class="file-note">For cross-device sharing, the proposal data is encoded in the link. Very large photos/audio may exceed browser or messaging URL limits.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="proposal" class="screen hidden"><div class="container">
+<div class="glass hero-card hero">
+<div class="glow-heart">💗</div><div class="eyebrow">A little secret for you</div>
+<h1>Hey <span id="heroGirl">[Girl Name]</span> ❤️</h1>
+<p>I have something special to ask you…</p>
+<h2>Will You Be Mine? 💗</h2>
+<div class="actions"><button class="btn" onclick="startStory()">Start My Surprise ✨</button><button class="btn secondary" onclick="backToEditor()">Edit Proposal ✏️</button></div>
+</div></div></section>
+
+<section id="story" class="screen hidden"><div class="container">
+<div id="s1" class="surprise glass surprise-card">
+<div class="eyebrow">Surprise 1</div><h2>Magical Opening ✨</h2><p>“I kept a little secret for you…”</p>
+<div id="envelope" class="envelope" onclick="openEnvelope()"><div class="env-body"></div><div class="letter">You are the most beautiful part of my story. ❤️</div><div class="env-flap"></div></div>
+<button class="btn" onclick="next(2)">Next Surprise ✨</button></div>
+
+<div id="s2" class="surprise glass surprise-card hidden">
+<div class="eyebrow">Surprise 2</div><h2>Love Letter 💌</h2>
+<p id="typing"></p><div id="quote2" class="urdu"></div>
+<button class="btn" onclick="next(3)">Next Surprise ✨</button></div>
+
+<div id="s3" class="surprise glass surprise-card hidden">
+<div class="eyebrow">Surprise 3</div><h2>Our Memories 📸</h2><p>Every moment with you is my favorite memory ❤️</p>
+<div id="memories" class="memory-grid"></div>
+<button class="btn" onclick="next(4)">Next Surprise ✨</button></div>
+
+<div id="s4" class="surprise glass surprise-card hidden">
+<div class="eyebrow">Surprise 4</div><h2>Cupid Arrow 🏹💗</h2>
+<div id="cupid" class="cupid"><div class="bow">🏹</div><div class="arrow">➳</div><div class="target">💗</div></div>
+<p id="cupidMsg" class="hidden">Oops… my heart has already chosen you. ❤️</p><div id="quote4" class="urdu hidden"></div>
+<button id="shootBtn" class="btn" onclick="shoot()">Shoot Cupid's Arrow 🏹</button>
+<button id="next4" class="btn hidden" onclick="next(5)">Next Surprise ✨</button></div>
+
+<div id="s5" class="surprise glass surprise-card hidden">
+<div class="eyebrow">Surprise 5</div><h2>Reasons I Love You ❤️</h2><p>Do you know why I choose you?</p><div id="reasonCards" class="cards"></div>
+<button class="btn" onclick="next(6)">Next Surprise ✨</button></div>
+
+<div id="s6" class="surprise glass surprise-card hidden">
+<div class="eyebrow">Surprise 6</div><h2>The Hidden Message 🌙</h2><p>There is one last thing I need to tell you…</p>
+<div class="urdu">تم میری زندگی کی وہ خوبصورت دعا ہو،<br>جس کا جواب مجھے محبت کی صورت میں ملا۔</div>
+<p>You are not just someone I love…</p><h3>You are someone I want beside me in every chapter of my life. ❤️</h3>
+<button class="btn" onclick="next(7)">Final Surprise 💍</button></div>
+
+<div id="s7" class="surprise glass surprise-card final hidden">
+<div class="eyebrow">Surprise 7</div><h2>The Final Proposal 💍❤️</h2><div id="namesFinal" class="answer"></div>
+<h1>Will You Be Mine Forever?</h1><p id="finalMessage"></p>
+<div class="actions"><button class="btn" onclick="celebrate()">💗 YES, I'LL BE YOURS</button><button class="btn gold" onclick="celebrate()">💕 OF COURSE!</button></div>
+<div id="celebration" class="hidden"><h2>You Just Made Me The Happiest Person ❤️</h2><p>Our beautiful story starts here…</p><div id="namesEnd"></div><button class="btn secondary" onclick="restart()">Replay Our Story ❤️</button></div>
+</div>
+</div></section>
+
+<div id="music" class="music hidden"><span>🎵</span><button onclick="toggleMusic()" id="playBtn">▶</button><input id="vol" type="range" min="0" max="1" step=".01" value=".8"><span>Our Song ❤️</span></div>
+<div id="confetti" class="confetti"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let data={boy:"",girl:"",message:"",quotes:"",reasons:"",photos:[],audio:null};
+let audioEl=null,current=1;
+
+function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function fileData(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
+function setDataUI(){
+ $("boy").value=data.boy;$("girl").value=data.girl;$("message").value=data.message;
+ $("quotes").value=data.quotes;$("reasons").value=data.reasons;
+ $("heroGirl").textContent=data.girl||"[Girl Name]";
+ $("namesFinal").textContent=(data.boy||"[Boy Name]")+" ❤️ "+(data.girl||"[Girl Name]");
+ $("namesEnd").textContent=(data.boy||"[Boy Name]")+" ❤️ "+(data.girl||"[Girl Name]");
+ $("finalMessage").textContent=data.message||"I don't promise that every day will be perfect… but I promise I'll make every day worth remembering.";
+ $("quote2").textContent=(data.quotes||"محبت وہ نہیں جو لفظوں میں بیان ہو،\nمحبت وہ ہے جو دل سے محسوس ہو۔").split("\n")[0];
+ $("quote4").textContent=(data.quotes||"دل تو پہلے ہی تمہارا ہو چکا ہے،\nاب بس تمہاری ہاں کا انتظار ہے۔").split("\n").slice(-1)[0];
+ renderMemories();renderReasons();
+}
+function collectText(){data.boy=$("boy").value.trim();data.girl=$("girl").value.trim();data.message=$("message").value;data.quotes=$("quotes").value;data.reasons=$("reasons").value}
+async function saveProposal(){
+ collectText();
+ const files=[...$("photos").files];
+ try{data.photos=await Promise.all(files.map(fileData));const af=$("audio").files[0];if(af)data.audio=await fileData(af)}catch(e){alert("Could not read one of the selected files.");return}
+ const encoded=btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+ const url=location.href.split("#")[0]+"#proposal="+encoded;
+ $("shareUrl").value=url;$("shareArea").classList.remove("hidden");
+ localStorage.setItem("proposalDraft",JSON.stringify(data));
+ setDataUI();
+}
+function loadHash(){
+ if(!location.hash.startsWith("#proposal="))return false;
+ try{const raw=decodeURIComponent(escape(atob(location.hash.slice(10))));data=JSON.parse(raw);setDataUI();openRecipient()}catch(e){alert("This proposal link is invalid or too large for this browser.");}
+ return true;
+}
+function previewDraft(){collectText();setDataUI();openRecipient()}
+function openRecipient(){$("editor").classList.add("hidden");$("proposal").classList.remove("hidden");}
+function backToEditor(){$("proposal").classList.add("hidden");$("story").classList.add("hidden");$("progress").classList.add("hidden");$("editor").classList.remove("hidden")}
+function startStory(){$("proposal").classList.add("hidden");$("story").classList.remove("hidden");$("progress").classList.remove("hidden");current=1;show(1);setupMusic()}
+function show(n){for(let i=1;i<=7;i++)$("s"+i).classList.toggle("hidden",i!==n);current=n;$("progress").textContent=n+" / 7";if(n===3)renderMemories();if(n===5)renderReasons()}
+function next(n){show(n)}
+function openEnvelope(){$("envelope").classList.add("open")}
+function typeText(){
+ const text=data.message||"If I could choose one person to share all my tomorrows with, I would choose you. ❤️";
+ let i=0;$("typing").textContent="";const t=setInterval(()=>{ $("typing").textContent=text.slice(0,++i);if(i>=text.length)clearInterval(t)},28)
+}
+function shoot(){
+ $("cupid").classList.add("shoot");$("shootBtn").disabled=true;
+ setTimeout(()=>{$("cupidMsg").classList.remove("hidden");$("quote4").classList.remove("hidden");$("next4").classList.remove("hidden")},1500)
+}
+function renderMemories(){
+ $("memories").innerHTML=data.photos.length?data.photos.map((p,i)=>`<div class="memory" style="--r:${i%2?-2:2}deg"><img src="${p}" alt="Memory ${i+1}"><div class="caption">Every moment with you ❤️</div></div>`).join(""):"<p>No photos added yet. Add memory pictures in customization.</p>"
+}
+function renderReasons(){
+ const arr=(data.reasons||"Your Smile 😊 — Because your smile can make my worst day beautiful.\nYour Heart 💗 — Because your heart is the place where I feel at home.\nYour Presence ✨ — Because everything feels better when you're around.").split("\n").filter(Boolean);
+ $("reasonCards").innerHTML=arr.map((x,i)=>{let [a,...b]=x.split("—");return `<div class="reason" style="animation-delay:${i*.15}s"><h3>${esc(a)}</h3><p>${esc(b.join("—"))}</p></div>`}).join("")
+}
+function setupMusic(){
+ if(!data.audio)return;$("music").classList.remove("hidden");
+ if(audioEl){audioEl.pause();audioEl=null}
+ audioEl=new Audio(data.audio);audioEl.volume=.8;
+}
+function toggleMusic(){if(!audioEl)return; if(audioEl.paused){audioEl.play().then(()=>$("playBtn").textContent="❚❚").catch(()=>alert("Tap Play again to allow music."))}else{audioEl.pause();$("playBtn").textContent="▶"}}
+$("vol").oninput=e=>{if(audioEl)audioEl.volume=e.target.value}
+function celebrate(){
+ $("celebration").classList.remove("hidden");$("namesEnd").innerHTML="<h3>"+esc(data.boy||"[Boy Name]")+" ❤️ "+esc(data.girl||"[Girl Name]")+"</h3>";
+ const icons=["💗","❤️","💕","✨","🌹","💖","💍"];for(let i=0;i<70;i++){const s=document.createElement("span");s.className="conf";s.textContent=icons[Math.floor(Math.random()*icons.length)];s.style.left=Math.random()*100+"%";s.style.animationDelay=Math.random()*1.5+"s";$("confetti").appendChild(s)};setTimeout(()=>$("confetti").innerHTML="",4500)
+ if(audioEl)audioEl.play().catch(()=>{})
+}
+function restart(){show(1);$("celebration").classList.add("hidden");$("shootBtn").disabled=false;$("cupid").classList.remove("shoot");$("cupidMsg").classList.add("hidden");$("quote4").classList.add("hidden");$("next4").classList.add("hidden")}
+function copyLink(){navigator.clipboard?.writeText($("shareUrl").value).then(()=>alert("Link copied ❤️")).catch(()=>{ $("shareUrl").select();document.execCommand("copy");alert("Link copied ❤️")})}
+async function shareLink(){const u=$("shareUrl").value;if(navigator.share)try{await navigator.share({title:"Will You Be Mine? ❤️",text:"I made something special for you… ❤️",url:u})}catch(e){}else copyLink()}
+function initFx(){
+ for(let i=0;i<35;i++){const p=document.createElement("span");p.className="particle";p.style.left=Math.random()*100+"%";p.style.animationDelay=Math.random()*8+"s";p.style.animationDuration=5+Math.random()*7+"s";$("particles").appendChild(p)}
+ for(let i=0;i<12;i++){const p=document.createElement("span");p.className="petal";p.textContent="🌹";p.style.left=Math.random()*100+"%";p.style.animationDelay=Math.random()*8+"s";$("petals").appendChild(p)}
+}
+document.addEventListener("DOMContentLoaded",()=>{
+ initFx();
+ if(loadHash())return;
+ const saved=localStorage.getItem("proposalDraft");if(saved)try{data=JSON.parse(saved);setDataUI()}catch(e){}
+});
+</script>
+</body>
+</html>
