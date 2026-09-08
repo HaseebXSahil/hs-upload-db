@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StarVoice Studio — Clone Celebrity Voices</title>
+  <meta name="description" content="Type any text and hear it spoken in the style of Babar Azam, Virat Kohli, Cristiano Ronaldo, Shah Rukh Khan, Morgan Freeman and more. 100% client-side." />
+
+  <!-- Tailwind Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* ---- Dark studio theme ---- */
+    :root {
+      --bg: #07070a;
+      --fg: #ffffff;
+      --accent: #ec4899;
+      --accent-2: #d946ef;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .starvoice-bg {
+      background:
+        radial-gradient(60rem 40rem at 12% -10%, rgba(168, 85, 247, 0.18), transparent 60%),
+        radial-gradient(48rem 36rem at 95% 8%, rgba(236, 72, 153, 0.16), transparent 60%),
+        radial-gradient(60rem 50rem at 50% 110%, rgba(34, 197, 94, 0.12), transparent 60%),
+        radial-gradient(40rem 40rem at 78% 90%, rgba(251, 191, 36, 0.10), transparent 60%),
+        var(--bg);
+    }
+
+    .starvoice-glass {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    /* Equalizer */
+    @keyframes eq {
+      0%, 100% { transform: scaleY(0.35); }
+      50% { transform: scaleY(1); }
+    }
+    .eq-bar {
+      transform-origin: bottom;
+      animation: eq 1s ease-in-out infinite;
+      display: inline-block;
+      width: 3px;
+      border-radius: 9999px;
+      background: currentColor;
+      height: 100%;
+    }
+    .eq-bar.paused { animation-play-state: paused; transform: scaleY(0.3); }
+
+    /* Shimmer text */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .shimmer {
+      background: linear-gradient(90deg,
+        rgba(255,255,255,0.6) 0%,
+        rgba(236, 72, 153, 0.95) 25%,
+        rgba(168, 85, 247, 0.95) 50%,
+        rgba(34, 197, 94, 0.95) 75%,
+        rgba(255,255,255,0.6) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: shimmer 5s linear infinite;
+    }
+
+    /* Custom scrollbar */
+    .scroll-x {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.18) transparent;
+    }
+    .scroll-x::-webkit-scrollbar { height: 6px; width: 6px; }
+    .scroll-x::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.18);
+      border-radius: 9999px;
+    }
+
+    /* Range slider styling */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 9999px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 9999px;
+      background: #ec4899;
+      cursor: pointer;
+      box-shadow: 0 0 0 4px rgba(236,72,153,0.2);
+      transition: transform 0.15s;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border: none;
+      border-radius: 9999px;
+      background: #ec4899;
+      cursor: pointer;
+      box-shadow: 0 0 0 4px rgba(236,72,153,0.2);
+    }
+
+    /* Card hover */
+    .celeb-card {
+      transition: transform 0.25s, border-color 0.25s, background 0.25s;
+    }
+    .celeb-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.06);
+    }
+    .celeb-card.selected {
+      border-color: rgba(236,72,153,0.7);
+      box-shadow: 0 0 0 2px rgba(236,72,153,0.4);
+      background: rgba(255,255,255,0.07);
+    }
+
+    /* Fade-in */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in { animation: fadeIn 0.4s ease-out both; }
+
+    /* Buttons */
+    .btn-primary {
+      background: linear-gradient(90deg, #c026d3, #db2777, #e11d48);
+      color: white;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 10px 30px -10px rgba(219, 39, 119, 0.5);
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: scale(1.02);
+      box-shadow: 0 14px 40px -10px rgba(219, 39, 119, 0.6);
+    }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  </style>
+</head>
+<body class="starvoice-bg">
+  <div class="min-h-screen flex flex-col">
+
+    <!-- Sticky Nav -->
+    <header class="sticky top-0 z-50 border-b border-white/10 bg-black/40 backdrop-blur-lg">
+      <div class="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 py-3">
+        <a href="#top" class="flex items-center gap-2.5 no-underline">
+          <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-fuchsia-500 via-pink-500 to-rose-500 shadow-lg">
+            <i data-lucide="mic-2" class="w-5 h-5 text-white"></i>
+          </span>
+          <div class="leading-tight">
+            <p class="text-sm font-black tracking-tight text-white m-0">StarVoice</p>
+            <p class="text-[10px] uppercase tracking-[0.2em] text-fuchsia-300/80 m-0">Studio</p>
+          </div>
+        </a>
+        <nav class="hidden md:flex items-center gap-6 text-sm text-white/70">
+          <a href="#voices" class="hover:text-white no-underline transition">Voices</a>
+          <a href="#how" class="hover:text-white no-underline transition">How it works</a>
+          <a href="#voices" class="rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold text-white hover:bg-white/20 no-underline transition">Try now</a>
+        </nav>
+        <div id="navEq" class="flex items-end gap-[3px] h-4 text-fuchsia-400">
+          <span class="eq-bar paused" style="height:100%"></span>
+          <span class="eq-bar paused" style="height:100%;animation-delay:0.12s"></span>
+          <span class="eq-bar paused" style="height:100%;animation-delay:0.24s"></span>
+          <span class="eq-bar paused" style="height:100%;animation-delay:0.36s"></span>
+          <span class="eq-bar paused" style="height:100%;animation-delay:0.48s"></span>
+          <span class="eq-bar paused" style="height:100%;animation-delay:0.6s"></span>
+        </div>
+      </div>
+    </header>
+
+    <main id="top" class="flex-1">
+
+      <!-- Hero -->
+      <section class="mx-auto max-w-7xl px-4 sm:px-6 pt-12 sm:pt-16 lg:pt-24 pb-8">
+        <div class="max-w-3xl mx-auto text-center fade-in">
+          <div class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-xs font-medium text-white/70">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-fuchsia-400"></i>
+            100% in-browser · Web Speech API · 19 celebrity styles
+          </div>
+          <h1 class="mt-6 text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05] m-0">
+            Make your favourite <span class="shimmer">celebrities</span> say anything.
+          </h1>
+          <p class="mx-auto mt-5 max-w-xl text-base sm:text-lg text-white/65 m-0">
+            Pick a star — Babar Azam, Virat Kohli, Cristiano Ronaldo, Shah Rukh Khan, Morgan Freeman and more — type a few words, and hear them speak in seconds. No sign-up, no server, runs entirely in your browser.
+          </p>
+          <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+            <a href="#voices" class="btn-primary inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold no-underline">
+              <i data-lucide="waves" class="w-4 h-4"></i> Start cloning
+            </a>
+            <a href="#how" class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-6 py-3 text-sm font-semibold text-white hover:bg-white/[0.08] no-underline transition">
+              How it works
+            </a>
+          </div>
+
+          <!-- Floating avatar orbs -->
+          <div id="heroOrbs" class="mt-12 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3"></div>
+        </div>
+      </section>
+
+      <!-- Voice studio -->
+      <section id="voice-studio" class="mx-auto max-w-5xl px-4 sm:px-6 pb-12"></section>
+
+      <!-- Roster -->
+      <section id="voices" class="mx-auto max-w-7xl px-4 sm:px-6 pb-12">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <h2 class="text-2xl sm:text-3xl font-bold m-0">The Roster</h2>
+            <p class="mt-1 text-sm text-white/55 m-0">19 celebrities across 6 categories. Click any card to launch the studio.</p>
+          </div>
+          <div id="categoryTabs" class="flex gap-2 overflow-x-auto scroll-x pb-1 w-full sm:w-auto" role="tablist" aria-label="Celebrity categories"></div>
+        </div>
+        <div id="rosterGrid" class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+      </section>
+
+      <!-- How it works -->
+      <section id="how" class="mx-auto max-w-7xl px-4 sm:px-6 pb-16">
+        <h2 class="text-2xl sm:text-3xl font-bold m-0">How it works</h2>
+        <p class="mt-1 max-w-2xl text-sm text-white/55 m-0">Three steps from idea to playback. No model training, no uploads — just type and listen.</p>
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4" id="howSteps"></div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 bg-black/40 mt-auto">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="flex items-center gap-2.5">
+            <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-fuchsia-500 via-pink-500 to-rose-500">
+              <i data-lucide="mic-2" class="w-4 h-4 text-white"></i>
+            </span>
+            <p class="text-sm text-white/60 m-0">
+              <span class="font-semibold text-white">StarVoice Studio</span> · 100% client-side · Web Speech API
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <a href="#" class="text-white/50 hover:text-white" aria-label="Twitter"><i data-lucide="twitter" class="w-4 h-4"></i></a>
+            <a href="#" class="text-white/50 hover:text-white" aria-label="GitHub"><i data-lucide="github" class="w-4 h-4"></i></a>
+          </div>
+        </div>
+        <p class="mt-4 text-center sm:text-left text-xs leading-relaxed text-white/40 m-0">
+          StarVoice Studio is a fan-made demo. Voice profiles are stylistic approximations generated by your browser's built-in speech synthesis engine, not biometric clones of the named individuals. All names, voices, and likenesses belong to their respective owners and are used here for parody and educational purposes only. Please use responsibly.
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast" class="fixed bottom-4 right-4 z-[100] hidden pointer-events-none"></div>
+
+  <script>
+    // ============================================================
+    // CELEBRITY ROSTER
+    // ============================================================
+    // Voice mapping strategy: we pick a voice name pattern based on
+    // gender + locale. Web Speech API exposes system voices; we
+    // match by substring. If no match, fall back to default.
+    // ============================================================
+
+    const CELEBRITIES = [
+      // Cricket
+      { id:"babar-azam", name:"Babar Azam", profession:"Cricketer · Pakistan Captain", nationality:"Pakistan", flag:"🇵🇰", initials:"BA", gradient:"from-emerald-500 via-green-500 to-teal-600", vibe:"Calm, composed, classic", sample:"We will try our best to play positive cricket and make the nation proud, InshaAllah.", voicePref:["en-US male","en-GB male","en male"], lang:"en-US", rate:0.95, pitch:0.95, volume:1, category:"Cricket", gender:"male" },
+      { id:"virat-kohli", name:"Virat Kohli", profession:"Cricketer · Batting Maestro", nationality:"India", flag:"🇮🇳", initials:"VK", gradient:"from-orange-500 via-red-500 to-rose-600", vibe:"Aggressive, intense, fiery", sample:"The bat does the talking. When in doubt, just back your game and go for it.", voicePref:["en-IN male","en-GB male","en-US male","en male"], lang:"en-IN", rate:1.1, pitch:0.9, volume:1, category:"Cricket", gender:"male" },
+      { id:"ms-dhoni", name:"MS Dhoni", profession:"Cricketer · Captain Cool", nationality:"India", flag:"🇮🇳", initials:"MSD", gradient:"from-amber-500 via-yellow-500 to-orange-600", vibe:"Cool, calculated, leader", sample:"Process is more important than the result. If you take care of the process, the result will take care of itself.", voicePref:["en-IN male","en-GB male","en-US male","en male"], lang:"en-IN", rate:0.9, pitch:0.85, volume:1, category:"Cricket", gender:"male" },
+      { id:"shahid-afridi", name:"Shahid Afridi", profession:"Cricketer · Boom Boom", nationality:"Pakistan", flag:"🇵🇰", initials:"SA", gradient:"from-green-600 via-emerald-600 to-lime-600", vibe:"Explosive, energetic, fearless", sample:"I always play my natural game, that is to attack from the very first ball.", voicePref:["en-US male","en-GB male","en male"], lang:"en-US", rate:1.2, pitch:1.05, volume:1, category:"Cricket", gender:"male" },
+
+      // Football
+      { id:"cristiano-ronaldo", name:"Cristiano Ronaldo", profession:"Footballer · CR7", nationality:"Portugal", flag:"🇵🇹", initials:"CR7", gradient:"from-rose-500 via-red-600 to-amber-500", vibe:"Confident, driven, iconic", sample:"Your love makes me strong, your hate makes me unstoppable. SIUUUU!", voicePref:["en-GB male","en-US male","en-PT male","en male"], lang:"en-GB", rate:1.1, pitch:0.95, volume:1, category:"Football", gender:"male" },
+      { id:"lionel-messi", name:"Lionel Messi", profession:"Footballer · GOAT", nationality:"Argentina", flag:"🇦🇷", initials:"LM", gradient:"from-sky-400 via-cyan-500 to-blue-500", vibe:"Humble, magical, calm", sample:"I start, I have the ball, I make the play and I score. It is what I love to do.", voicePref:["en-US male","en-GB male","en male"], lang:"en-US", rate:0.9, pitch:1.0, volume:1, category:"Football", gender:"male" },
+      { id:"neymar-jr", name:"Neymar Jr", profession:"Footballer · Trickster", nationality:"Brazil", flag:"🇧🇷", initials:"NJ", gradient:"from-yellow-400 via-green-500 to-blue-500", vibe:"Playful, flamboyant, skillful", sample:"I play football with a smile on my face, that is the Brazilian way.", voicePref:["en-US male","en-GB male","en male"], lang:"en-US", rate:1.15, pitch:1.1, volume:1, category:"Football", gender:"male" },
+
+      // Bollywood
+      { id:"shah-rukh-khan", name:"Shah Rukh Khan", profession:"Actor · King of Bollywood", nationality:"India", flag:"🇮🇳", initials:"SRK", gradient:"from-purple-500 via-fuchsia-500 to-rose-500", vibe:"Charismatic, dramatic, witty", sample:"Picture abhi baaki hai mere dost. The show must go on.", voicePref:["en-IN male","en-GB male","en male"], lang:"en-IN", rate:1.0, pitch:0.95, volume:1, category:"Bollywood", gender:"male" },
+      { id:"amitabh-bachchan", name:"Amitabh Bachchan", profession:"Actor · Big B", nationality:"India", flag:"🇮🇳", initials:"AB", gradient:"from-slate-600 via-gray-700 to-zinc-800", vibe:"Baritone, majestic, timeless", sample:"Deewar ke iss paar hum hain, aur uss paar humari zameen. Door se hi sahi, lekin dekh to sakte hain.", voicePref:["en-IN male","en-GB male","en male"], lang:"en-IN", rate:0.85, pitch:0.7, volume:1.3, category:"Bollywood", gender:"male" },
+      { id:"salman-khan", name:"Salman Khan", profession:"Actor · Bhaijaan", nationality:"India", flag:"🇮🇳", initials:"SK", gradient:"from-blue-500 via-indigo-500 to-violet-500", vibe:"Bold, generous, mass hero", sample:"Once a lion, always a lion. Swagat nahi karoge humara?", voicePref:["en-IN male","en-GB male","en male"], lang:"en-IN", rate:1.0, pitch:0.85, volume:1.1, category:"Bollywood", gender:"male" },
+
+      // Hollywood
+      { id:"morgan-freeman", name:"Morgan Freeman", profession:"Actor · The Voice", nationality:"USA", flag:"🇺🇸", initials:"MF", gradient:"from-amber-700 via-orange-800 to-stone-900", vibe:"Narrative, deep, soothing", sample:"I was not born for myself. I was born to bring hope to others, even when the world forgets it.", voicePref:["en-US male","en-GB male","en male"], lang:"en-US", rate:0.85, pitch:0.75, volume:1, category:"Hollywood", gender:"male" },
+      { id:"dwayne-johnson", name:"Dwayne Johnson", profession:"Actor · The Rock", nationality:"USA", flag:"🇺🇸", initials:"DJ", gradient:"from-yellow-500 via-amber-600 to-orange-700", vibe:"Loud, motivational, alpha", sample:"It does not matter what you think, because the Rock has already laid the smackdown. Jabroni.", voicePref:["en-US male","en-GB male","en male"], lang:"en-US", rate:1.1, pitch:0.85, volume:1.4, category:"Hollywood", gender:"male" },
+      { id:"arnold-schwarzenegger", name:"Arnold Schwarzenegger", profession:"Actor · Terminator", nationality:"Austria / USA", flag:"🇺🇸", initials:"AS", gradient:"from-stone-500 via-zinc-600 to-slate-800", vibe:"Robotic, austere, iconic", sample:"I will be back. And when I come back, I will terminate every excuse you have ever made.", voicePref:["en-US male","en-GB male","en male"], lang:"en-US", rate:0.95, pitch:0.8, volume:1.2, category:"Hollywood", gender:"male" },
+
+      // Politics
+      { id:"barack-obama", name:"Barack Obama", profession:"Former US President", nationality:"USA", flag:"🇺🇸", initials:"BO", gradient:"from-blue-600 via-sky-700 to-cyan-700", vibe:"Measured, articulate, hopeful", sample:"Yes we can. Yes we did. And yes we will keep building a more perfect union, together.", voicePref:["en-US male","en-GB male","en male"], lang:"en-US", rate:0.92, pitch:0.9, volume:1, category:"Politics", gender:"male" },
+      { id:"imran-khan", name:"Imran Khan", profession:"Former PM · Cricketer", nationality:"Pakistan", flag:"🇵🇰", initials:"IK", gradient:"from-emerald-600 via-teal-700 to-green-800", vibe:"Passionate, principled, leader", sample:"I shall fight till the very last ball, and I shall never surrender this nation to fear.", voicePref:["en-GB male","en-US male","en male"], lang:"en-GB", rate:0.95, pitch:0.92, volume:1.2, category:"Politics", gender:"male" },
+      { id:"narendra-modi", name:"Narendra Modi", profession:"Prime Minister of India", nationality:"India", flag:"🇮🇳", initials:"NM", gradient:"from-orange-500 via-amber-600 to-red-600", vibe:"Orator, rhythmic, mass leader", sample:"Mann ki baat mein aaj hum baat karenge desh ke unn hero ke baare mein jinhone sapne pure kiye.", voicePref:["en-IN male","en-GB male","en male"], lang:"en-IN", rate:0.95, pitch:0.88, volume:1.2, category:"Politics", gender:"male" },
+
+      // Music
+      { id:"eminem", name:"Eminem", profession:"Rapper · Rap God", nationality:"USA", flag:"🇺🇸", initials:"EM", gradient:"from-zinc-700 via-neutral-800 to-black", vibe:"Fast, sharp, intense", sample:"Look, if you had one shot, one opportunity to seize everything you ever wanted, would you capture it?", voicePref:["en-US male","en-GB male","en male"], lang:"en-US", rate:1.5, pitch:0.95, volume:1.2, category:"Music", gender:"male" },
+      { id:"ariana-grande", name:"Ariana Grande", profession:"Singer · Pop Icon", nationality:"USA", flag:"🇺🇸", initials:"AG", gradient:"from-pink-400 via-rose-400 to-fuchsia-500", vibe:"Sweet, breathy, youthful", sample:"Thank you, next. I am so grateful for every lesson that brought me here.", voicePref:["en-US female","en-GB female","en female","Samantha","Victoria","Karen"], lang:"en-US", rate:1.05, pitch:1.4, volume:1, category:"Music", gender:"female" },
+      { id:"atif-aslam", name:"Atif Aslam", profession:"Singer · Bollywood Voice", nationality:"Pakistan", flag:"🇵🇰", initials:"AA", gradient:"from-violet-500 via-purple-600 to-indigo-700", vibe:"Soulful, smooth, romantic", sample:"Tera hone ko rab ne banaya hoga, kahin unko bhi yeh dard dikhaya hoga.", voicePref:["en-IN male","en-GB male","en male"], lang:"en-IN", rate:0.95, pitch:0.92, volume:1.1, category:"Music", gender:"male" },
+    ];
+
+    const CATEGORIES = ["All","Cricket","Football","Bollywood","Hollywood","Politics","Music"];
+
+    // ============================================================
+    // STATE
+    // ============================================================
+    let selectedCeleb = null;
+    let activeCategory = "All";
+    let studioMode = "text"; // 'text' | 'audio'
+    let voices = [];
+    let currentUtterance = null;
+    let isPlaying = false;
+    let uploadedFileName = null;
+    let uploadedFileSize = 0;
+
+    // ============================================================
+    // VOICE LOADING
+    // ============================================================
+    function loadVoices() {
+      voices = window.speechSynthesis.getVoices() || [];
+      if (voices.length === 0) {
+        // Try again shortly
+        setTimeout(loadVoices, 250);
+      }
+    }
+    if ('speechSynthesis' in window) {
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    function pickVoice(celeb) {
+      if (!voices.length) return null;
+      // Try each preference in order
+      for (const pref of celeb.voicePref) {
+        const lower = pref.toLowerCase();
+        // First try exact lang+gender match
+        const parts = lower.split(' ');
+        const langPart = parts[0];
+        const genderPart = parts[1];
+        // Match by language
+        const langMatches = voices.filter(v =>
+          v.lang.toLowerCase().startsWith(langPart) || v.lang.toLowerCase().replace('_','-').startsWith(langPart)
+        );
+        if (langMatches.length) {
+          // Try gender hint by name
+          if (genderPart === 'female') {
+            const femaleNames = ['samantha','victoria','karen','moira','tessa','fiona','veena','rishi','laila','zira','hazel','amelie','anna','helena','catherine','mariska','monica','paulina','alice','carla','ellen','google uk english female','google us english'];
+            const fMatch = langMatches.find(v => femaleNames.some(n => v.name.toLowerCase().includes(n)));
+            if (fMatch) return fMatch;
+          }
+          if (genderPart === 'male') {
+            const maleNames = ['daniel','alex','fred','tom','david','mark','george','oliver','aaron','arthur','gordon','james','rishi','suresh','ravi','google uk english male','google us english male','male'];
+            const mMatch = langMatches.find(v => maleNames.some(n => v.name.toLowerCase().includes(n)));
+            if (mMatch) return mMatch;
+          }
+          return langMatches[0];
+        }
+        // Try name substring match (e.g. "Samantha")
+        const namedMatch = voices.find(v => v.name.toLowerCase().includes(lower));
+        if (namedMatch) return namedMatch;
+      }
+      // Fallback to any en voice
+      const en = voices.find(v => v.lang.toLowerCase().startsWith('en'));
+      return en || voices[0];
+    }
+
+    // ============================================================
+    // RENDERING
+    // ============================================================
+    const heroOrbs = document.getElementById('heroOrbs');
+    const rosterGrid = document.getElementById('rosterGrid');
+    const categoryTabs = document.getElementById('categoryTabs');
+    const studioContainer = document.getElementById('voice-studio');
+    const howSteps = document.getElementById('howSteps');
+
+    function renderHeroOrbs() {
+      heroOrbs.innerHTML = '';
+      CELEBRITIES.slice(0,12).forEach(c => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.setAttribute('aria-label', `Pick ${c.name}`);
+        btn.className = `relative h-11 w-11 sm:h-12 sm:w-12 rounded-full bg-gradient-to-br ${c.gradient} shadow-md transition hover:scale-110 overflow-hidden`;
+        btn.innerHTML = `
+          <span class="absolute inset-0 flex items-center justify-center text-[10px] font-black text-white">${c.initials}</span>
+          <span class="absolute inset-0 bg-[radial-gradient(circle_at_30%_25%,rgba(255,255,255,0.45),transparent_55%)]"></span>
+        `;
+        btn.onclick = () => selectCeleb(c);
+        heroOrbs.appendChild(btn);
+      });
+      const more = document.createElement('span');
+      more.className = 'ml-2 text-xs text-white/50';
+      more.textContent = `+${CELEBRITIES.length - 12} more`;
+      heroOrbs.appendChild(more);
+    }
+
+    function renderCategoryTabs() {
+      categoryTabs.innerHTML = '';
+      CATEGORIES.forEach(cat => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.role = 'tab';
+        btn.setAttribute('aria-selected', cat === activeCategory);
+        btn.textContent = cat;
+        btn.className = cat === activeCategory
+          ? 'shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold bg-white text-black transition'
+          : 'shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold border border-white/10 bg-white/[0.04] text-white/70 hover:bg-white/[0.08] hover:text-white transition';
+        btn.onclick = () => { activeCategory = cat; renderCategoryTabs(); renderRoster(); };
+        categoryTabs.appendChild(btn);
+      });
+    }
+
+    function renderRoster() {
+      const list = activeCategory === 'All' ? CELEBRITIES : CELEBRITIES.filter(c => c.category === activeCategory);
+      rosterGrid.innerHTML = '';
+      list.forEach((c, i) => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.setAttribute('aria-pressed', selectedCeleb?.id === c.id ? 'true' : 'false');
+        card.setAttribute('aria-label', `Select ${c.name}`);
+        card.className = `celeb-card group relative w-full overflow-hidden rounded-2xl text-left border border-white/10 bg-white/[0.03] fade-in ${selectedCeleb?.id === c.id ? 'selected' : ''}`;
+        card.style.animationDelay = `${Math.min(i * 0.03, 0.4)}s`;
+        card.innerHTML = `
+          <div class="relative h-32 w-full overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br ${c.gradient} opacity-90"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.35),transparent_55%)]"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-4xl font-black tracking-tight text-white drop-shadow-md">${c.initials}</span>
+            </div>
+            <span class="absolute left-3 top-3 rounded-full bg-black/40 px-2 py-1 text-xs font-semibold text-white">${c.flag} ${c.nationality}</span>
+            ${selectedCeleb?.id === c.id ? '<span class="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-black"><i data-lucide="sparkles" class="w-3 h-3"></i> Selected</span>' : ''}
+          </div>
+          <div class="p-4">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <h3 class="truncate text-base font-bold text-white m-0">${c.name}</h3>
+                <p class="truncate text-xs text-white/60 m-0">${c.profession}</p>
+              </div>
+              <div class="shrink-0 rounded-full bg-white/10 p-1.5 text-fuchsia-300">
+                <i data-lucide="mic" class="w-3.5 h-3.5"></i>
+              </div>
+            </div>
+            <div class="mt-3 flex items-center justify-between">
+              <p class="text-[11px] uppercase tracking-wider text-white/50 m-0">${c.vibe}</p>
+              <div class="flex items-end gap-[3px] h-3 ${selectedCeleb?.id === c.id ? 'text-fuchsia-400' : 'text-white/40'}">
+                <span class="eq-bar ${selectedCeleb?.id === c.id ? '' : 'paused'}" style="height:100%"></span>
+                <span class="eq-bar ${selectedCeleb?.id === c.id ? '' : 'paused'}" style="height:100%;animation-delay:0.12s"></span>
+                <span class="eq-bar ${selectedCeleb?.id === c.id ? '' : 'paused'}" style="height:100%;animation-delay:0.24s"></span>
+                <span class="eq-bar ${selectedCeleb?.id === c.id ? '' : 'paused'}" style="height:100%;animation-delay:0.36s"></span>
+              </div>
+            </div>
+          </div>
+        `;
+        card.onclick = () => selectCeleb(c);
+        rosterGrid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function renderHowSteps() {
+      const steps = [
+        { step:'01', title:'Pick a voice', body:'Browse 19 celebrities across 6 categories. Each one is paired with a tuned speech profile — rate, pitch and energy that matches their public speaking style.', icon:'mic-2', gradient:'from-fuchsia-500/20 to-pink-500/10' },
+        { step:'02', title:'Type your script', body:'Write any text. Use the sliders to nudge the speed or volume if you want a calmer or punchier delivery.', icon:'radio', gradient:'from-rose-500/20 to-orange-500/10' },
+        { step:'03', title:'Play & download', body:'Hit play to hear it instantly. Use the record button to capture the audio as a .webm file you can save and share.', icon:'waves', gradient:'from-emerald-500/20 to-teal-500/10' },
+      ];
+      howSteps.innerHTML = steps.map(s => `
+        <div class="rounded-2xl border border-white/10 bg-gradient-to-br ${s.gradient} p-5 fade-in">
+          <div class="flex items-center justify-between">
+            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-white"><i data-lucide="${s.icon}" class="w-5 h-5"></i></span>
+            <span class="text-xs font-mono text-white/40">${s.step}</span>
+          </div>
+          <h3 class="mt-4 text-lg font-bold text-white m-0">${s.title}</h3>
+          <p class="mt-2 text-sm text-white/65 m-0">${s.body}</p>
+        </div>
+      `).join('');
+    }
+
+    // ============================================================
+    // STUDIO
+    // ============================================================
+    function renderStudio() {
+      if (!selectedCeleb) {
+        studioContainer.innerHTML = `
+          <div class="starvoice-glass flex flex-col items-center justify-center rounded-3xl px-6 py-12 text-center fade-in">
+            <i data-lucide="radio" class="w-10 h-10 text-fuchsia-400"></i>
+            <h2 class="mt-4 text-2xl font-bold text-white m-0">Pick a voice to start the studio</h2>
+            <p class="mt-2 max-w-md text-sm text-white/60 m-0">Choose any celebrity below and the studio will open right here. Type a script, or upload an audio clip to re-voice.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      const c = selectedCeleb;
+      const isAudioMode = studioMode === 'audio';
+      const initialText = isAudioMode ? '' : c.sample.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const uploadAreaHTML = isAudioMode ? `
+          <div class="mt-5">
+            <label class="block mb-2 text-xs font-semibold uppercase tracking-wider text-white/70">Step 1 · Upload the audio to clone</label>
+            <div id="dropzone" class="relative cursor-pointer rounded-2xl border-2 border-dashed border-white/15 bg-black/30 hover:border-white/30 hover:bg-black/40 transition p-6 text-center">
+              <input id="audioFileInput" type="file" accept="audio/*,.wav,.mp3,.m4a,.webm,.ogg,.flac" class="sr-only" />
+              <div id="dropzoneIdle" class="flex flex-col items-center gap-2 py-4">
+                <i data-lucide="upload" class="w-8 h-8 text-fuchsia-400"></i>
+                <p class="text-sm font-semibold text-white m-0">Drop an audio file here, or click to browse</p>
+                <p class="text-xs text-white/50 m-0">WAV, MP3, M4A, WEBM, OGG, FLAC · max 15 MB</p>
+              </div>
+              <div id="dropzoneBusy" class="hidden flex-col items-center gap-2 py-4">
+                <i data-lucide="loader-2" class="w-8 h-8 text-fuchsia-400 animate-spin"></i>
+                <p class="text-sm font-semibold text-white m-0">Transcribing audio...</p>
+                <p class="text-xs text-white/50 m-0">This usually takes a few seconds.</p>
+              </div>
+              <div id="dropzoneDone" class="hidden flex-col items-center gap-2 py-2">
+                <i data-lucide="file-audio" class="w-8 h-8 text-fuchsia-400"></i>
+                <p id="fileNameLabel" class="text-sm font-semibold text-white m-0 truncate max-w-[80%]"></p>
+                <p id="fileSizeLabel" class="text-xs text-white/50 m-0"></p>
+              </div>
+            </div>
+          </div>
+      ` : '';
+
+      studioContainer.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex gap-2" role="tablist" aria-label="Studio mode">
+            <button id="tabText" type="button" role="tab" class="${studioMode === 'text' ? 'bg-white text-black' : 'border border-white/10 bg-white/[0.04] text-white/70 hover:bg-white/[0.08] hover:text-white'} inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition">
+              <i data-lucide="type" class="w-3.5 h-3.5"></i> Type text
+            </button>
+            <button id="tabAudio" type="button" role="tab" class="${studioMode === 'audio' ? 'bg-white text-black' : 'border border-white/10 bg-white/[0.04] text-white/70 hover:bg-white/[0.08] hover:text-white'} inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition">
+              <i data-lucide="audio-lines" class="w-3.5 h-3.5"></i> Upload audio
+            </button>
+          </div>
+
+          <div class="starvoice-glass rounded-3xl p-5 sm:p-7 lg:p-8 fade-in" aria-label="Voice studio for ${c.name}">
+            <div class="flex items-start gap-4 sm:gap-5">
+              <div class="relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br ${c.gradient} text-white shadow-lg">
+                <span class="text-xl font-black drop-shadow">${c.initials}</span>
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.35),transparent_55%)]"></div>
+              </div>
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
+                  <h2 class="text-xl sm:text-2xl font-bold text-white m-0">${c.name}</h2>
+                  <span class="inline-flex items-center rounded-full bg-white/10 px-2 py-1 text-xs text-white">${c.flag} ${c.nationality}</span>
+                  ${isAudioMode ? '<span class="inline-flex items-center rounded-full bg-fuchsia-500/20 px-2 py-1 text-xs text-fuchsia-200"><i data-lucide="audio-lines" class="w-3 h-3 mr-1"></i> Audio mode</span>' : ''}
+                </div>
+                <p class="mt-0.5 text-sm text-white/60 m-0">${c.profession}</p>
+                <p class="mt-1 text-xs text-fuchsia-300/90 m-0">${c.vibe}</p>
+              </div>
+              <button id="changeVoiceBtn" class="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm text-white/60 hover:text-white hover:bg-white/10 transition">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Change voice
+              </button>
+            </div>
+
+            ${uploadAreaHTML}
+
+            <div class="mt-${isAudioMode ? '5' : '6'}">
+              <div class="mb-2 flex items-center justify-between">
+                <label for="voiceText" class="text-xs font-semibold uppercase tracking-wider text-white/70">${isAudioMode ? 'Step 2 · Edit what ' + c.name.split(' ')[0] + ' should say' : 'What should ' + c.name.split(' ')[0] + ' say?'}</label>
+                <span id="charCount" class="text-[11px] tabular-nums text-white/40">${initialText.length} / 1024</span>
+              </div>
+              <textarea id="voiceText" rows="4" maxlength="1024" class="resize-none w-full rounded-xl border border-white/10 bg-black/30 text-base text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-fuchsia-400/50 p-3" placeholder="${isAudioMode ? 'Upload audio first — the transcription will appear here, or type your own text.' : 'Type something in the style of ' + c.name + '...'}">${initialText}</textarea>
+              <div id="transcriptHolder" class="hidden mt-2">
+                <details class="group">
+                  <summary class="cursor-pointer text-xs text-white/50 hover:text-white/80 transition">Show original transcription</summary>
+                  <p id="transcriptText" class="mt-2 rounded-lg border border-white/10 bg-black/30 p-3 text-xs text-white/60 italic m-0"></p>
+                </details>
+              </div>
+            </div>
+
+            <div class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <div class="mb-2 flex items-center justify-between text-xs">
+                  <span class="font-semibold uppercase tracking-wider text-white/70">Speed</span>
+                  <span id="speedVal" class="tabular-nums text-fuchsia-300">${c.rate.toFixed(2)}×</span>
+                </div>
+                <input type="range" id="speedSlider" min="0.5" max="2" step="0.05" value="${c.rate}" />
+                <div class="mt-1 flex justify-between text-[10px] text-white/40">
+                  <span>Slow</span><span>Normal</span><span>Fast</span>
+                </div>
+              </div>
+              <div>
+                <div class="mb-2 flex items-center justify-between text-xs">
+                  <span class="font-semibold uppercase tracking-wider text-white/70 inline-flex items-center gap-1"><i data-lucide="volume-2" class="w-3 h-3"></i> Volume</span>
+                  <span id="volVal" class="tabular-nums text-fuchsia-300">${c.volume.toFixed(2)}</span>
+                </div>
+                <input type="range" id="volSlider" min="0" max="1" step="0.05" value="${c.volume}" />
+                <div class="mt-1 flex justify-between text-[10px] text-white/40">
+                  <span>Quiet</span><span>Loud</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-3">
+              <button id="playBtn" class="btn-primary inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold sm:min-w-[200px]">
+                <i data-lucide="play" class="w-4 h-4"></i> ${isAudioMode ? 'Generate & Play' : 'Play'}
+              </button>
+              <button id="stopBtn" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white hover:bg-white/[0.08] transition">
+                <i data-lucide="square" class="w-3.5 h-3.5"></i> Stop
+              </button>
+              <button id="resetBtn" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white hover:bg-white/[0.08] transition">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
+              </button>
+              <button id="recordBtn" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white hover:bg-white/[0.08] transition">
+                <i data-lucide="circle" class="w-3.5 h-3.5 text-rose-400"></i> Record & Download
+              </button>
+            </div>
+
+            <div class="mt-5 flex items-start gap-2 rounded-xl border border-amber-400/20 bg-amber-400/[0.06] p-3 text-xs text-amber-200/80">
+              <i data-lucide="mic" class="mt-0.5 w-3.5 h-3.5 shrink-0"></i>
+              <p class="m-0">
+                <i data-lucide="sparkles" class="inline w-3 h-3 mr-1"></i>
+                ${isAudioMode
+                  ? '<strong>How this works:</strong> We transcribe your uploaded audio using the browser\'s Web Speech Recognition API, then re-speak the transcription through the speech synthesis engine tuned to ' + c.name + '\'s style. The <strong>words</strong> are cloned from your audio; the <strong>voice timbre</strong> comes from the synthesis engine, not the original speaker. This is not biometric voice conversion.'
+                  : '<strong>Voice simulation:</strong> StarVoice Studio uses your browser\'s built-in speech synthesis engine, tuned to approximate each celebrity\'s speaking style. It is <strong>not</strong> a biometric clone or deepfake. Names and personas belong to their respective owners and are used here for parody / fan content only.'
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+
+      // Wire up events
+      document.getElementById('changeVoiceBtn').onclick = () => {
+        selectedCeleb = null;
+        uploadedFileName = null;
+        uploadedFileSize = 0;
+        stopSpeaking();
+        renderStudio();
+        renderRoster();
+        document.getElementById('voice-studio').scrollIntoView({ behavior:'smooth', block:'start' });
+      };
+
+      document.getElementById('tabText').onclick = () => {
+        if (studioMode === 'text') return;
+        studioMode = 'text';
+        uploadedFileName = null;
+        uploadedFileSize = 0;
+        stopSpeaking();
+        renderStudio();
+      };
+      document.getElementById('tabAudio').onclick = () => {
+        if (studioMode === 'audio') return;
+        studioMode = 'audio';
+        stopSpeaking();
+        renderStudio();
+      };
+
+      const textEl = document.getElementById('voiceText');
+      const charCount = document.getElementById('charCount');
+      textEl.addEventListener('input', () => {
+        charCount.textContent = `${textEl.value.length} / 1024`;
+        charCount.className = `text-[11px] tabular-nums ${textEl.value.length > 1024 - 100 ? 'text-rose-400' : 'text-white/40'}`;
+      });
+
+      const speedSlider = document.getElementById('speedSlider');
+      const speedVal = document.getElementById('speedVal');
+      speedSlider.addEventListener('input', () => {
+        speedVal.textContent = `${parseFloat(speedSlider.value).toFixed(2)}×`;
+      });
+
+      const volSlider = document.getElementById('volSlider');
+      const volVal = document.getElementById('volVal');
+      volSlider.addEventListener('input', () => {
+        volVal.textContent = `${parseFloat(volSlider.value).toFixed(2)}`;
+      });
+
+      document.getElementById('playBtn').onclick = speak;
+      document.getElementById('stopBtn').onclick = stopSpeaking;
+      document.getElementById('resetBtn').onclick = () => {
+        speedSlider.value = c.rate; speedVal.textContent = `${c.rate.toFixed(2)}×`;
+        volSlider.value = c.volume; volVal.textContent = `${c.volume.toFixed(2)}`;
+        if (!isAudioMode) {
+          textEl.value = c.sample;
+          charCount.textContent = `${c.sample.length} / 1024`;
+        }
+        showToast('Parameters reset', `Restored to ${c.name}'s default profile.`);
+      };
+      document.getElementById('recordBtn').onclick = recordAndDownload;
+
+      // Audio mode: wire up dropzone + file input
+      if (isAudioMode) {
+        wireUpDropzone(c);
+        // If a file was already uploaded, restore its UI
+        if (uploadedFileName) {
+          showDropzoneDone(uploadedFileName, uploadedFileSize);
+        }
+      }
+    }
+
+    // ============================================================
+    // AUDIO UPLOAD (browser-based, uses Web Speech Recognition)
+    // ============================================================
+    function showDropzoneState(state) {
+      const idle = document.getElementById('dropzoneIdle');
+      const busy = document.getElementById('dropzoneBusy');
+      const done = document.getElementById('dropzoneDone');
+      if (!idle) return;
+      idle.classList.toggle('hidden', state !== 'idle');
+      idle.classList.toggle('flex', state === 'idle');
+      busy.classList.toggle('hidden', state !== 'busy');
+      busy.classList.toggle('flex', state === 'busy');
+      done.classList.toggle('hidden', state !== 'done');
+      done.classList.toggle('flex', state === 'done');
+    }
+    function showDropzoneDone(name, size) {
+      showDropzoneState('done');
+      const label = document.getElementById('fileNameLabel');
+      const sizeLabel = document.getElementById('fileSizeLabel');
+      if (label) label.textContent = name;
+      if (sizeLabel) {
+        const sizeStr = size < 1024 ? `${size} B` : size < 1024*1024 ? `${(size/1024).toFixed(1)} KB` : `${(size/1024/1024).toFixed(2)} MB`;
+        sizeLabel.textContent = `${sizeStr} · click to upload a different file`;
+      }
+    }
+    function wireUpDropzone(celeb) {
+      const dz = document.getElementById('dropzone');
+      const input = document.getElementById('audioFileInput');
+      if (!dz || !input) return;
+
+      dz.onclick = () => input.click();
+      dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.classList.add('border-fuchsia-400','bg-fuchsia-500/10'); dz.classList.remove('border-white/15','bg-black/30'); });
+      dz.addEventListener('dragleave', () => { dz.classList.remove('border-fuchsia-400','bg-fuchsia-500/10'); dz.classList.add('border-white/15','bg-black/30'); });
+      dz.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dz.classList.remove('border-fuchsia-400','bg-fuchsia-500/10'); dz.classList.add('border-white/15','bg-black/30');
+        const file = e.dataTransfer.files?.[0];
+        if (file) handleAudioFile(file, celeb);
+      });
+      input.onchange = () => {
+        const file = input.files?.[0];
+        if (file) handleAudioFile(file, celeb);
+        input.value = '';
+      };
+    }
+    async function handleAudioFile(file, celeb) {
+      const allowed = /\.(wav|mp3|m4a|webm|ogg|flac)$/i.test(file.name) || (file.type || '').startsWith('audio/');
+      if (!allowed) {
+        showToast('Unsupported file', 'Please upload an audio file (WAV, MP3, M4A, WEBM, OGG, FLAC).', 'error');
+        return;
+      }
+      if (file.size > 15 * 1024 * 1024) {
+        showToast('File too large', 'Please keep the file under 15 MB.', 'error');
+        return;
+      }
+      uploadedFileName = file.name;
+      uploadedFileSize = file.size;
+      showDropzoneState('busy');
+
+      // Try Web Speech Recognition API (Chrome / Edge only, needs internet)
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        try {
+          const transcript = await transcribeWithSpeechRecognition(file, celeb);
+          if (transcript && transcript.trim()) {
+            applyTranscription(transcript);
+            return;
+          }
+        } catch (err) {
+          console.warn('Web Speech Recognition failed:', err);
+        }
+      }
+
+      // Fallback: instruct user to type or record via microphone
+      showDropzoneDone(file.name, file.size);
+      const textEl = document.getElementById('voiceText');
+      textEl.value = '';
+      textEl.placeholder = 'Web Speech Recognition is not available in this browser. Click Reset to switch to Type text mode, or click the mic below to record live audio.';
+      document.getElementById('charCount').textContent = '0 / 1024';
+      showToast('Auto-transcribe unavailable', 'Your browser does not support Web Speech Recognition. Please type the words manually, or use the live mic button to record.', 'error');
+      addLiveMicButton(celeb);
+    }
+    function applyTranscription(text) {
+      const trimmed = text.trim();
+      const sliced = trimmed.slice(0, 1024);
+      const textEl = document.getElementById('voiceText');
+      textEl.value = sliced;
+      document.getElementById('charCount').textContent = `${sliced.length} / 1024`;
+      const holder = document.getElementById('transcriptHolder');
+      const transcriptText = document.getElementById('transcriptText');
+      if (holder && transcriptText) {
+        transcriptText.textContent = `"${trimmed}"`;
+        holder.classList.remove('hidden');
+      }
+      showDropzoneDone(uploadedFileName, uploadedFileSize);
+      showToast('Transcribed!', `Captured ${trimmed.length} characters. Edit if needed, then Generate & Play.`);
+    }
+
+    /** Uses Web Speech Recognition to transcribe an audio FILE.
+     *  Note: the API is designed for live mic input; we play the audio
+     *  through an off-screen <audio> element piped into a MediaStream,
+     *  which the recognition then listens to. This works in Chrome/Edge. */
+    async function transcribeWithSpeechRecognition(file, celeb) {
+      return new Promise((resolve, reject) => {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          reject(new Error('not supported'));
+          return;
+        }
+        // Try to use AudioContext to route the file audio into a media stream
+        const audio = document.createElement('audio');
+        audio.src = URL.createObjectURL(file);
+        audio.crossOrigin = 'anonymous';
+        audio.style.display = 'none';
+        document.body.appendChild(audio);
+
+        let cleanup = () => {
+          try { audio.pause(); } catch (e) {}
+          URL.revokeObjectURL(audio.src);
+          if (audio.parentNode) audio.parentNode.removeChild(audio);
+        };
+
+        const rec = new SpeechRecognition();
+        rec.lang = (celeb.lang || 'en-US').startsWith('en') ? 'en-US' : (celeb.lang || 'en-US');
+        rec.continuous = true;
+        rec.interimResults = false;
+
+        let finalText = '';
+        let stopped = false;
+
+        rec.onresult = (event) => {
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            if (event.results[i].isFinal) {
+              finalText += event.results[i][0].transcript + ' ';
+            }
+          }
+        };
+        rec.onerror = (e) => {
+          cleanup();
+          reject(new Error(e.error || 'recognition error'));
+        };
+        rec.onend = () => {
+          if (!stopped) {
+            stopped = true;
+            cleanup();
+            resolve(finalText.trim());
+          }
+        };
+
+        // Play audio out loud so the recognition picks it up
+        audio.onended = () => {
+          setTimeout(() => { try { rec.stop(); } catch (e) {} }, 500);
+        };
+        audio.onerror = () => {
+          cleanup();
+          reject(new Error('audio decode error'));
+        };
+
+        try {
+          rec.start();
+          audio.play().catch((err) => {
+            cleanup();
+            reject(new Error('Audio playback blocked: ' + err.message));
+          });
+          // Safety timeout: 60s max
+          setTimeout(() => {
+            if (!stopped) {
+              try { rec.stop(); } catch (e) {}
+            }
+          }, 60000);
+        } catch (err) {
+          cleanup();
+          reject(err);
+        }
+      });
+    }
+
+    function addLiveMicButton(celeb) {
+      // Adds a "Use mic instead" button if Web Speech Recognition is available
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return;
+      const holder = document.createElement('div');
+      holder.className = 'mt-3';
+      holder.innerHTML = `<button id="liveMicBtn" class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-sm text-white hover:bg-white/[0.08] transition"><i data-lucide="mic" class="w-4 h-4 text-fuchsia-400"></i> Use microphone to record live</button>`;
+      const playBtn = document.getElementById('playBtn');
+      if (playBtn && playBtn.parentNode) {
+        playBtn.parentNode.appendChild(holder);
+        lucide.createIcons();
+        document.getElementById('liveMicBtn').onclick = () => liveMicTranscribe(celeb);
+      }
+    }
+    function liveMicTranscribe(celeb) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return;
+      const rec = new SpeechRecognition();
+      rec.lang = (celeb.lang || 'en-US').startsWith('en') ? 'en-US' : (celeb.lang || 'en-US');
+      rec.continuous = false;
+      rec.interimResults = false;
+      showToast('Listening...', 'Speak now. Recognition will stop when you pause.');
+      rec.onresult = (event) => {
+        const text = event.results[0][0].transcript;
+        applyTranscription(text);
+      };
+      rec.onerror = (e) => showToast('Recognition error', e.error || 'failed', 'error');
+      rec.start();
+    }
+
+    // ============================================================
+    // SPEAK
+    // ============================================================
+    function setEqActive(active) {
+      document.querySelectorAll('#navEq .eq-bar').forEach(b => {
+        if (active) b.classList.remove('paused'); else b.classList.add('paused');
+      });
+    }
+
+    function speak() {
+      if (!selectedCeleb) return;
+      if (!('speechSynthesis' in window)) {
+        showToast('Speech not supported', 'Your browser does not support the Web Speech API.', 'error');
+        return;
+      }
+      const text = document.getElementById('voiceText').value.trim();
+      if (!text) {
+        showToast('Text is empty', 'Please type something for the celebrity to say.', 'error');
+        return;
+      }
+      if (text.length > 1024) {
+        showToast('Text too long', 'Please keep it under 1024 characters.', 'error');
+        return;
+      }
+      // Cancel any in-flight speech
+      window.speechSynthesis.cancel();
+
+      const u = new SpeechSynthesisUtterance(text);
+      const v = pickVoice(selectedCeleb);
+      if (v) u.voice = v;
+      u.lang = selectedCeleb.lang || (v ? v.lang : 'en-US');
+      u.rate = parseFloat(document.getElementById('speedSlider').value);
+      u.pitch = selectedCeleb.pitch;
+      u.volume = parseFloat(document.getElementById('volSlider').value);
+
+      u.onstart = () => {
+        isPlaying = true;
+        setEqActive(true);
+        updatePlayButton();
+      };
+      u.onend = () => {
+        isPlaying = false;
+        setEqActive(false);
+        updatePlayButton();
+      };
+      u.onerror = (e) => {
+        isPlaying = false;
+        setEqActive(false);
+        updatePlayButton();
+        if (e.error !== 'interrupted' && e.error !== 'canceled') {
+          showToast('Playback error', e.error || 'Speech synthesis failed.', 'error');
+        }
+      };
+
+      currentUtterance = u;
+      window.speechSynthesis.speak(u);
+    }
+
+    function stopSpeaking() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      isPlaying = false;
+      setEqActive(false);
+      updatePlayButton();
+    }
+
+    function updatePlayButton() {
+      const btn = document.getElementById('playBtn');
+      if (!btn) return;
+      btn.innerHTML = isPlaying
+        ? '<i data-lucide="pause" class="w-4 h-4"></i> Pause'
+        : '<i data-lucide="play" class="w-4 h-4"></i> Play';
+      lucide.createIcons();
+    }
+
+    // ============================================================
+    // RECORD & DOWNLOAD (uses getDisplayMedia tab audio capture)
+    // ============================================================
+    async function recordAndDownload() {
+      if (!selectedCeleb) return;
+      const text = document.getElementById('voiceText').value.trim();
+      if (!text) {
+        showToast('Text is empty', 'Please type something first.', 'error');
+        return;
+      }
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        showToast('Recording not supported', 'Your browser does not support tab audio capture. Use Play and your system recorder instead.', 'error');
+        return;
+      }
+
+      let stream;
+      try {
+        // Ask user to share THIS tab with audio
+        stream = await navigator.mediaDevices.getDisplayMedia({
+          video: { width: 1, height: 1 },
+          audio: true
+        });
+      } catch (err) {
+        showToast('Recording cancelled', 'You need to share this tab with audio enabled to record.', 'error');
+        return;
+      }
+
+      const audioTracks = stream.getAudioTracks();
+      if (!audioTracks.length) {
+        showToast('No audio captured', 'Please re-share the tab and tick the "Share tab audio" checkbox.', 'error');
+        stream.getTracks().forEach(t => t.stop());
+        return;
+      }
+
+      // Stop video track immediately, keep audio only
+      stream.getVideoTracks().forEach(t => t.stop());
+
+      const audioStream = new MediaStream(audioTracks);
+      const recorder = new MediaRecorder(audioStream);
+      const chunks = [];
+      recorder.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `starvoice-${selectedCeleb.id}-${Date.now()}.webm`;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        audioTracks.forEach(t => t.stop());
+        showToast('Audio saved', `${selectedCeleb.name}'s clip downloaded as .webm`);
+      };
+
+      recorder.start();
+      // Speak immediately so the recorder captures it
+      stopSpeaking();
+      const u = new SpeechSynthesisUtterance(text);
+      const v = pickVoice(selectedCeleb);
+      if (v) u.voice = v;
+      u.lang = selectedCeleb.lang || (v ? v.lang : 'en-US');
+      u.rate = parseFloat(document.getElementById('speedSlider').value);
+      u.pitch = selectedCeleb.pitch;
+      u.volume = parseFloat(document.getElementById('volSlider').value);
+      u.onend = () => setTimeout(() => recorder.stop(), 500);
+      u.onerror = () => { recorder.stop(); };
+      window.speechSynthesis.speak(u);
+    }
+
+    // ============================================================
+    // SELECT CELEBRITY
+    // ============================================================
+    function selectCeleb(c) {
+      selectedCeleb = c;
+      // Reset audio-mode state on celebrity change
+      uploadedFileName = null;
+      uploadedFileSize = 0;
+      // Default to text mode on fresh selection
+      studioMode = 'text';
+      stopSpeaking();
+      renderStudio();
+      renderRoster();
+      requestAnimationFrame(() => {
+        document.getElementById('voice-studio')
+          ?.scrollIntoView({ behavior:'smooth', block:'start' });
+      });
+    }
+
+    // ============================================================
+    // TOAST
+    // ============================================================
+    function showToast(title, description, type = 'success') {
+      const container = document.getElementById('toast');
+      const toast = document.createElement('div');
+      const accent = type === 'error' ? 'border-rose-500/40 bg-rose-950/80' : 'border-fuchsia-500/40 bg-fuchsia-950/80';
+      toast.className = `pointer-events-auto mb-3 rounded-xl border ${accent} backdrop-blur px-4 py-3 shadow-xl text-white text-sm fade-in min-w-[260px] max-w-sm`;
+      toast.innerHTML = `<p class="font-semibold m-0">${title}</p><p class="text-white/70 text-xs mt-0.5 m-0">${description}</p>`;
+      container.appendChild(toast);
+      container.classList.remove('hidden');
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+        toast.style.transition = 'all 0.3s';
+        setTimeout(() => {
+          toast.remove();
+          if (!container.children.length) container.classList.add('hidden');
+        }, 300);
+      }, 3500);
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    renderHeroOrbs();
+    renderCategoryTabs();
+    renderRoster();
+    renderStudio();
+    renderHowSteps();
+    lucide.createIcons();
+
+    // Some browsers need a user gesture before loading voices
+    document.addEventListener('click', () => {
+      if (!voices.length) loadVoices();
+    }, { once: true });
+  </script>
+</body>
+</html>
