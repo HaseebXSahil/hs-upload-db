@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VoxForge AI — Voice Studio</title>
+  <style>
+    :root {
+      --bg: #080a12;
+      --panel: #10131f;
+      --panel2: #151929;
+      --text: #f4f6ff;
+      --muted: #9aa2bb;
+      --line: rgba(255,255,255,.09);
+      --accent: #7c5cff;
+      --accent2: #20d3a7;
+      --danger: #ff6678;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: Inter, system-ui, -apple-system, Segoe UI, sans-serif;
+      color: var(--text); background:
+        radial-gradient(circle at 15% 10%, rgba(124,92,255,.18), transparent 30%),
+        radial-gradient(circle at 90% 20%, rgba(32,211,167,.10), transparent 25%), var(--bg);
+      min-height: 100vh;
+    }
+    header {
+      height: 72px; border-bottom: 1px solid var(--line); display:flex;
+      align-items:center; justify-content:space-between; padding: 0 6%;
+      backdrop-filter: blur(16px); position:sticky; top:0; z-index:10;
+      background: rgba(8,10,18,.72);
+    }
+    .logo { font-size: 21px; font-weight: 800; letter-spacing:-.5px; }
+    .logo span { color: var(--accent); }
+    nav { display:flex; gap:24px; }
+    nav a { color:var(--muted); text-decoration:none; font-size:14px; }
+    nav a:hover { color:var(--text); }
+    .container { width:min(1120px, 92%); margin:auto; }
+    .hero { padding: 70px 0 40px; text-align:center; }
+    .badge {
+      display:inline-flex; gap:8px; align-items:center; padding:8px 13px;
+      border:1px solid rgba(124,92,255,.35); border-radius:999px;
+      background:rgba(124,92,255,.09); color:#c9c0ff; font-size:13px;
+    }
+    h1 { font-size:clamp(40px, 7vw, 72px); line-height:.98; margin:22px auto 18px; max-width:850px; letter-spacing:-3px; }
+    .gradient { background:linear-gradient(90deg,#fff,#a99bff,#63e6c4); -webkit-background-clip:text; color:transparent; }
+    .hero p { color:var(--muted); max-width:670px; margin:auto; font-size:17px; line-height:1.6; }
+    .app {
+      display:grid; grid-template-columns: 1.05fr .95fr; gap:18px; margin:36px 0 70px;
+    }
+    .card {
+      background:linear-gradient(180deg,rgba(21,25,41,.94),rgba(13,16,27,.94));
+      border:1px solid var(--line); border-radius:20px; padding:24px; box-shadow:var(--shadow);
+    }
+    .card h2 { margin:0 0 7px; font-size:19px; }
+    .sub { color:var(--muted); font-size:13px; margin-bottom:20px; }
+    .drop {
+      border:1.5px dashed #3a4058; border-radius:16px; min-height:190px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding:25px; cursor:pointer; transition:.2s;
+    }
+    .drop:hover { border-color:var(--accent); background:rgba(124,92,255,.05); }
+    .mic { font-size:38px; margin-bottom:10px; }
+    input[type=file] { display:none; }
+    .btn {
+      border:0; border-radius:11px; padding:12px 16px; color:white; cursor:pointer;
+      font-weight:700; background:var(--accent); transition:.2s;
+    }
+    .btn:hover { transform:translateY(-1px); filter:brightness(1.08); }
+    .btn.secondary { background:#252b40; color:#dfe3f5; }
+    .btn.green { background:var(--accent2); color:#06120f; }
+    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .field { margin-top:18px; }
+    label { display:block; font-size:13px; color:#c7cce0; margin-bottom:8px; }
+    input[type=text], textarea, select {
+      width:100%; background:#0b0e18; border:1px solid var(--line); color:var(--text);
+      border-radius:11px; padding:12px; outline:none;
+    }
+    textarea { min-height:125px; resize:vertical; line-height:1.5; }
+    input:focus, textarea:focus, select:focus { border-color:var(--accent); }
+    .notice {
+      display:flex; gap:10px; padding:12px; border-radius:11px;
+      background:rgba(255,180,70,.07); border:1px solid rgba(255,180,70,.18);
+      color:#d9c9a9; font-size:12px; line-height:1.45; margin-top:18px;
+    }
+    .voices { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:70px; }
+    .voice {
+      border:1px solid var(--line); background:rgba(16,19,31,.8); border-radius:16px; padding:18px;
+    }
+    .avatar {
+      width:46px; height:46px; border-radius:50%; display:grid; place-items:center;
+      background:linear-gradient(135deg,#7c5cff,#20d3a7); font-weight:800; margin-bottom:12px;
+    }
+    .voice h3 { margin:0 0 5px; font-size:15px; }
+    .voice p { margin:0 0 14px; color:var(--muted); font-size:12px; }
+    .pill { display:inline-block; padding:5px 8px; border-radius:7px; background:#20263a; color:#b9c1da; font-size:11px; }
+    .output { margin-top:18px; display:none; }
+    audio { width:100%; margin-top:10px; }
+    .status { font-size:12px; color:var(--accent2); margin-top:10px; }
+    footer { border-top:1px solid var(--line); padding:28px 0; color:var(--muted); font-size:12px; text-align:center; }
+    @media(max-width:800px) {
+      .app { grid-template-columns:1fr; }
+      .voices { grid-template-columns:1fr; }
+      nav { display:none; }
+      h1 { letter-spacing:-2px; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">Vox<span>Forge</span> AI</div>
+  <nav>
+    <a href="#studio">Studio</a>
+    <a href="#voices">Voices</a>
+    <a href="#safety">Safety</a>
+  </nav>
+  <button class="btn secondary" onclick="alert('Sign-in would connect to your backend.')">Sign in</button>
+</header>
+
+<main class="container">
+  <section class="hero">
+    <div class="badge">✦ AI Voice Studio</div>
+    <h1>Create natural <span class="gradient">AI voices</span> from authorized recordings.</h1>
+    <p>Upload a voice you have permission to use, create a voice profile, and turn text into expressive speech.</p>
+  </section>
+
+  <section class="app" id="studio">
+    <div class="card">
+      <h2>1. Create a voice</h2>
+      <div class="sub">Upload a clean recording of a voice you own or have permission to clone.</div>
+
+      <label class="drop" for="voiceFile">
+        <div class="mic">🎙️</div>
+        <strong id="fileTitle">Drop an audio file here</strong>
+        <span style="color:var(--muted);font-size:12px;margin:7px 0 13px">WAV, MP3 or M4A · Recommended: 30–180 seconds</span>
+        <span class="btn">Choose audio</span>
+      </label>
+      <input id="voiceFile" type="file" accept="audio/*" onchange="fileSelected(this)" />
+
+      <div class="field">
+        <label for="voiceName">Voice name</label>
+        <input id="voiceName" type="text" placeholder="e.g. My Studio Voice" />
+      </div>
+
+      <div class="notice" id="safety">
+        <span>🛡️</span>
+        <span><strong>Consent required.</strong> Only clone voices when you have the speaker's authorization. Do not use this demo to impersonate celebrities, public figures, or other people without permission.</span>
+      </div>
+
+      <div class="row" style="margin-top:18px">
+        <button class="btn green" onclick="createVoice()">Create voice profile</button>
+        <button class="btn secondary" onclick="resetVoice()">Reset</button>
+      </div>
+      <div id="voiceStatus" class="status"></div>
+    </div>
+
+    <div class="card">
+      <h2>2. Generate speech</h2>
+      <div class="sub">Select an authorized voice and enter text to synthesize.</div>
+
+      <div class="field" style="margin-top:0">
+        <label for="voiceSelect">Voice</label>
+        <select id="voiceSelect">
+          <option>My Studio Voice — Authorized</option>
+          <option>Demo Voice — Licensed</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="text">Text</label>
+        <textarea id="text" placeholder="Type something for your authorized AI voice to say..."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="speed">Speed: <span id="speedValue">1.0×</span></label>
+        <input id="speed" type="range" min=".5" max="1.5" value="1" step=".1"
+          style="width:100%" oninput="speedValue.textContent=this.value+'×'" />
+      </div>
+
+      <button class="btn" style="width:100%;margin-top:18px" onclick="generateSpeech()">Generate speech</button>
+
+      <div class="output" id="output">
+        <div style="font-size:13px;font-weight:700">Generated audio</div>
+        <div class="status">Demo playback placeholder — connect your TTS API here.</div>
+        <audio id="player" controls></audio>
+      </div>
+    </div>
+  </section>
+
+  <h2 style="margin-bottom:16px" id="voices">Voice library</h2>
+  <section class="voices">
+    <div class="voice">
+      <div class="avatar">M</div>
+      <h3>My Studio Voice</h3>
+      <p>Your authorized custom voice.</p>
+      <span class="pill">✓ Verified consent</span>
+    </div>
+    <div class="voice">
+      <div class="avatar">D</div>
+      <h3>Demo Voice</h3>
+      <p>Example licensed synthetic voice.</p>
+      <span class="pill">Licensed demo</span>
+    </div>
+    <div class="voice">
+      <div class="avatar">+</div>
+      <h3>Add a voice</h3>
+      <p>Create another authorized voice profile.</p>
+      <button class="btn secondary" onclick="document.getElementById('voiceFile').click()">Upload</button>
+    </div>
+  </section>
+</main>
+
+<footer>
+  VoxForge AI · Voice cloning demo · Add server-side consent verification, authentication, rate limits and a real TTS provider before production use.
+</footer>
+
+<script>
+  function fileSelected(input) {
+    const title = document.getElementById('fileTitle');
+    if (input.files.length) title.textContent = input.files[0].name;
+  }
+
+  function createVoice() {
+    const name = document.getElementById('voiceName').value.trim();
+    const file = document.getElementById('voiceFile').files[0];
+    const status = document.getElementById('voiceStatus');
+
+    if (!file) {
+      status.style.color = '#ff6678';
+      status.textContent = 'Please choose an audio recording first.';
+      return;
+    }
+    if (!name) {
+      status.style.color = '#ff6678';
+      status.textContent = 'Please enter a voice name.';
+      return;
+    }
+    status.style.color = '#20d3a7';
+    status.textContent = '✓ Demo voice profile created. Connect your backend to actually train/clone the voice.';
+    document.getElementById('voiceSelect').insertAdjacentHTML(
+      'beforeend', `<option>${escapeHtml(name)} — Authorized</option>`
+    );
+  }
+
+  function generateSpeech() {
+    const text = document.getElementById('text').value.trim();
+    const output = document.getElementById('output');
+    if (!text) {
+      alert('Enter some text first.');
+      return;
+    }
+    output.style.display = 'block';
+    // Front-end demo only. Replace this section with a fetch() call to your TTS backend.
+    document.querySelector('#output .status').textContent =
+      '✓ Request prepared. Connect a server-side TTS API to return the generated audio.';
+  }
+
+  function resetVoice() {
+    document.getElementById('voiceFile').value = '';
+    document.getElementById('voiceName').value = '';
+    document.getElementById('fileTitle').textContent = 'Drop an audio file here';
+    document.getElementById('voiceStatus').textContent = '';
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+    }[c]));
+  }
+</script>
+</body>
+</html>
