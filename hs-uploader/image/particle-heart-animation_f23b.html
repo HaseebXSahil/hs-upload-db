@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Particle Heart Animation</title>
+<style>
+  /* ---------- Page reset ---------- */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #0E0F0A;            /* warm near-black from image */
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    cursor: crosshair;
+  }
+
+  /* ---------- Canvas full-screen ---------- */
+  #stage {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  /* ---------- Floating UI overlay ---------- */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px 36px;
+    color: #ABB2BF;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #E5C07B;
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+  .brand .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #5EFEFE;
+    box-shadow: 0 0 12px #5EFEFE, 0 0 24px #5EFEFE;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.4); opacity: 0.6; }
+  }
+
+  .hint {
+    font-size: 12px;
+    color: #5C6370;
+    text-align: right;
+    line-height: 1.6;
+  }
+  .hint b { color: #93c5fd; font-weight: 500; }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 11px;
+    color: #5C6370;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .footer .left  { color: #98C379; }
+  .footer .right { color: #5C6370; }
+
+  /* ---------- Stats badge ---------- */
+  .stats {
+    position: fixed;
+    bottom: 70px;
+    left: 36px;
+    display: flex;
+    gap: 18px;
+    pointer-events: none;
+    font-size: 11px;
+    color: #5C6370;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .stats span b {
+    color: #60a5fa;
+    font-weight: 600;
+    margin-left: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+</head>
+<body>
+
+  <canvas id="stage"></canvas>
+
+  <div class="overlay">
+    <div class="top-bar">
+      <div class="brand">
+        <span class="dot"></span>
+        <span>FRONTEND.DEV</span>
+      </div>
+      <div class="hint">
+        <b>Click</b> anywhere to spawn a heart burst<br/>
+        <b>Move</b> mouse to drift the heart
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="left">// particle.heart.js</div>
+      <div class="right">canvas · additive · 60fps</div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <span>FLOAT <b id="floatCount">0</b></span>
+    <span>BURST <b id="burstCount">0</b></span>
+    <span>FPS <b id="fps">0</b></span>
+  </div>
+
+<script>
+/* =========================================================
+   PARTICLE HEART ANIMATION
+   - Ambient floating particles (~140)
+   - Parametric heart curve (16sin^3 t, 13cos t - 5cos2t ...)
+   - Click → spawnHeartBurst(x, y)
+   - Heartbeat pulse + radial glow pool
+   ========================================================= */
+
+const canvas = document.getElementById('stage');
+const ctx = canvas.getContext('2d');
+
+let width, height, dpr;
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  width  = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width  = width  * dpr;
+  canvas.height = height * dpr;
+  canvas.style.width  = width  + 'px';
+  canvas.style.height = height + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener('resize', resize);
+resize();
+
+/* ---------- palette ---------- */
+const BLUE_SHADES = [
+  '#3b82f6', '#60a5fa', // blue-400
+  '#93c5fd', '#2563eb', // blue-600
+  '#bfdbfe', '#1d4ed8', // blue-700
+];
+const GLOW_CORE = '#5EFEFE';
+const FLOAT_COUNT = 140;
+
+/* ---------- heart parametric curve ---------- */
+// x = 16 sin^3 t , y = 13cos t - 5cos2t - 2cos3t - cos4t
+function heartPoint(t, scale) {
+  const x = 16 * Math.pow(Math.sin(t), 3);
+  const y = 13 * Math.cos(t)
+          - 5  * Math.cos(2 * t)
+          - 2  * Math.cos(3 * t)
+          - 1  * Math.cos(4 * t);
+  return { x: x * scale, y: -y * scale }; // flip Y (canvas y goes down)
+}
+
+/* ---------- Particle class ---------- */
+class Particle {
+  constructor(x, y, type) {
+    this.x = x;
+    this.y = y;
+    this.type = type;
+    this.color = BLUE_SHADES[(Math.random() * BLUE_SHADES.length) | 0];
+
+    if (type === 'float') {
+      this.size   = Math.random() * 1.8 + 0.4;
+      this.vx     = (Math.random() - 0.5) * 0.3;
+      this.vy     = (Math.random() - 0.5) * 0.3;
+      this.maxLife = 240 + Math.random() * 240;
+      this.life   = this.maxLife;
+      this.tw     = Math.random() * Math.PI * 2;   // twinkle phase
+    } else { // burst
+      const ang   = Math.random() * Math.PI * 2;
+      const spd   = Math.random() * 4 + 1;
+      this.vx     = Math.cos(ang) * spd;
+      this.vy     = Math.sin(ang) * spd - 0.8;     // slight upward bias
+      this.size   = Math.random() * 2.2 + 0.8;
+      this.maxLife = 80 + Math.random() * 60;
+      this.life   = this.maxLife;
+    }
+  }
+
+  update(dt) {
+    this.x += this.vx * dt;
+    this.y += this.vy * dt;
+
+    if (this.type === 'float') {
+      // gentle Brownian drift
+      this.vx += (Math.random() - 0.5) * 0.02;
+      this.vy += (Math.random() - 0.5) * 0.02;
+      // damping
+      this.vx *= 0.99; this.vy *= 0.99;
+      this.tw += 0.04;
+      // wrap around edges
+      if (this.x < -20) this.x = width + 20;
+      if (this.x > width + 20) this.x = -20;
+      if (this.y < -20) this.y = height + 20;
+      if (this.y > height + 20) this.y = -20;
+    } else {
+      // gravity + drag for bursts
+      this.vy += 0.05;
+      this.vx *= 0.985;
+      this.vy *= 0.985;
+    }
+
+    this.life -= dt;
+  }
+
+  draw(ctx) {
+    const lifeRatio = Math.max(0, this.life / this.maxLife);
+    const alpha = this.type === 'float'
+      ? (0.4 + 0.6 * Math.abs(Math.sin(this.tw))) * lifeRatio
+      : lifeRatio;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.shadowBlur  = 12;
+    ctx.shadowColor = this.color;
+    ctx.fillStyle   = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  get dead() { return this.life <= 0; }
+}
+
+/* ---------- Particle pools ---------- */
+const floatParticles = [];
+const burstParticles = [];
+
+for (let i = 0; i < FLOAT_COUNT; i++) {
+  const p = new Particle(Math.random() * width, Math.random() * height, 'float');
+  p.life = Math.random() * p.maxLife;        // stagger starting life
+  floatParticles.push(p);
+}
+
+function spawnHeartBurst(x, y) {
+  const count = 140;
+  for (let i = 0; i < count; i++) {
+    burstParticles.push(new Particle(x, y, 'burst'));
+  }
+}
+
+/* ---------- Heart shape from particles ---------- */
+const heartParticles = [];
+function buildHeart(cx, cy, scale) {
+  heartParticles.length = 0;
+  const N = 140;
+  for (let i = 0; i < N; i++) {
+    const t = (i / N) * Math.PI * 2;
+    const p = heartPoint(t, scale);
+    heartParticles.push({
+      ox: p.x, oy: p.y,    // offset from center
+      x: cx + p.x,
+      y: cy + p.y,
+      color: BLUE_SHADES[i % BLUE_SHADES.length],
+      size: 1.4 + Math.random() * 1.6,
+      tw: Math.random() * Math.PI * 2,
+    });
+  }
+}
+
+/* ---------- mouse interaction ---------- */
+const mouse = { x: width / 2, y: height / 2, tx: width / 2, ty: height / 2 };
+window.addEventListener('mousemove', e => {
+  mouse.tx = e.clientX;
+  mouse.ty = e.clientY;
+});
+window.addEventListener('touchmove', e => {
+  if (e.touches[0]) {
+    mouse.tx = e.touches[0].clientX;
+    mouse.ty = e.touches[0].clientY;
+  }
+}, { passive: true });
+
+window.addEventListener('click', e => {
+  spawnHeartBurst(e.clientX, e.clientY);
+});
+window.addEventListener('touchend', e => {
+  if (e.changedTouches[0]) {
+    spawnHeartBurst(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+  }
+});
+
+/* ---------- animation loop ---------- */
+let last = performance.now();
+let fpsAcc = 0, fpsFrames = 0, fpsLast = last;
+const floatEl = document.getElementById('floatCount');
+const burstEl = document.getElementById('burstCount');
+const fpsEl   = document.getElementById('fps');
+
+function frame(now) {
+  const dt = Math.min(2, (now - last) / 16.67); // normalize to 60fps frames
+  last = now;
+
+  // smooth mouse follow
+  mouse.x += (mouse.tx - mouse.x) * 0.08;
+  mouse.y += (mouse.ty - mouse.y) * 0.08;
+
+  // heartbeat pulse (sin wave), ~1 beat/sec
+  const beat = 1 + 0.06 * Math.sin(now * 0.005);
+  const heartScale = Math.min(width, height) * 0.012 * beat;
+  const cx = width / 2;
+  const cy = height / 2 - 20;
+
+  // ---- trail / fade background ----
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = 'rgba(14, 15, 10, 0.18)';
+  ctx.fillRect(0, 0, width, height);
+
+  // ---- radial glow pool beneath heart ----
+  ctx.globalCompositeOperation = 'lighter';
+  const glowR = heartScale * 18;
+  const grd = ctx.createRadialGradient(cx, cy + heartScale * 4, 0, cx, cy + heartScale * 4, glowR);
+  grd.addColorStop(0,    'rgba(94, 254, 254, 0.35)');
+  grd.addColorStop(0.4,  'rgba(94, 254, 254, 0.10)');
+  grd.addColorStop(1,    'rgba(94, 254, 254, 0.00)');
+  ctx.fillStyle = grd;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + heartScale * 4, glowR, glowR * 0.4, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // ---- rebuild heart particle positions each frame (so heartbeat works) ----
+  buildHeart(cx, cy, heartScale);
+
+  // ---- draw heart particles (additive) ----
+  for (const p of heartParticles) {
+    p.tw += 0.05;
+    const tw = 0.7 + 0.3 * Math.sin(p.tw);
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = 0.9 * tw;
+    ctx.shadowBlur  = 14;
+    ctx.shadowColor = p.color;
+    ctx.fillStyle   = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size * beat, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // ---- draw ambient floaters ----
+  for (const p of floatParticles) {
+    p.update(dt);
+    p.draw(ctx);
+  }
+
+  // ---- draw bursts ----
+  for (let i = burstParticles.length - 1; i >= 0; i--) {
+    const p = burstParticles[i];
+    p.update(dt);
+    p.draw(ctx);
+    if (p.dead) burstParticles.splice(i, 1);
+  }
+
+  // ---- stats ----
+  fpsFrames++;
+  if (now - fpsLast > 500) {
+    fpsEl.textContent = Math.round((fpsFrames * 1000) / (now - fpsLast));
+    fpsFrames = 0;
+    fpsLast = now;
+  }
+  floatEl.textContent = floatParticles.length;
+  burstEl.textContent = burstParticles.length;
+
+  requestAnimationFrame(frame);
+}
+
+// initial heart build + first frame
+buildHeart(width / 2, height / 2 - 20, Math.min(width, height) * 0.012);
+requestAnimationFrame(frame);
+
+// auto demo burst on load so the user immediately sees it
+setTimeout(() => spawnHeartBurst(width / 2, height / 2 - 20), 600);
+</script>
+</body>
+</html>
