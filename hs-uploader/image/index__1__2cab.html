@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width,
+                   initial-scale=1.0,
+                   maximum-scale=1.0,
+                   user-scalable=no">
+
+    <title>My Music Player</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+        }
+
+        /* =========================
+           MAIN PLAYER
+        ========================= */
+
+        .player {
+            position: relative;
+            width: 100%;
+            height: 100dvh;
+            min-height: 600px;
+            overflow: hidden;
+            background: #000;
+        }
+
+
+        /* =========================
+           FULL HD BACKGROUND
+        ========================= */
+
+        .background {
+            position: absolute;
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+
+            background-image: url("background.jpg");
+
+            /*
+               COVER = full screen
+               IMAGE CENTER = no unwanted shifting
+            */
+
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+
+            /*
+               No blur
+               No artificial zoom
+            */
+
+            filter: none;
+            transform: none;
+
+            z-index: 0;
+        }
+
+
+        /* Dark gradient only */
+
+        .background::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    rgba(0,0,0,0.55) 0%,
+                    rgba(0,0,0,0.10) 35%,
+                    rgba(0,0,0,0.15) 55%,
+                    rgba(0,0,0,0.88) 100%
+                );
+        }
+
+
+        /* =========================
+           CONTENT
+        ========================= */
+
+        .content {
+            position: relative;
+            z-index: 5;
+
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        /* =========================
+           TOP BAR
+        ========================= */
+
+        .top-bar {
+            width: 100%;
+
+            padding:
+                max(20px, env(safe-area-inset-top))
+                18px
+                12px
+                18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .app-title {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+
+            text-shadow:
+                0 2px 8px rgba(0,0,0,0.7);
+        }
+
+        .top-button {
+            width: 44px;
+            height: 44px;
+
+            border: 0;
+            border-radius: 50%;
+
+            color: white;
+            background: rgba(255,255,255,0.15);
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+
+            font-size: 20px;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           PLAYLIST
+        ========================= */
+
+        .playlist {
+            flex: 1;
+
+            width: 100%;
+
+            padding:
+                5px 15px
+                0 15px;
+
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            scrollbar-width: none;
+        }
+
+        .playlist::-webkit-scrollbar {
+            display: none;
+        }
+
+
+        /* Empty message */
+
+        .empty {
+            margin-top: 80px;
+
+            text-align: center;
+
+            color: rgba(255,255,255,0.65);
+
+            line-height: 1.7;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+
+        /* =========================
+           SONG ITEM
+        ========================= */
+
+        .song {
+            width: 100%;
+
+            min-height: 70px;
+
+            padding: 9px 10px;
+
+            margin-bottom: 7px;
+
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            border-radius: 14px;
+
+            background: rgba(0,0,0,0.28);
+
+            border: 1px solid rgba(255,255,255,0.05);
+
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .song:active {
+            transform: scale(0.98);
+        }
+
+        .song.active {
+            background: rgba(255,255,255,0.20);
+
+            border-color:
+                rgba(255,255,255,0.12);
+        }
+
+
+        .song-cover {
+            width: 52px;
+            height: 52px;
+
+            flex-shrink: 0;
+
+            object-fit: cover;
+
+            border-radius: 9px;
+
+            background: #222;
+        }
+
+
+        .song-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .song-name {
+            font-size: 15px;
+            font-weight: 600;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .song-subtitle {
+            margin-top: 5px;
+
+            font-size: 12px;
+
+            color:
+                rgba(255,255,255,0.60);
+        }
+
+
+        .song-play {
+            width: 38px;
+            height: 38px;
+
+            flex-shrink: 0;
+
+            border: 0;
+
+            border-radius: 50%;
+
+            background:
+                rgba(255,255,255,0.13);
+
+            color: white;
+
+            font-size: 15px;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           IMPORT AREA
+        ========================= */
+
+        .import-area {
+            display: flex;
+
+            gap: 9px;
+
+            padding:
+                8px 15px 10px;
+        }
+
+        .import-button {
+            flex: 1;
+
+            min-height: 46px;
+
+            border: 0;
+            border-radius: 13px;
+
+            color: white;
+
+            background:
+                rgba(255,255,255,0.15);
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+
+            font-size: 14px;
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+        .import-button:active {
+            transform: scale(0.97);
+        }
+
+
+        /* =========================
+           BOTTOM PLAYER
+        ========================= */
+
+        .bottom-player {
+            width: 100%;
+
+            padding:
+                8px 20px
+                max(22px, env(safe-area-inset-bottom))
+                20px;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    rgba(0,0,0,0),
+                    rgba(0,0,0,0.45)
+                );
+        }
+
+
+        /* =========================
+           NOW PLAYING
+        ========================= */
+
+        .now-playing {
+            display: flex;
+            align-items: center;
+
+            gap: 12px;
+
+            margin-bottom: 13px;
+        }
+
+        .now-cover {
+            width: 60px;
+            height: 60px;
+
+            flex-shrink: 0;
+
+            object-fit: cover;
+
+            border-radius: 9px;
+
+            background: #222;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.4);
+        }
+
+        .now-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .now-name {
+            font-size: 17px;
+            font-weight: 700;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .now-artist {
+            margin-top: 5px;
+
+            font-size: 12px;
+
+            color:
+                rgba(255,255,255,0.60);
+        }
+
+        .favorite {
+            width: 45px;
+            height: 45px;
+
+            flex-shrink: 0;
+
+            border: 0;
+            background: transparent;
+
+            color: white;
+
+            font-size: 28px;
+
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           PROGRESS
+        ========================= */
+
+        .progress-row {
+            width: 100%;
+        }
+
+        #progress {
+            width: 100%;
+            height: 4px;
+
+            appearance: none;
+            -webkit-appearance: none;
+
+            background:
+                rgba(255,255,255,0.35);
+
+            border-radius: 10px;
+
+            cursor: pointer;
+        }
+
+        #progress::-webkit-slider-thumb {
+            appearance: none;
+            -webkit-appearance: none;
+
+            width: 12px;
+            height: 12px;
+
+            border-radius: 50%;
+
+            background: white;
+
+            cursor: pointer;
+        }
+
+        #progress::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+
+            border: 0;
+            border-radius: 50%;
+
+            background: white;
+
+            cursor: pointer;
+        }
+
+        .time-row {
+            display: flex;
+            justify-content: space-between;
+
+            margin-top: 5px;
+
+            color:
+                rgba(255,255,255,0.65);
+
+            font-size: 10px;
+        }
+
+
+        /* =========================
+           CONTROLS
+        ========================= */
+
+        .controls {
+            width: 100%;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            gap: 27px;
+
+            margin-top: 12px;
+        }
+
+        .control {
+            width: 35px;
+            height: 45px;
+
+            border: 0;
+            background: transparent;
+
+            color: white;
+
+            font-size: 23px;
+
+            cursor: pointer;
+        }
+
+        .control.active {
+            color: #7dff8c;
+        }
+
+
+        /* Main play */
+
+        .play-button {
+            width: 65px;
+            height: 65px;
+
+            border: 0;
+
+            border-radius: 50%;
+
+            background: white;
+
+            color: black;
+
+            font-size: 25px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 5px 25px
+                rgba(0,0,0,0.35);
+        }
+
+        .play-button:active {
+            transform: scale(0.94);
+        }
+
+
+        /* =========================
+           HIDDEN FILE INPUTS
+        ========================= */
+
+        #songInput,
+        #backgroundInput {
+            display: none;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 420px) {
+
+            .controls {
+                gap: 20px;
+            }
+
+            .play-button {
+                width: 61px;
+                height: 61px;
+            }
+
+            .control {
+                font-size: 21px;
+            }
+
+            .app-title {
+                font-size: 20px;
+            }
+
+        }
+
+
+        /* =========================
+           LANDSCAPE
+        ========================= */
+
+        @media (orientation: landscape) {
+
+            .playlist {
+                max-height: 43vh;
+            }
+
+            .bottom-player {
+                padding-bottom: 12px;
+            }
+
+            .now-cover {
+                width: 48px;
+                height: 48px;
+            }
+
+            .controls {
+                margin-top: 5px;
+            }
+
+            .play-button {
+                width: 52px;
+                height: 52px;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="player">
+
+    <!-- Background -->
+    <div
+        class="background"
+        id="background">
+    </div>
+
+
+    <div class="content">
+
+        <!-- =====================
+             TOP
+        ====================== -->
+
+        <div class="top-bar">
+
+            <div class="app-title">
+                My Music
+            </div>
+
+            <button
+                class="top-button"
+                onclick="chooseBackground()">
+                🖼️
+            </button>
+
+        </div>
+
+
+        <!-- =====================
+             PLAYLIST
+        ====================== -->
+
+        <div
+            class="playlist"
+            id="playlist">
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    🎵
+                </div>
+
+                <div>
+                    No songs imported
+                </div>
+
+                <div>
+                    Tap "Import Songs"
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             IMPORT BUTTONS
+        ====================== -->
+
+        <div class="import-area">
+
+            <button
+                class="import-button"
+                onclick="chooseSongs()">
+
+                🎵 Import Songs
+
+            </button>
+
+
+            <button
+                class="import-button"
+                onclick="chooseBackground()">
+
+                🖼️ Background
+
+            </button>
+
+        </div>
+
+
+        <!-- =====================
+             BOTTOM PLAYER
+        ====================== -->
+
+        <div class="bottom-player">
+
+
+            <!-- Now playing -->
+
+            <div class="now-playing">
+
+                <img
+                    id="nowCover"
+                    class="now-cover"
+                    src="background.jpg"
+                    alt="Cover">
+
+
+                <div class="now-info">
+
+                    <div
+                        class="now-name"
+                        id="nowName">
+
+                        Select a song
+
+                    </div>
+
+
+                    <div
+                        class="now-artist">
+
+                        Local Music
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="favorite"
+                    id="favoriteButton"
+                    onclick="toggleFavorite()">
+
+                    ♡
+
+                </button>
+
+            </div>
+
+
+            <!-- Progress -->
+
+            <div class="progress-row">
+
+                <input
+                    type="range"
+                    id="progress"
+                    min="0"
+                    max="100"
+                    value="0"
+                    step="0.1">
+
+                <div class="time-row">
+
+                    <span id="currentTime">
+                        0:00
+                    </span>
+
+                    <span id="duration">
+                        0:00
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Controls -->
+
+            <div class="controls">
+
+
+                <button
+                    class="control"
+                    id="shuffleButton"
+                    onclick="toggleShuffle()">
+
+                    🔀
+
+                </button>
+
+
+                <button
+                    class="control"
+                    onclick="previousSong()">
+
+                    ⏮
+
+                </button>
+
+
+                <button
+                    class="play-button"
+                    id="playButton"
+                    onclick="togglePlay()">
+
+                    ▶
+
+                </button>
+
+
+                <button
+                    class="control"
+                    onclick="nextSong()">
+
+                    ⏭
+
+                </button>
+
+
+                <button
+                    class="control"
+                    id="repeatButton"
+                    onclick="toggleRepeat()">
+
+                    🔁
+
+                </button>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     FILE INPUTS
+========================= -->
+
+<input
+    type="file"
+    id="songInput"
+    accept="audio/*"
+    multiple>
+
+
+<input
+    type="file"
+    id="backgroundInput"
+    accept="image/*">
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+    /* =========================
+       VARIABLES
+    ========================= */
+
+    let songs = [];
+
+    let currentIndex = -1;
+
+    let shuffle = false;
+
+    let repeat = false;
+
+    let favorite = false;
+
+
+    const audio = new Audio();
+
+    audio.preload = "metadata";
+
+
+    /* =========================
+       ELEMENTS
+    ========================= */
+
+    const playlist =
+        document.getElementById("playlist");
+
+    const nowName =
+        document.getElementById("nowName");
+
+    const nowCover =
+        document.getElementById("nowCover");
+
+    const playButton =
+        document.getElementById("playButton");
+
+    const progress =
+        document.getElementById("progress");
+
+    const currentTime =
+        document.getElementById("currentTime");
+
+    const duration =
+        document.getElementById("duration");
+
+    const background =
+        document.getElementById("background");
+
+    const favoriteButton =
+        document.getElementById("favoriteButton");
+
+    const shuffleButton =
+        document.getElementById("shuffleButton");
+
+    const repeatButton =
+        document.getElementById("repeatButton");
+
+
+    /* =========================
+       DEFAULT BACKGROUND
+    ========================= */
+
+    /*
+       Make sure background.jpg exists
+       in the same folder.
+    */
+
+    background.style.backgroundImage =
+        'url("background.jpg")';
+
+
+    /* =========================
+       CHOOSE SONGS
+    ========================= */
+
+    function chooseSongs() {
+
+        document
+            .getElementById("songInput")
+            .click();
+
+    }
+
+
+    /* =========================
+       SONG IMPORT
+    ========================= */
+
+    document
+        .getElementById("songInput")
+        .addEventListener(
+            "change",
+            function(event) {
+
+                const files =
+                    Array.from(
+                        event.target.files
+                    );
+
+                if (!files.length) {
+                    return;
+                }
+
+
+                files.forEach(file => {
+
+                    songs.push({
+
+                        name:
+                            removeExtension(
+                                file.name
+                            ),
+
+                        url:
+                            URL.createObjectURL(
+                                file
+                            ),
+
+                        file: file
+
+                    });
+
+                });
+
+
+                renderPlaylist();
+
+
+                /*
+                   Automatically load first song
+                */
+
+                if (currentIndex === -1) {
+
+                    loadSong(0);
+
+                }
+
+
+                /*
+                   Reset input so same files
+                   can be selected again.
+                */
+
+                event.target.value = "";
+
+            }
+        );
+
+
+    /* =========================
+       REMOVE FILE EXTENSION
+    ========================= */
+
+    function removeExtension(name) {
+
+        return name.replace(
+            /\.[^/.]+$/,
+            ""
+        );
+
+    }
+
+
+    /* =========================
+       RENDER PLAYLIST
+    ========================= */
+
+    function renderPlaylist() {
+
+        playlist.innerHTML = "";
+
+
+        if (songs.length === 0) {
+
+            playlist.innerHTML = `
+
+                <div class="empty">
+
+                    <div class="empty-icon">
+                        🎵
+                    </div>
+
+                    <div>
+                        No songs imported
+                    </div>
+
+                    <div>
+                        Tap "Import Songs"
+                    </div>
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        songs.forEach(
+            (song, i
