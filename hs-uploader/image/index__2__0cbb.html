@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Congratulations on Your Great Success</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --gold: #d8b36a;
+    --gold-light: #f0d99a;
+    --white: #f8f7f3;
+    --muted: #b8b8bd;
+    --navy: #080d18;
+}
+
+/* ---------------- BODY ---------------- */
+
+body {
+    min-height: 100vh;
+    font-family: "DM Sans", sans-serif;
+    color: var(--white);
+    background:
+        radial-gradient(
+            circle at 50% -10%,
+            rgba(216,179,106,.13),
+            transparent 38%
+        ),
+        linear-gradient(
+            135deg,
+            #080d18,
+            #0c1322 50%,
+            #070b13
+        );
+
+    overflow-x: hidden;
+}
+
+/* ---------------- BACKGROUND LIGHT ---------------- */
+
+.background-light {
+    position: fixed;
+    width: 500px;
+    height: 500px;
+
+    border-radius: 50%;
+
+    background: rgba(216,179,106,.06);
+
+    filter: blur(100px);
+
+    pointer-events: none;
+
+    animation: lightMove 12s ease-in-out infinite alternate;
+}
+
+.background-light.one {
+    top: -250px;
+    left: -180px;
+}
+
+.background-light.two {
+    right: -250px;
+    bottom: -250px;
+
+    animation-delay: 3s;
+}
+
+@keyframes lightMove {
+    from {
+        transform: translate(0,0);
+    }
+
+    to {
+        transform: translate(100px,60px);
+    }
+}
+
+/* ---------------- PARTICLES ---------------- */
+
+.particle {
+    position: fixed;
+
+    width: 2px;
+    height: 2px;
+
+    border-radius: 50%;
+
+    background: rgba(240,217,154,.7);
+
+    pointer-events: none;
+
+    animation: floatParticle linear infinite;
+}
+
+@keyframes floatParticle {
+
+    0% {
+        transform: translateY(0);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: .8;
+    }
+
+    80% {
+        opacity: .8;
+    }
+
+    100% {
+        transform: translateY(-100vh);
+        opacity: 0;
+    }
+}
+
+/* ---------------- LAYOUT ---------------- */
+
+.wrapper {
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 40px 20px;
+
+    position: relative;
+    z-index: 2;
+}
+
+/* ---------------- CARD ---------------- */
+
+.card {
+    width: 900px;
+    max-width: 100%;
+
+    text-align: center;
+
+    padding: 70px 65px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.065),
+            rgba(255,255,255,.025)
+        );
+
+    border: 1px solid rgba(216,179,106,.25);
+
+    border-radius: 24px;
+
+    backdrop-filter: blur(20px);
+
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.07);
+
+    animation: cardAppear 1.2s cubic-bezier(.2,.7,.2,1);
+}
+
+@keyframes cardAppear {
+
+    from {
+        opacity: 0;
+        transform: translateY(35px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---------------- TOP LINE ---------------- */
+
+.top-line {
+    width: 70px;
+    height: 1px;
+
+    margin: 0 auto 30px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--gold),
+        transparent
+    );
+
+    animation: lineAppear 1.5s ease;
+}
+
+@keyframes lineAppear {
+
+    from {
+        width: 0;
+        opacity: 0;
+    }
+
+    to {
+        width: 70px;
+        opacity: 1;
+    }
+}
+
+/* ---------------- ICON ---------------- */
+
+.icon {
+    width: 82px;
+    height: 82px;
+
+    margin: 0 auto 30px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(216,179,106,.4);
+
+    background: rgba(216,179,106,.06);
+
+    font-size: 38px;
+
+    box-shadow:
+        0 0 35px rgba(216,179,106,.08);
+
+    animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+
+    0%,100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-7px);
+    }
+}
+
+/* ---------------- HEADING ---------------- */
+
+.eyebrow {
+    color: var(--gold);
+
+    text-transform: uppercase;
+
+    letter-spacing: 5px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    margin-bottom: 18px;
+}
+
+h1 {
+    font-family: "Playfair Display", serif;
+
+    font-size: clamp(42px, 6vw, 70px);
+
+    line-height: 1.1;
+
+    font-weight: 700;
+
+    letter-spacing: -1px;
+
+    color: var(--white);
+
+    animation: headingReveal 1.3s ease;
+}
+
+@keyframes headingReveal {
+
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ---------------- NAME ---------------- */
+
+.name {
+    margin-top: 22px;
+
+    font-size: 24px;
+
+    font-weight: 600;
+
+    color: var(--gold-light);
+
+    letter-spacing: .5px;
+}
+
+/* ---------------- DIVIDER ---------------- */
+
+.divider {
+    width: 100%;
+    max-width: 500px;
+
+    height: 1px;
+
+    margin: 30px auto;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(216,179,106,.35),
+            transparent
+        );
+}
+
+/* ---------------- MESSAGE ---------------- */
+
+.message {
+    max-width: 700px;
+
+    margin: auto;
+
+    color: var(--muted);
+
+    font-size: 17px;
+
+    line-height: 1.9;
+}
+
+/* ---------------- PRAYER ---------------- */
+
+.prayer {
+    max-width: 720px;
+
+    margin: 38px auto 0;
+
+    padding: 30px;
+
+    text-align: left;
+
+    border-radius: 18px;
+
+    background: rgba(216,179,106,.035);
+
+    border: 1px solid rgba(216,179,106,.14);
+}
+
+.prayer-title {
+    text-align: center;
+
+    color: var(--gold-light);
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 25px;
+
+    margin-bottom: 18px;
+}
+
+.prayer-intro {
+    text-align: center;
+
+    color: var(--muted);
+
+    line-height: 1.8;
+
+    margin-bottom: 22px;
+}
+
+/* ---------------- PRAYER LIST ---------------- */
+
+.prayer-list {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+}
+
+.prayer-item {
+    padding: 14px 16px;
+
+    border-left: 2px solid rgba(216,179,106,.55);
+
+    background: rgba(255,255,255,.025);
+
+    color: #c9c9ce;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    transition: .3s;
+}
+
+.prayer-item:hover {
+    background: rgba(216,179,106,.07);
+
+    transform: translateX(4px);
+}
+
+/* ---------------- AMEEN ---------------- */
+
+.ameen {
+    margin-top: 25px;
+
+    text-align: center;
+
+    color: var(--gold-light);
+
+    font-family: "Playfair Display", serif;
+
+    font-size: 20px;
+
+    font-style: italic;
+}
+
+/* ---------------- BUTTON ---------------- */
+
+.celebrate-btn {
+    margin-top: 38px;
+
+    padding: 14px 30px;
+
+    border-radius: 50px;
+
+    border: 1px solid rgba(216,179,106,.5);
+
+    background: transparent;
+
+    color: var(--gold-light);
+
+    font-family: "DM Sans", sans-serif;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    letter-spacing: .5px;
+
+    cursor: pointer;
+
+    transition: .35s;
+}
+
+.celebrate-btn:hover {
+    background: var(--gold);
+
+    color: #10141c;
+
+    box-shadow:
+        0 0 30px rgba(216,179,106,.25);
+
+    transform: translateY(-2px);
+}
+
+/* ---------------- FOOTER ---------------- */
+
+.footer {
+    margin-top: 30px;
+
+    color: #777b84;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+}
+
+/* ---------------- CONFETTI ---------------- */
+
+.confetti {
+    position: fixed;
+
+    top: -20px;
+
+    width: 6px;
+    height: 12px;
+
+    z-index: 20;
+
+    pointer-events: none;
+
+    animation: confettiFall 4s linear forwards;
+}
+
+@keyframes confettiFall {
+
+    to {
+        transform:
+            translateY(110vh)
+            translateX(var(--drift))
+            rotate(600deg);
+
+        opacity: 0;
+    }
+}
+
+/* ---------------- FIREWORK ---------------- */
+
+.firework {
+    position: fixed;
+
+    width: 5px;
+    height: 5px;
+
+    border-radius: 50%;
+
+    background: var(--gold-light);
+
+    z-index: 25;
+
+    pointer-events: none;
+
+    box-shadow:
+        0 0 10px var(--gold-light),
+        0 0 25px var(--gold);
+
+    animation: firework 1.3s ease-out forwards;
+}
+
+@keyframes firework {
+
+    0% {
+        transform: scale(.2);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(18);
+        opacity: 0;
+    }
+}
+
+/* ---------------- MOBILE ---------------- */
+
+@media(max-width: 700px) {
+
+    .card {
+        padding: 45px 22px;
+        border-radius: 20px;
+    }
+
+    .icon {
+        width: 70px;
+        height: 70px;
+        font-size: 32px;
+    }
+
+    .eyebrow {
+        letter-spacing: 3px;
+    }
+
+    h1 {
+        font-size: 40px;
+    }
+
+    .name {
+        font-size: 20px;
+    }
+
+    .message {
+        font-size: 15px;
+    }
+
+    .prayer {
+        padding: 22px 16px;
+    }
+
+    .prayer-list {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="background-light one"></div>
+<div class="background-light two"></div>
+
+<div class="wrapper">
+
+    <main class="card">
+
+        <div class="top-line"></div>
+
+        <div class="icon">
+            🏆
+        </div>
+
+        <div class="eyebrow">
+            A Moment Worth Celebrating
+        </div>
+
+        <h1>
+            Congratulations to You<br>
+            on Your Great Success
+        </h1>
+
+        <!-- CHANGE THE NAME HERE -->
+        <div class="name">
+            Dear Champion
+        </div>
+
+        <div class="divider"></div>
+
+        <p class="message">
+            Heartfelt congratulations on this remarkable achievement.
+            Your dedication, perseverance and sincere efforts have
+            brought you to this wonderful moment.
+
+            May this success be a beautiful milestone in your journey
+            and the beginning of many greater achievements to come.
+        </p>
+
+
+        <!-- PRAYERS -->
+
+        <section class="prayer">
+
+            <h2 class="prayer-title">
+                With Prayers & Best Wishes
+            </h2>
+
+            <p class="prayer-intro">
+                May Allah bless you abundantly, guide you toward what
+                is best, and make every step of your journey meaningful
+                and successful.
+            </p>
+
+            <div class="prayer-list">
+
+                <div class="prayer-item">
+                    May Allah bless your future with success,
+                    happiness and prosperity.
+                </div>
+
+                <div class="prayer-item">
+                    May He increase you in knowledge, wisdom
+                    and understanding.
+                </div>
+
+                <div class="prayer-item">
+                    May Allah put barakah in your efforts,
+                    achievements and time.
+                </div>
+
+                <div class="prayer-item">
+                    May He open doors of opportunities beyond
+                    your expectations.
+                </div>
+
+                <div class="prayer-item">
+                    May Allah grant you strength and patience
+                    whenever you face challenges.
+                </div>
+
+                <div class="prayer-item">
+                    May He protect you from difficulties and
+                    surround you with sincere people.
+                </div>
+
+                <div class="prayer-item">
+                    May Allah fulfill your good wishes and
+                    make your dreams a reality.
+                </div>
+
+                <div class="prayer-item">
+                    May He grant you peace, contentment and
+                    countless blessings throughout your life.
+                </div>
+
+            </div>
+
+            <div class="ameen">
+                May Allah bless your journey and grant you
+                success in this world and the Hereafter. Ameen.
+            </div>
+
+        </section>
+
+
+        <button class="celebrate-btn" onclick="celebrate()">
+            Celebrate This Achievement
+        </button>
+
+        <div class="footer">
+            WITH HEARTFELT CONGRATULATIONS & BEST WISHES
+        </div>
+
+    </main>
+
+</div>
+
+
+<script>
+
+/* ---------------- PARTICLES ---------------- */
+
+for (let i = 0; i < 70; i++) {
+
+    const particle = document.createElement("div");
+
+    particle.className = "particle";
+
+    particle.style.left =
+        Math.random() * 100 + "vw";
+
+    particle.style.top =
+        (Math.random() * 100 + 100) + "vh";
+
+    particle.style.animationDuration =
+        (8 + Math.random() * 12) + "s";
+
+    particle.style.animationDelay =
+        Math.random() * 10 + "s";
+
+    document.body.appendChild(particle);
+}
+
+
+/* ---------------- CONFETTI ---------------- */
+
+function createConfetti() {
+
+    for (let i = 0; i < 100; i++) {
+
+        const piece =
+            document.createElement("div");
+
+        piece.className = "confetti";
+
+        piece.style.left =
+            Math.random() * 100 + "vw";
+
+        piece.style.background =
+            Math.random() > .5
+            ? "#d8b36a"
+            : "#f0d99a";
+
+        piece.style.animationDuration =
+            (2.5 + Math.random() * 2.5) + "s";
+
+        piece.style.setProperty(
+            "--drift",
+            (Math.random() * 250 - 125) + "px"
+        );
+
+        document.body.appendChild(piece);
+
+        setTimeout(() => {
+            piece.remove();
+        }, 5500);
+    }
+}
+
+
+/* ---------------- FIREWORKS ---------------- */
+
+function createFirework() {
+
+    const firework =
+        document.createElement("div");
+
+    firework.className = "firework";
+
+    firework.style.left =
+        (15 + Math.random() * 70) + "vw";
+
+    firework.style.top =
+        (10 + Math.random() * 55) + "vh";
+
+    document.body.appendChild(firework);
+
+    setTimeout(() => {
+        firework.remove();
+    }, 1500);
+}
+
+
+/* ---------------- CELEBRATION ---------------- */
+
+function celebrate() {
+
+    createConfetti();
+
+    for (let i = 0; i < 12; i++) {
+
+        setTimeout(
+            createFirework,
+            i * 180
+        );
+
+    }
+}
+
+</script>
+
+</body>
+</html>
