@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>FIA SIM DATABASE • INFO V3</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+    body {
+      background-color: #0b1120;
+      background-image: radial-gradient(circle at top, #1e293b 0%, #0b1120 70%);
+      color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+    .dev-input {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid #334155;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+    .dev-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+      outline: none;
+    }
+    .pro-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .pro-card:hover { border-color: rgba(59, 130, 246, 0.4); }
+    .feature-card {
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px dashed #334155;
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    .feature-card:hover {
+      background: rgba(30, 41, 59, 0.6);
+      border-style: solid;
+      border-color: #3b82f6;
+    }
+    .skeleton {
+      background: linear-gradient(110deg, #1e293b 8%, #334155 18%, #1e293b 33%);
+      background-size: 200% 100%;
+      animation: 1.5s shine linear infinite;
+    }
+    @keyframes shine { to { background-position-x: -200%; } }
+    .watermark {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      opacity: 0.03;
+      font-size: 3rem;
+      font-weight: 800;
+      pointer-events: none;
+      z-index: 0;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body class="relative">
+
+  <div class="p-4 md:p-8 flex-grow">
+    <nav class="flex justify-center items-center max-w-6xl mx-auto mb-12 border-b border-slate-800 pb-5">
+      <div class="flex items-center gap-3">
+        <div class="bg-gradient-to-tr from-blue-600 to-cyan-500 text-white p-2.5 rounded-xl shadow-lg"><i class="fas fa-database"></i></div>
+        <div>
+          <h1 class="font-extrabold text-xl md:text-2xl tracking-tight text-white">FIA <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">SIM DATABASE</span></h1>
+        </div>
+      </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto z-10 relative">
+      <!-- Search card -->
+      <div class="bg-slate-900/50 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl mb-8 backdrop-blur-md">
+        <div class="text-center mb-6">
+          <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400 mb-2">Universal Search</h2>
+          <p class="text-xs text-slate-500">Enter SIM (e.g. 03xxxx) or CNIC (e.g. 36301xxxxxx) without dashes</p>
+        </div>
+        <div class="relative flex flex-col md:flex-row gap-4">
+          <div class="relative w-full">
+            <i class="fas fa-search absolute left-5 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg"></i>
+            <input type="text" id="searchInput" placeholder="Phone number or CNIC..." class="dev-input w-full pl-14 pr-6 py-5 rounded-2xl text-lg text-white font-semibold">
+          </div>
+          <button onclick="searchData()" class="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white px-10 py-5 rounded-2xl font-bold text-lg transition-all shadow-[0_0_20px_rgba(59,130,246,0.3)] flex items-center justify-center gap-3 whitespace-nowrap">
+            Search <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+        <div class="mt-6 flex items-center gap-3 overflow-x-auto pb-2" id="historyContainer">
+          <span class="text-xs text-slate-500 font-bold uppercase tracking-wider"><i class="fas fa-history mr-1"></i> Recent:</span>
+        </div>
+      </div>
+
+      <div id="statusArea" class="hidden text-center py-4 px-6 rounded-2xl font-bold text-md mb-8 shadow-lg border"></div>
+
+      <!-- Welcome features (hidden when results appear) -->
+      <div id="welcomeFeatures" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 mt-12">
+        <div class="feature-card text-center">
+          <div class="w-14 h-14 bg-blue-500/10 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-database"></i></div>
+          <h3 class="font-bold text-white mb-2">Live Database</h3>
+          <p class="text-sm text-slate-400">Fetching real-time data from secure servers instantly.</p>
+        </div>
+        <div class="feature-card text-center">
+          <div class="w-14 h-14 bg-green-500/10 text-green-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-bolt"></i></div>
+          <h3 class="font-bold text-white mb-2">Lightning Fast</h3>
+          <p class="text-sm text-slate-400">Optimized API routing ensures results within seconds.</p>
+        </div>
+        <div class="feature-card text-center">
+          <div class="w-14 h-14 bg-purple-500/10 text-purple-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fas fa-map-marked-alt"></i></div>
+          <h3 class="font-bold text-white mb-2">Location Mapping</h3>
+          <p class="text-sm text-slate-400">Automatically plots the registered address onto Google Maps.</p>
+        </div>
+      </div>
+
+      <div id="dashboardSummary" class="hidden grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 flex items-center gap-5 backdrop-blur-md">
+          <div class="bg-blue-500/20 text-blue-400 p-4 rounded-xl"><i class="fas fa-users text-2xl"></i></div>
+          <div><p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Records</p><p class="text-2xl font-black text-white" id="dashTotal">0</p></div>
+        </div>
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 flex items-center gap-5 backdrop-blur-md">
+          <div class="bg-green-500/20 text-green-400 p-4 rounded-xl"><i class="fas fa-check-circle text-2xl"></i></div>
+          <div><p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Search Status</p><p class="text-xl font-bold text-green-400">Success</p></div>
+        </div>
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-5 flex items-center gap-5 backdrop-blur-md">
+          <div class="bg-purple-500/20 text-purple-400 p-4 rounded-xl"><i class="fas fa-shield-alt text-2xl"></i></div>
+          <div><p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Developer</p><p class="text-xl font-bold text-white">FIA</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="resultsContainer" class="max-w-5xl mx-auto space-y-8 pb-10 relative"></div>
+  </div>
+
+  <footer class="mt-auto border-t border-slate-800/80 pt-6 pb-8 text-center relative z-10 w-full bg-[#0b1120]">
+    <p class="text-slate-500 text-sm font-bold tracking-wide">© 2026 FIA SIM DATABASE. All Rights Reserved.</p>
+    <p class="text-slate-600 text-xs mt-1 font-medium">Designed & Developed by <span class="text-blue-400 font-bold">FIA</span></p>
+  </footer>
+
+  
+  </a>
+
+  <script>
+(function(){
+"use strict";
+var API="https://wasifali.biz.id/public_apis/sim-info-api.php?search=";
+var $=function(s){return document.querySelector(s)};
+
+function showStatus(m,t){var a=$('#statusArea');a.style.display='block';a.innerHTML=m;a.className="text-center py-4 px-6 rounded-2xl font-bold text-md mb-8 shadow-lg border";if(t==='loading')a.classList.add('bg-blue-900/40','text-blue-400','border-blue-500/40');else if(t==='error')a.classList.add('bg-red-900/40','text-red-400','border-red-500/40');else if(t==='success')a.classList.add('bg-emerald-900/40','text-emerald-400','border-emerald-500/40')}
+
+function getNetworkInfo(n){var c=String(n||'').replace(/[^0-9]/g,'');if(c.indexOf('030')===0)return{name:'Jazz',color:'text-orange-500',bg:'bg-orange-500/10'};if(c.indexOf('031')===0)return{name:'Zong',color:'text-green-500',bg:'bg-green-500/10'};if(c.indexOf('032')===0)return{name:'Warid/Jazz',color:'text-red-400',bg:'bg-red-400/10'};if(c.indexOf('033')===0)return{name:'Ufone',color:'text-orange-400',bg:'bg-orange-400/10'};if(c.indexOf('034')===0)return{name:'Telenor',color:'text-blue-400',bg:'bg-blue-400/10'};return{name:'Unknown',color:'text-slate-400',bg:'bg-slate-700'}}
+
+function getProvince(a){var ad=String(a||'').toLowerCase();if(ad.indexOf('punjab')>-1||ad.indexOf('lahore')>-1||ad.indexOf('multan')>-1||ad.indexOf('faisalabad')>-1||ad.indexOf('rawalpindi')>-1)return'Punjab';if(ad.indexOf('sindh')>-1||ad.indexOf('karachi')>-1||ad.indexOf('hyderabad')>-1)return'Sindh';if(ad.indexOf('kpk')>-1||ad.indexOf('peshawar')>-1||ad.indexOf('abbottabad')>-1)return'KPK';if(ad.indexOf('balochistan')>-1||ad.indexOf('quetta')>-1)return'Balochistan';if(ad.indexOf('islamabad')>-1)return'Islamabad';return'Pakistan'}
+
+function getNetworkColor(n){var nm=String(n||'').toLowerCase();if(nm.indexOf('jazz')>-1)return'text-red-500';if(nm.indexOf('zong')>-1)return'text-green-500';if(nm.indexOf('ufone')>-1)return'text-orange-400';if(nm.indexOf('telenor')>-1)return'text-blue-400';if(nm.indexOf('warid')>-1)return'text-red-400';return'text-slate-400'}
+function getNetworkBg(n){var nm=String(n||'').toLowerCase();if(nm.indexOf('jazz')>-1)return'bg-red-500/10';if(nm.indexOf('zong')>-1)return'bg-green-500/10';if(nm.indexOf('ufone')>-1)return'bg-orange-400/10';if(nm.indexOf('telenor')>-1)return'bg-blue-400/10';if(nm.indexOf('warid')>-1)return'bg-red-400/10';return'bg-slate-700'}
+
+function escHtml(t){return String(t==null?'':t).replace(/[&<>"]/g,function(m){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]})}
+function escAttr(t){return String(t==null?'':t).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/\n/g,' ').replace(/\r/g,'')}
+
+function showSkeleton(){$('#welcomeFeatures').style.display='none';$('#dashboardSummary').style.display='none';$('#resultsContainer').innerHTML='<div class="pro-card p-6 md:p-8 w-full flex flex-col lg:flex-row gap-8"><div class="flex-1 space-y-6"><div class="skeleton h-10 w-1/3 rounded-lg mb-6"></div><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div class="skeleton h-20 w-full rounded-xl"></div><div class="skeleton h-20 w-full rounded-xl"></div><div class="skeleton h-20 w-full rounded-xl"></div><div class="skeleton h-20 w-full rounded-xl"></div></div></div><div class="lg:w-2/5 skeleton h-64 rounded-xl"></div></div>'}
+
+window.searchData=async function(){
+var raw=$('#searchInput').value.trim();
+if(!raw){showStatus('<i class="fas fa-exclamation-triangle mr-2"></i>Please enter phone or CNIC.','error');return}
+saveHistory(raw);
+showSkeleton();
+showStatus('<i class="fas fa-circle-notch fa-spin mr-2"></i>Fetching data...','loading');
+
+var controller=new AbortController();
+var timer=setTimeout(function(){controller.abort()},20000);
+
+try{
+var r=await fetch(API+encodeURIComponent(raw),{
+method:'GET',
+headers:{'Accept':'application/json'},
+signal:controller.signal
+});
+clearTimeout(timer);
+
+if(!r.ok)throw new Error('HTTP '+r.status);
+
+// ✅ FIX: JSON text لے کر صاف کریں
+var text=await r.text();
+
+// BOM اور whitespace ہٹائیں
+text=text.replace(/^\uFEFF/,'').trim();
+
+// JSON کے بعد اگر extra کچھ ہو تو صرف پہلا object رکھیں
+var startIdx=text.indexOf('{');
+var endIdx=text.lastIndexOf('}');
+if(startIdx>-1&&endIdx>-1){
+text=text.substring(startIdx,endIdx+1);
+}
+
+var j;
+try{
+j=JSON.parse(text);
+}catch(parseErr){
+console.error('Raw response:',text.substring(0,500));
+throw new Error('Invalid JSON from API');
+}
+
+if(!j.success||!Array.isArray(j.records)||j.records.length===0){
+$('#resultsContainer').innerHTML="";
+$('#dashboardSummary').style.display='none';
+showStatus('<i class="fas fa-times-circle mr-2"></i>No record found.','error');
+return;
+}
+
+// ✅ FIX: صرف 5 مطلوبہ فیلڈز لیں
+var records=j.records.map(function(rec){
+return{
+name:String(rec.name||'N/A').trim(),
+mobile:String(rec.mobile||'N/A').trim(),
+cnic:String(rec.cnic||'N/A').trim(),
+address:String(rec.address||'Pakistan').trim(),
+network:String(rec.network||'Unknown').trim()
+};
+});
+
+showStatus('<i class="fas fa-check-circle mr-2 text-xl"></i>Found <b>'+records.length+'</b> record(s).','success');
+$('#dashboardSummary').style.display='grid';
+$('#dashTotal').innerText=records.length;
+displayRecords(records)
+
+}catch(e){
+clearTimeout(timer);
+console.error(e);
+$('#resultsContainer').innerHTML="";
+$('#dashboardSummary').style.display='none';
+
+if(e.name==='AbortError'){
+showStatus('<i class="fas fa-clock mr-2"></i>Request timed out. Try again.','error');
+}else if(e.message&&e.message.indexOf('Failed to fetch')>-1){
+showStatus('<i class="fas fa-wifi mr-2"></i>Cannot reach API. Check CORS/Cloudflare.','error');
+}else{
+showStatus('<i class="fas fa-wifi mr-2"></i>Network error: '+e.message,'error');
+}
+}
+};
+
+function displayRecords(records){
+var c=$('#resultsContainer');
+var html='';
+records.forEach(function(r,i){
+var name=r.name||'N/A';
+var mobile=r.mobile||'N/A';
+var cnic=r.cnic||'N/A';
+var address=r.address||'Pakistan';
+var network=r.network||'Unknown';
+
+// Network color/bg
+var net={
+name:network,
+color:getNetworkColor(network),
+bg:getNetworkBg(network)
+};
+
+var prov=getProvince(address);
+var mapUrl='https://maps.google.com/maps?q='+encodeURIComponent(address)+'&t=&z=14&ie=UTF8&iwloc=&output=embed';
+var mapLink='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(address);
+
+html+='<div class="pro-card p-6 md:p-8 relative overflow-hidden" id="rc-'+i+'">'
++'<div class="watermark text-slate-800">WASIF ALI</div>'
++'<div class="flex flex-wrap justify-between items-center border-b border-slate-700 pb-4 mb-6 relative z-10 gap-4">'
++'<div class="flex items-center gap-3 flex-wrap">'
++'<span class="bg-blue-600 text-white text-xs font-bold px-4 py-1.5 rounded-lg">#'+(i+1)+'</span>'
++'<span class="'+net.bg+' '+net.color+' text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fas fa-sim-card"></i> '+escHtml(net.name)+'</span>'
++'<span class="bg-slate-700 text-slate-300 text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fas fa-map-marker-alt text-red-400"></i> '+escHtml(prov)+'</span>'
++'</div>'
++'<div class="flex gap-2">'
++'<button onclick="copyData(\''+escAttr(name)+'\',\''+escAttr(mobile)+'\',\''+escAttr(cnic)+'\',\''+escAttr(address)+'\',\''+escAttr(network)+'\')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 px-4 py-2 rounded-lg text-sm font-semibold"><i class="fas fa-copy"></i> <span class="hidden sm:inline">Copy</span></button>'
++'<button onclick="downloadPDF(\'rc-'+i+'\',\''+escAttr(mobile)+'\')" class="bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/30 text-blue-400 px-4 py-2 rounded-lg text-sm font-semibold"><i class="fas fa-file-pdf"></i> <span class="hidden sm:inline">PDF</span></button>'
++'</div></div>'
++'<div class="flex flex-col lg:flex-row gap-8 relative z-10">'
++'<div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-5">'
++'<div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700/50"><p class="text-blue-400 text-[11px] font-bold uppercase tracking-wider mb-1"><i class="fas fa-user mr-1"></i>Name</p><p class="font-bold text-xl text-white">'+escHtml(name)+'</p></div>'
++'<div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700/50"><p class="text-blue-400 text-[11px] font-bold uppercase tracking-wider mb-1"><i class="fas fa-phone mr-1"></i>Mobile</p><p class="font-bold text-xl text-green-400">'+escHtml(mobile)+'</p></div>'
++'<div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700/50"><p class="text-blue-400 text-[11px] font-bold uppercase tracking-wider mb-1"><i class="fas fa-fingerprint mr-1"></i>CNIC</p><p class="font-bold text-xl text-white">'+escHtml(cnic)+'</p></div>'
++'<div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700/50"><p class="text-blue-400 text-[11px] font-bold uppercase tracking-wider mb-1"><i class="fas fa-sim-card mr-1"></i>Network</p><p class="font-bold text-xl '+net.color+'">'+escHtml(network)+'</p></div>'
++'<div class="bg-slate-800/40 p-5 rounded-2xl border border-slate-700/50 md:col-span-2"><p class="text-blue-400 text-[11px] font-bold uppercase tracking-wider mb-1"><i class="fas fa-home mr-1"></i>Address</p><p class="font-semibold text-md text-slate-300">'+escHtml(address)+'</p></div>'
++'</div>'
++'<div class="lg:w-2/5 flex flex-col gap-4">'
++'<div class="h-64 lg:h-full bg-slate-900 rounded-2xl overflow-hidden border border-slate-700 p-1"><iframe width="100%" height="100%" frameborder="0" src="'+mapUrl+'" style="border:0;border-radius:12px" allowfullscreen loading="lazy"></iframe></div>'
++'<a href="'+mapLink+'" target="_blank" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white text-center py-4 rounded-2xl text-sm font-bold flex items-center justify-center gap-2"><i class="fas fa-location-arrow text-red-500"></i>Open in Google Maps</a>'
++'</div></div></div>';
+});
+c.innerHTML=html;
+}
+
+// ✅ FIX: copyData بھی network کے ساتھ
+window.copyData=function(n,m,c,a,net){
+var t='=== WASIF ALI SIM DATABASE ===\n\n'
++'Name: '+n+'\n'
++'Mobile: '+m+'\n'
++'CNIC: '+c+'\n'
++'Network: '+(net||'N/A')+'\n'
++'Address: '+a+'\n\n'
++'==========================';
+if(navigator.clipboard&&navigator.clipboard.writeText){
+navigator.clipboard.writeText(t).then(function(){alert('Copied!')}).catch(function(){fallbackCopy(t)})
+}else{fallbackCopy(t)}
+};
+function fallbackCopy(t){var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');alert('Copied!')}catch(e){alert('Copy failed')}document.body.removeChild(ta)}
+
+window.downloadPDF=function(id,mob){
+var el=document.getElementById(id);
+if(!el)return;
+html2pdf().set({margin:0.3,filename:'WASIF_ALI_'+mob+'.pdf',image:{type:'jpeg',quality:0.98},html2canvas:{scale:2,useCORS:true,backgroundColor:'#0f172a'},jsPDF:{unit:'in',format:'letter',orientation:'landscape'}}).from(el).save()
+};
+
+function saveHistory(q){try{var h=JSON.parse(localStorage.getItem('wa_sim_history')||'[]');h=h.filter(function(x){return x!==q});h.unshift(q);if(h.length>5)h.pop();localStorage.setItem('wa_sim_history',JSON.stringify(h))}catch(e){}renderHistory()}
+function renderHistory(){var h=[];try{h=JSON.parse(localStorage.getItem('wa_sim_history')||'[]')}catch(e){}var c=$('#historyContainer');c.innerHTML='<span class="text-xs text-slate-500 font-bold uppercase tracking-wider"><i class="fas fa-history mr-1"></i> Recent:</span>';h.forEach(function(i){var t=document.createElement('span');t.className="bg-slate-800/80 hover:bg-slate-700 cursor-pointer text-slate-300 text-xs px-4 py-1.5 rounded-full border border-slate-700 transition-colors shadow-sm font-medium";t.innerText=i;t.onclick=function(){$('#searchInput').value=i;window.searchData()};c.appendChild(t)})}
+
+window.openPanel=function(){$('#sidePanel').classList.add('open');$('#overlay').classList.add('show')};
+window.closePanel=function(){$('#sidePanel').classList.remove('open');$('#overlay').classList.remove('show')};
+
+document.addEventListener('DOMContentLoaded',function(){
+renderHistory();
+$('#welcomeFeatures').style.display='grid';
+$('#searchInput').addEventListener('keydown',function(e){if(e.key==='Enter')window.searchData()});
+});
+})();
+</script>
+</body>
+</html>
