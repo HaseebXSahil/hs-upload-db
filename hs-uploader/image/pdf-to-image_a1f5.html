@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0b0d">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PDF to Image Converter - FAK LAB | Free Online Tool</title>
+<meta name="description" content="Convert PDF pages to JPG or PNG images online for free. Extract any page from a PDF as a high-quality image — 100% in your browser, no upload needed.">
+<meta name="keywords" content="pdf to image, pdf to jpg, pdf to png, convert pdf to image, extract pdf pages, FAK LAB">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="PDF to Image Converter - FAK LAB">
+<meta property="og:description" content="Convert PDF pages to JPG or PNG images — free, fast, 100% browser-based.">
+<meta property="og:image" content="https://faizankhichi.me/android-chrome-512x512.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
+
+<style>
+/* ═══ SWISS TOKENS ═══ */
+:root {
+  --sw-font: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --sw-font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+  --sw-display: clamp(3rem, 8vw, 7rem);
+  --sw-h1: clamp(2.25rem, 5vw, 4rem);
+  --sw-h2: clamp(1.6rem, 3.2vw, 2.6rem);
+  --sw-h3: 1.25rem;
+  --sw-body: 1rem;
+  --sw-small: .875rem;
+  --sw-caption: .75rem;
+  --sw-kicker: .72rem;
+  --sw-leading-display: .88;
+  --sw-leading-head: 1.05;
+  --sw-leading-body: 1.6;
+  --sw-track-tight: -.04em;
+  --sw-track-kicker: .18em;
+  --sw-white: #ffffff;
+  --sw-paper: #ffffff;
+  --sw-panel: #f7f7f5;
+  --sw-ink: #111111;
+  --sw-gray-900: #1c1c1e;
+  --sw-gray-700: #3d3d3f;
+  --sw-gray-500: #6e6e70;
+  --sw-gray-300: #d4d4d6;
+  --sw-gray-200: #e8e8ea;
+  --sw-gray-100: #f4f4f5;
+  --sw-accent: #6d4aff;
+  --sw-accent-deep: #4a2fb3;
+  --sw-accent-soft: #efebff;
+  --sw-rule: #111111;
+  --sw-rule-soft: #d4d4d6;
+  --sw-hairline: 1px solid var(--sw-rule-soft);
+  --sw-hairline-strong: 1px solid var(--sw-rule);
+  --sw-s1: .25rem; --sw-s2: .5rem; --sw-s3: .75rem; --sw-s4: 1rem;
+  --sw-s6: 1.5rem; --sw-s8: 2rem; --sw-s12: 3rem; --sw-s16: 4rem; --sw-s24: 6rem;
+  --sw-grid-columns: 12;
+  --sw-grid-gap: 1.5rem;
+  --sw-max: 1280px;
+  --sw-gutter: clamp(1rem, 4vw, 4rem);
+  --sw-radius: 0;
+
+  /* shadcn semantic tokens */
+  --background: #ffffff;
+  --foreground: #111111;
+  --card: #ffffff;
+  --card-foreground: #111111;
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+  --primary: #6d4aff;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #1c1c1e;
+  --muted: #f4f4f5;
+  --muted-foreground: #6e6e70;
+  --accent: #f4f4f5;
+  --accent-foreground: #111111;
+  --destructive: #d92d20;
+  --destructive-foreground: #ffffff;
+  --border: #e8e8ea;
+  --input: #d4d4d6;
+  --ring: #6d4aff;
+  --radius: 0px;
+  --bs-border-radius: 0;
+  --bs-border-radius-sm: 0;
+  --bs-border-radius-lg: 0;
+  --bs-border-radius-xl: 0;
+  --bs-border-radius-2xl: 0;
+  --bs-border-radius-pill: 0;
+
+  /* Tool base */
+  --bg: #f8f9fa; --bg-card: #fff; --text: #09090b; --text-muted: #52525b;
+  --border-tool: #e4e4e7; --purple: #8b5cf6; --red: #ef4444; --green: #10b981;
+  --yellow: #f59e0b; --shadow: 0 4px 6px -1px rgba(0,0,0,.05);
+  --font-display: 'Space Grotesk', sans-serif; --font-body: 'Inter', sans-serif;
+}
+
+[data-bs-theme="dark"], .dark {
+  --background: #0b0b0d;
+  --foreground: #f5f5f6;
+  --card: #141416;
+  --card-foreground: #f5f5f6;
+  --popover: #1a1a1e;
+  --popover-foreground: #f5f5f6;
+  --primary: #8f7cff;
+  --primary-foreground: #0b0b0d;
+  --secondary: #26262a;
+  --secondary-foreground: #f5f5f6;
+  --muted: #1e1e21;
+  --muted-foreground: #a1a1a6;
+  --accent: #26262a;
+  --accent-foreground: #f5f5f6;
+  --destructive: #f04438;
+  --destructive-foreground: #ffffff;
+  --border: #3a3a3e;
+  --input: #3a3a3e;
+  --ring: #8f7cff;
+
+  --sw-paper: #0b0b0d;
+  --sw-panel: #141416;
+  --sw-ink: #f5f5f6;
+  --sw-gray-900: #e8e8ea;
+  --sw-gray-700: #c9c9cc;
+  --sw-gray-500: #a1a1a6;
+  --sw-gray-300: #3a3a3e;
+  --sw-gray-200: #26262a;
+  --sw-gray-100: #17171a;
+  --sw-rule: #f5f5f6;
+  --sw-rule-soft: #3a3a3e;
+  --sw-accent: #8f7cff;
+  --sw-accent-deep: #b3a4ff;
+  --sw-accent-soft: #221d3d;
+
+  --bg: #0b0b0d; --bg-card: #141416; --text: #f5f5f6; --text-muted: #a1a1a6;
+  --border-tool: #3a3a3e; --purple: #8f7cff; --shadow: 0 4px 6px -1px rgba(0,0,0,.4);
+}
+
+/* ═══ RESET / BASE ═══ */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--sw-font);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  min-height: 100vh;
+  padding-left: 0;
+  line-height: var(--sw-leading-body);
+}
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-display);
+  letter-spacing: var(--sw-track-tight);
+  line-height: var(--sw-leading-head);
+  text-wrap: balance;
+}
+p, li { line-height: var(--sw-leading-body); }
+a { color: inherit; }
+::selection { background: var(--primary); color: var(--primary-foreground); }
+
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 40%, transparent);
+}
+
+/* ═══ TOOL HEADER ═══ */
+.tool-header {
+  background: var(--bg-card); border-bottom: 1px solid var(--border);
+  padding: .75rem 1.25rem; position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; gap: 12px;
+}
+.tool-header a { color: var(--text-muted); text-decoration: none; font-size: .85rem; display: flex; align-items: center; gap: 6px; }
+.tool-header a:hover { color: var(--purple); }
+.tool-header .tool-title-bar { font-weight: 700; font-size: 1rem; margin: 0 auto 0 0; }
+#theme-toggle {
+  background: none; border: 1px solid var(--border); color: var(--text);
+  width: 36px; height: 36px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: .2s;
+}
+#theme-toggle:hover { border-color: var(--purple); color: var(--purple); }
+
+/* ═══ LAYOUT ═══ */
+.tool-wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+.tool-hero { text-align: center; margin-bottom: 2rem; }
+.tool-hero h1 { font-size: 1.8rem; margin-bottom: .4rem; }
+.tool-hero p { color: var(--text-muted); margin: 0; }
+.tool-icon-hero { font-size: 2.5rem; margin-bottom: .75rem; }
+
+/* ═══ CARDS ═══ */
+.t-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  padding: 1.5rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
+  border-radius: 0;
+}
+
+/* ═══ INPUTS ═══ */
+.t-input, .t-textarea, .t-select {
+  width: 100%; padding: .75rem 1rem;
+  border: 1.5px solid var(--border); background: var(--bg);
+  color: var(--text); font-family: var(--font-body); font-size: .95rem;
+  transition: .2s; outline: none; border-radius: 0;
+}
+.t-input:focus, .t-textarea:focus, .t-select:focus { border-color: var(--purple); }
+.t-input:focus-visible, .t-textarea:focus-visible, .t-select:focus-visible {
+  outline: none;
+  border-color: var(--ring) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 35%, transparent) !important;
+}
+.t-textarea { resize: vertical; min-height: 140px; }
+
+/* ═══ BUTTONS ═══ */
+.t-btn {
+  padding: .7rem 1.5rem; border: none;
+  font-weight: 600; font-size: .9rem; cursor: pointer; transition: .2s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 0;
+  min-height: 2.25rem;
+  white-space: nowrap;
+}
+.t-btn:disabled { opacity: .5; pointer-events: none; }
+.t-btn-primary { background: var(--text); color: var(--bg-card); }
+.t-btn-primary:hover { opacity: .85; }
+.t-btn-secondary { background: var(--bg); color: var(--text); border: 1.5px solid var(--border); }
+.t-btn-secondary:hover { border-color: var(--purple); color: var(--purple); }
+.t-btn-danger { background: var(--red); color: #fff; }
+.t-btn-success { background: var(--green); color: #fff; }
+
+button:not(:disabled), [role="button"]:not(:disabled) { cursor: pointer; }
+
+/* ═══ GRID ═══ */
+.t-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 600px) { .t-grid-2 { grid-template-columns: 1fr; } }
+.copy-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: .75rem; }
+
+/* ═══ DROP ZONE ═══ */
+.drop-zone {
+  border: 2px dashed var(--border);
+  padding: 2.5rem 1rem; text-align: center; cursor: pointer;
+  transition: .2s; color: var(--text-muted);
+  border-radius: 0;
+}
+.drop-zone:hover, .drop-zone.drag-over { border-color: var(--purple); color: var(--purple); background: rgba(139,92,246,.04); }
+.drop-zone input[type=file] { display: none; }
+
+/* ═══ TOAST ═══ */
+.t-toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: var(--text); color: var(--bg-card); padding: .6rem 1.4rem;
+  font-size: .85rem; font-weight: 600;
+  transition: .3s; z-index: 9999; opacity: 0; pointer-events: none;
+  border-radius: 0;
+}
+.t-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* ═══ PAGE GRID ═══ */
+.page-grid { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; }
+.page-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  padding: .75rem; text-align: center; width: 180px; border-radius: 0;
+}
+.page-card img { width: 100%; border: 1px solid var(--border); border-radius: 0; }
+.page-card .page-label { font-size: .8rem; color: var(--text-muted); margin: .4rem 0 .5rem; }
+.progress-bar-wrap { background: var(--border); height: 8px; overflow: hidden; margin-top: .5rem; border-radius: 0; }
+.progress-bar-fill { height: 100%; background: var(--purple); transition: width .3s; border-radius: 0; }
+
+/* ═══ UTILITIES ═══ */
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-flex { display: flex !important; }
+.d-inline-flex { display: inline-flex !important; }
+.d-grid { display: grid !important; }
+.d-inline-block { display: inline-block !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.flex-column { flex-direction: column !important; }
+.align-items-center { align-items: center !important; }
+.justify-content-center { justify-content: center !important; }
+.justify-content-between { justify-content: space-between !important; }
+.gap-1 { gap: .25rem !important; }
+.gap-2 { gap: .5rem !important; }
+.gap-3 { gap: 1rem !important; }
+.gap-4 { gap: 1.5rem !important; }
+.m-0 { margin: 0 !important; }
+.mt-1 { margin-top: .25rem !important; }
+.mt-2 { margin-top: .5rem !important; }
+.mt-3 { margin-top: 1rem !important; }
+.mt-4 { margin-top: 1.5rem !important; }
+.mb-0 { margin-bottom: 0 !important; }
+.mb-1 { margin-bottom: .25rem !important; }
+.mb-2 { margin-bottom: .5rem !important; }
+.mb-3 { margin-bottom: 1rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+.me-1 { margin-right: .25rem !important; }
+.me-2 { margin-right: .5rem !important; }
+.me-3 { margin-right: 1rem !important; }
+.ms-1 { margin-left: .25rem !important; }
+.ms-2 { margin-left: .5rem !important; }
+.ms-auto { margin-left: auto !important; }
+.p-0 { padding: 0 !important; }
+.p-2 { padding: .5rem !important; }
+.p-3 { padding: 1rem !important; }
+.py-1 { padding-top: .25rem !important; padding-bottom: .25rem !important; }
+.py-2 { padding-top: .5rem !important; padding-bottom: .5rem !important; }
+.px-2 { padding-left: .5rem !important; padding-right: .5rem !important; }
+.px-3 { padding-left: 1rem !important; padding-right: 1rem !important; }
+.text-center { text-align: center !important; }
+.text-start { text-align: left !important; }
+.text-end { text-align: right !important; }
+.text-muted { color: var(--text-muted) !important; }
+.text-success { color: var(--green) !important; }
+.text-danger { color: var(--red) !important; }
+.text-warning { color: var(--yellow) !important; }
+.fw-bold { font-weight: 700 !important; }
+.fw-semibold { font-weight: 600 !important; }
+.small { font-size: .875rem !important; }
+.w-100 { width: 100% !important; }
+.border { border: 1px solid var(--border) !important; }
+.border-bottom { border-bottom: 1px solid var(--border) !important; }
+.border-top { border-top: 1px solid var(--border) !important; }
+.rounded { border-radius: 0 !important; }
+.position-relative { position: relative !important; }
+.position-absolute { position: absolute !important; }
+.overflow-hidden { overflow: hidden !important; }
+.overflow-auto { overflow: auto !important; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); }
+
+/* ═══ SOCIAL RAIL ═══ */
+.social-rail {
+  position: fixed; left: 0; top: 50%; transform: translateY(-50%); z-index: 9990;
+  display: flex; flex-direction: column; box-shadow: 0 6px 24px rgba(0,0,0,.28);
+}
+.sr-item {
+  position: relative; display: flex; align-items: center; height: 46px; width: 46px;
+  background: #111214; color: #fff; text-decoration: none; flex: 0 0 46px;
+}
+.sr-ico {
+  flex: 0 0 46px; height: 46px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem;
+}
+.sr-fly {
+  position: absolute; left: 0; top: 0; height: 46px; width: max-content;
+  display: flex; align-items: center;
+  background: var(--brand, #6d4aff); color: #fff;
+  opacity: 0; transform: translateX(-14px); pointer-events: none;
+  transition: opacity .16s ease, transform .24s cubic-bezier(.2,.7,.25,1);
+}
+.sr-item:hover .sr-fly, .sr-item:focus-visible .sr-fly { opacity: 1; transform: none; }
+.sr-item:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
+.sr-label {
+  font-size: .68rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
+  white-space: nowrap; padding-right: 16px;
+}
+@media (min-width: 761px) { body { padding-left: 46px; } }
+@media (max-width: 760px) { .social-rail { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="bi-arrow-left" viewBox="0 0 16 16"><path fill="currentColor" fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/></symbol>
+  <symbol id="bi-moon-stars-fill" viewBox="0 0 16 16"><path fill="currentColor" d="M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278"/><path fill="currentColor" d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.73 1.73 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.73 1.73 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.73 1.73 0 0 0 1.097-1.097zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.16 1.16 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.16 1.16 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732z"/></symbol>
+  <symbol id="bi-sun-fill" viewBox="0 0 16 16"><path fill="currentColor" d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8M8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0m0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13m8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5M3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8m10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0m-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0m9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707M4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708"/></symbol>
+  <symbol id="bi-file-earmark-image" viewBox="0 0 16 16"><path fill="currentColor" d="M6.502 7a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/><path fill="currentColor" d="M14 14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zM4 1a1 1 0 0 0-1 1v10l2.224-2.223a3.004 3.004 0 0 1 3.097-.729l1.807.602.001-.001L13 6.5V5h-2.5A1.5 1.5 0 0 1 9 3.5V1zm6 3.5a.5.5 0 0 0 .5.5H13zM3 12v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-3.293l-3.076 3.076a1 1 0 0 1-1.06.24L7.06 11.45a2.004 2.004 0 0 0-2.168.457z"/></symbol>
+  <symbol id="bi-file-earmark-pdf" viewBox="0 0 16 16"><path fill="currentColor" d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/><path fill="currentColor" d="M4.603 14.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.188-.012.396-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.066.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.376-.912-.595-1.117-1.607-1.038-2.458a11 11 0 0 0-.911-.07c-.317.033-.62.097-.898.172a11 11 0 0 1-1.14 2.364c-.337.51-.754.936-1.23 1.267-.329.23-.707.4-1.108.482a1.6 1.6 0 0 1-.532.05z"/></symbol>
+  <symbol id="bi-images" viewBox="0 0 16 16"><path fill="currentColor" d="M4.502 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3"/><path fill="currentColor" d="M14.002 13a2 2 0 0 1-2 2h-10a2 2 0 0 1-2-2V5A2 2 0 0 1 2 3h10a2 2 0 0 1 2 2zm-2 1a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-10a1 1 0 0 0-1 1v7.998l3.224-3.223a3.004 3.004 0 0 1 3.097-.729l1.807.602.001-.001L14 5.5z"/></symbol>
+  <symbol id="bi-download" viewBox="0 0 16 16"><path fill="currentColor" d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/><path fill="currentColor" d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/></symbol>
+  <symbol id="bi-github" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8"/></symbol>
+  <symbol id="bi-linkedin" viewBox="0 0 16 16"><path fill="currentColor" d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z"/></symbol>
+  <symbol id="bi-instagram" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.046-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/></symbol>
+  <symbol id="bi-youtube" viewBox="0 0 16 16"><path fill="currentColor" d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"/></symbol>
+  <symbol id="bi-facebook" viewBox="0 0 16 16"><path fill="currentColor" d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951"/></symbol>
+  <symbol id="bi-whatsapp" viewBox="0 0 16 16"><path fill="currentColor" d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></symbol>
+  <symbol id="bi-briefcase-fill" viewBox="0 0 16 16"><path fill="currentColor" d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v1.384l7.614 2.03a1.5 1.5 0 0 0 .772 0L16 5.884V4.5A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5"/><path fill="currentColor" d="M0 12.5A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5V6.85L8.129 8.947a.5.5 0 0 1-.258 0L0 6.85z"/></symbol>
+  <symbol id="bi-globe2" viewBox="0 0 16 16"><path fill="currentColor" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m7.5-6.923c-.67.204-1.335.82-1.887 1.855q-.215.403-.395.872c.705.157 1.472.257 2.282.287zM4.249 3.539q.214-.577.481-1.078a7 7 0 0 1 .597-.933A7 7 0 0 0 3.051 3.05q.544.277 1.198.49zM3.509 7.5c.036-1.07.188-2.087.436-3.008a9 9 0 0 1-1.565-.667A6.96 6.96 0 0 0 1.018 7.5zm1.4-2.741a12.3 12.3 0 0 0-.4 2.741H7.5V5.091c-.91-.03-1.783-.145-2.591-.332M8.5 5.09V7.5h2.99a12.3 12.3 0 0 0-.399-2.741c-.808.187-1.681.301-2.591.332zM4.51 8.5c.035.987.176 1.914.399 2.741A13.6 13.6 0 0 1 7.5 10.91V8.5zm3.99 0v2.409c.91.03 1.783.145 2.591.332.223-.827.364-1.754.4-2.741zm-3.282 3.696q.18.469.395.872c.552 1.035 1.218 1.65 1.887 1.855V11.91c-.81.03-1.577.13-2.282.287zm.11 2.276a7 7 0 0 1-.598-.933 9 9 0 0 1-.481-1.079 8.4 8.4 0 0 0-1.198.49 7 7 0 0 0 2.276 1.522zm-1.383-2.964A13.4 13.4 0 0 1 3.508 8.5h-2.49a6.96 6.96 0 0 0 1.362 3.675c.47-.258.995-.482 1.565-.667zm6.728 2.964a7 7 0 0 0 2.275-1.521 8.4 8.4 0 0 0-1.197-.49 9 9 0 0 1-.481 1.078 7 7 0 0 1-.597.933M8.5 11.909v3.015c.67-.204 1.335-.82 1.887-1.855q.215-.403.395-.872a12.6 12.6 0 0 0-2.282-.288m3.734-.114c.57.185 1.095.409 1.565.667A6.96 6.96 0 0 0 15.018 7.5h-2.49a13.4 13.4 0 0 1-.394 3.295zM11.99 5.59q.549-.212 1.198-.49a7 7 0 0 0-2.276-1.522 9 9 0 0 1 .597.933q.267.501.481 1.078ZM8.5 4.986c.81-.03 1.577-.13 2.282-.287a9 9 0 0 0-.395-.872C9.835 2.792 9.17 2.176 8.5 1.972zM10.24 2.46q.18.469.395.872c.552 1.035 1.218 1.65 1.887 1.855V1.972a7 7 0 0 0-2.282.489z"/></symbol>
+</svg>
+
+<header class="tool-header">
+  <a href="#"><svg width="16" height="16"><use href="#bi-arrow-left"/></svg> FAK LAB</a>
+  <span class="tool-title-bar"><svg width="16" height="16" style="vertical-align:-2px"><use href="#bi-file-earmark-image"/></svg> PDF to Image</span>
+  <button id="theme-toggle" aria-label="Toggle theme"><svg width="16" height="16"><use href="#bi-moon-stars-fill"/></svg></button>
+</header>
+
+<div class="t-toast" id="t-toast"></div>
+
+<div class="tool-wrap">
+  <div class="tool-hero">
+    <div class="tool-icon-hero">📄➡️🖼️</div>
+    <h1>PDF to Image Converter</h1>
+    <p>Extract PDF pages as high-quality images — 100% in your browser, nothing uploaded</p>
+  </div>
+
+  <div class="t-card">
+    <div class="drop-zone" id="drop-zone">
+      <input type="file" id="file-input" accept=".pdf,application/pdf">
+      <svg width="32" height="32" class="mb-2 d-block" style="margin:0 auto .5rem"><use href="#bi-file-earmark-pdf"/></svg>
+      <strong>Drop a PDF here</strong> or click to browse
+    </div>
+  </div>
+
+  <div class="t-card" id="options-card" style="display:none">
+    <h5 class="fw-bold mb-3">Options</h5>
+    <div class="t-grid-2">
+      <div>
+        <label class="fw-bold d-block mb-1">Output Format</label>
+        <select class="t-select" id="out-fmt">
+          <option value="image/jpeg">JPEG</option>
+          <option value="image/png">PNG</option>
+          <option value="image/webp">WebP</option>
+        </select>
+      </div>
+      <div>
+        <label class="fw-bold d-block mb-1">Scale / DPI</label>
+        <select class="t-select" id="scale">
+          <option value="1">1x (72 DPI)</option>
+          <option value="2" selected>2x (144 DPI)</option>
+          <option value="3">3x (216 DPI)</option>
+        </select>
+      </div>
+    </div>
+    <div class="copy-row mt-3">
+      <button class="t-btn t-btn-primary" id="convert-btn"><svg width="16" height="16"><use href="#bi-images"/></svg> Convert All Pages</button>
+      <button class="t-btn t-btn-secondary" id="dl-all-btn" style="display:none"><svg width="16" height="16"><use href="#bi-download"/></svg> Download All</button>
+    </div>
+    <div id="progress-wrap" style="display:none">
+      <div class="progress-bar-wrap mt-2"><div class="progress-bar-fill" id="prog-bar" style="width:0%"></div></div>
+      <div class="text-muted small mt-1" id="prog-label">Processing...</div>
+    </div>
+  </div>
+
+  <div class="page-grid" id="page-grid"></div>
+</div>
+
+<section class="tool-wrap" style="margin-top:0;">
+  <div class="t-card">
+    <h2 class="fw-bold mb-3">How to Use the PDF to Image Converter</h2>
+    <ol>
+      <li>Drop or select a PDF file using the upload zone.</li>
+      <li>Choose the output format (JPEG, PNG, or WebP) and the rendering scale/DPI.</li>
+      <li>Click "Convert All Pages" to render every page as an image.</li>
+      <li>Download individual page images or click "Download All" to save them all.</li>
+    </ol>
+  </div>
+  <div class="t-card">
+    <h2 class="fw-bold mb-3">Technical Overview &amp; Use Cases</h2>
+    <p>This tool uses PDF.js to render PDF pages to HTML5 Canvas elements, then exports them as image blobs in your chosen format. Higher scale settings produce higher-resolution output for printing.</p>
+    <p><strong>Real-world use cases:</strong></p>
+    <ul>
+      <li>Creating image previews of PDF documents for websites.</li>
+      <li>Extracting diagrams or charts from PDF reports as images.</li>
+      <li>Converting PDF presentations to image slides for social media.</li>
+      <li>Generating thumbnails for document management systems.</li>
+    </ul>
+  </div>
+  <div class="t-card">
+    <h2 class="fw-bold mb-3">Privacy &amp; Security Guarantee</h2>
+    <p>This tool is part of the <strong>FAK LAB</strong> ecosystem, founded by <strong>Faizan Ahmad Khan Khichi</strong>. PDF rendering is performed <strong>100% client-side</strong>. No data is ever stored or shared.</p>
+  </div>
+  <div class="t-card">
+    <h2 class="fw-bold mb-3">Frequently Asked Questions</h2>
+    <h3 class="fw-semibold mt-3">What does the scale/DPI setting do?</h3><p>1x = 72 DPI (screen), 2x = 144 DPI (good quality), 3x = 216 DPI (high quality for print). Higher settings produce larger images.</p>
+    <h3 class="fw-semibold mt-3">Which format should I choose?</h3><p>JPEG is best for photos and smaller files. PNG preserves transparency and is best for text/diagrams. WebP offers good compression with quality.</p>
+    <h3 class="fw-semibold mt-3">Can I convert password-protected PDFs?</h3><p>No. The PDF must be unlocked before it can be rendered to images. Remove the password first using a PDF tool.</p>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<script>
+/* ═══ THEME ═══ */
+(function(){
+  try {
+    var t = localStorage.getItem('fak_theme');
+    if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-bs-theme', t);
+  } catch(e){}
+})();
+
+function setupTheme(){
+  var btn = document.getElementById('theme-toggle');
+  var icon = btn.querySelector('use');
+  function setIcon(){
+    var dark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+    icon.setAttribute('href', dark ? '#bi-sun-fill' : '#bi-moon-stars-fill');
+  }
+  setIcon();
+  btn.addEventListener('click', function(){
+    var cur = document.documentElement.getAttribute('data-bs-theme');
+    var next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-bs-theme', next);
+    try { localStorage.setItem('fak_theme', next); } catch(e){}
+    setIcon();
+  });
+}
+function toast(msg){
+  var el = document.getElementById('t-toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t = setTimeout(function(){ el.classList.remove('show'); }, 2600);
+}
+setupTheme();
+
+/* ═══ SOCIAL RAIL ═══ */
+(function(){
+  "use strict";
+  if (document.querySelector(".social-rail")) return;
+  var SOCIALS = [
+    { name: "GitHub",    icon: "bi-github",    href: "https://github.com/faizanahmadkhichi",          brand: "#24292f" },
+    { name: "LinkedIn",  icon: "bi-linkedin",  href: "https://www.linkedin.com/in/faklabs/",         brand: "#0a66c2" },
+    { name: "Instagram", icon: "bi-instagram", href: "https://www.instagram.com/faizanahmad.khichi", brand: "linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)" },
+    { name: "YouTube",   icon: "bi-youtube",   href: "https://youtube.com/@faizanahmad.khichi",       brand: "#ff0000" },
+    { name: "Facebook",  icon: "bi-facebook",  href: "https://www.facebook.com/share/1HDEUSj6b3/",    brand: "#1877f2" },
+    { name: "WhatsApp",  icon: "bi-whatsapp",  href: "https://whatsapp.com/channel/0029Vb2y2umF6sn16F6Zm20k", brand: "#25d366" },
+    { name: "Fiverr",    icon: "bi-briefcase-fill", href: "https://www.fiverr.com/faklabs",           brand: "#1dbf73" },
+    { name: "Portfolio", icon: "bi-globe2",    href: "https://portfolio.faizankhichi.me/",            brand: "#6d4aff" }
+  ];
+  var ICONS = {
+    'bi-github': 'bi-github', 'bi-linkedin': 'bi-linkedin', 'bi-instagram': 'bi-instagram',
+    'bi-youtube': 'bi-youtube', 'bi-facebook': 'bi-facebook', 'bi-whatsapp': 'bi-whatsapp',
+    'bi-briefcase-fill': 'bi-briefcase-fill', 'bi-globe2': 'bi-globe2'
+  };
+  function iconSpan(cls){
+    var wrap = document.createElement("span");
+    wrap.className = "sr-ico";
+    wrap.setAttribute("aria-hidden", "true");
+    wrap.innerHTML = '<svg width="18" height="18"><use href="#' + (ICONS[cls] || cls) + '"/></svg>';
+    return wrap;
+  }
+  function build(){
+    var rail = document.createElement("nav");
+    rail.className = "social-rail";
+    rail.setAttribute("aria-label", "FAK LAB social links");
+    SOCIALS.forEach(function(s){
+      var a = document.createElement("a");
+      a.className = "sr-item";
+      a.href = s.href;
+      a.target = "_blank";
+      a.rel = "me noopener";
+      a.setAttribute("aria-label", "FAK LAB on " + s.name);
+      a.style.setProperty("--brand", s.brand);
+      a.appendChild(iconSpan(s.icon));
+      var fly = document.createElement("span");
+      fly.className = "sr-fly";
+      fly.setAttribute("aria-hidden", "true");
+      fly.appendChild(iconSpan(s.icon));
+      var label = document.createElement("span");
+      label.className = "sr-label";
+      label.textContent = s.name;
+      fly.appendChild(label);
+      a.appendChild(fly);
+      rail.appendChild(a);
+    });
+    document.body.appendChild(rail);
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", build, { once: true });
+  } else { build(); }
+})();
+
+/* ═══ PDF TO IMAGE ═══ */
+(function(){
+  "use strict";
+  if (typeof pdfjsLib === 'undefined') { console.warn('pdf.js not loaded'); return; }
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+  var pdfDoc = null;
+  var pageBlobs = [];
+
+  function loadPDF(file){
+    var reader = new FileReader();
+    reader.onload = async function(){
+      try {
+        var data = new Uint8Array(reader.result);
+        pdfDoc = await pdfjsLib.getDocument({ data: data }).promise;
+        document.getElementById("options-card").style.display = "";
+        toast("✓ PDF loaded — " + pdfDoc.numPages + " page" + (pdfDoc.numPages > 1 ? "s" : ""));
+      } catch(e){
+        toast("Failed to load PDF: " + e.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  document.getElementById("dl-all-btn").addEventListener("click", async function(){
+    for (var i = 0; i < pageBlobs.length; i++){
+      var p = pageBlobs[i];
+      var a = document.createElement("a");
+      a.href = p.url;
+      a.download = p.name;
+      a.click();
+      await new Promise(function(r){ setTimeout(r, 200); });
+    }
+  });
+
+  document.getElementById("convert-btn").addEventListener("click", async function(){
+    if (!pdfDoc) return;
+    var fmt = document.getElementById("out-fmt").value;
+    var scale = +document.getElementById("scale").value;
+    var ext = fmt.split("/")[1];
+    var grid = document.getElementById("page-grid");
+    var btn = document.getElementById("convert-btn");
+    var wrap = document.getElementById("progress-wrap");
+    var bar = document.getElementById("prog-bar");
+    var lbl = document.getElementById("prog-label");
+    grid.innerHTML = ""; pageBlobs = [];
+    btn.disabled = true; wrap.style.display = "";
+    for (var i = 1; i <= pdfDoc.numPages; i++){
+      lbl.textContent = "Rendering page " + i + " of " + pdfDoc.numPages + "...";
+      bar.style.width = ((i - 1) / pdfDoc.numPages * 100) + "%";
+      var page = await pdfDoc.getPage(i);
+      var viewport = page.getViewport({ scale: scale });
+      var canvas = document.createElement("canvas");
+      canvas.width = viewport.width; canvas.height = viewport.height;
+      await page.render({ canvasContext: canvas.getContext("2d"), viewport: viewport }).promise;
+      var blob = await new Promise(function(res){ canvas.toBlob(res, fmt, 0.92); });
+      var url = URL.createObjectURL(blob);
+      pageBlobs.push({ blob: blob, url: url, name: "page-" + i + "." + ext });
+      var card = document.createElement("div");
+      card.className = "page-card";
+      card.innerHTML = '<img src="' + url + '" alt="Page ' + i + '">' +
+        '<div class="page-label">Page ' + i + '</div>' +
+        '<button class="t-btn t-btn-secondary" style="width:100%;padding:.4rem;font-size:.8rem" data-idx="' + (i - 1) + '">' +
+        '<svg width="14" height="14"><use href="#bi-download"/></svg> Download</button>';
+      card.querySelector("button").addEventListener("click", (function(u, n){
+        return function(){
+          var a = document.createElement("a");
+          a.href = u; a.download = n; a.click();
+        };
+      })(url, "page-" + i + "." + ext));
+      grid.appendChild(card);
+    }
+    bar.style.width = "100%";
+    lbl.textContent = "Done! " + pdfDoc.numPages + " pages converted.";
+    btn.disabled = false;
+    document.getElementById("dl-all-btn").style.display = "";
+    toast("✓ " + pdfDoc.numPages + " pages converted");
+  });
+
+  var dropZone = document.getElementById("drop-zone");
+  var fileInput = document.getElementById("file-input");
+  dropZone.addEventListener("click", function(){ fileInput.click(); });
+  fileInput.addEventListener("change", function(){ if (fileInput.files[0]) loadPDF(fileInput.files[0]); });
+  dropZone.addEventListener("dragover", function(e){ e.preventDefault(); dropZone.classList.add("drag-over"); });
+  dropZone.addEventListener("dragleave", function(){ dropZone.classList.remove("drag-over"); });
+  dropZone.addEventListener("drop", function(e){
+    e.preventDefault(); dropZone.classList.remove("drag-over");
+    var f = e.dataTransfer.files[0];
+    if (f && f.type === "application/pdf") loadPDF(f);
+    else toast("Please drop a PDF file");
+  });
+})();
+</script>
+</body>
+</html>
