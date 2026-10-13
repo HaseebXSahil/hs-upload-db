@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Humayoun Akhter - Intelligence Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #0a0f1d;
+            --card-bg: #131a30;
+            --accent: #00ffcc;
+            --text-main: #ffffff;
+            --text-muted: #8fa0dd;
+            --whatsapp: #25D366;
+        }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            border: 2px dashed var(--accent);
+            padding: 20px;
+            border-radius: 8px;
+            background: rgba(0, 255, 204, 0.05);
+            margin-bottom: 25px;
+        }
+        h1 {
+            color: var(--accent);
+            margin: 0 0 10px 0;
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid #1e294b;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .card h2 {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-top: 0;
+            border-bottom: 1px solid #1e294b;
+            padding-bottom: 8px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 0.9rem;
+        }
+        .info-label {
+            color: var(--text-muted);
+        }
+        .info-value {
+            font-weight: bold;
+            color: #fff;
+        }
+        .btn-wa {
+            background: var(--whatsapp);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-family: inherit;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            text-align: center;
+        }
+        .btn-wa:hover {
+            background: #20ba5a;
+            box-shadow: 0 0 20px var(--whatsapp);
+            transform: translateY(-2px);
+        }
+        .pulse {
+            animation: pulse-animation 2s infinite;
+        }
+        @keyframes pulse-animation {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>[ HUMAYOUN AKHTER - METADATA INSPECTOR ]</h1>
+            <p class="pulse" style="color: var(--accent); margin: 0;">🟢 SYSTEM: READY TO EXPORT PUBLIC SYSTEM LOGS</p>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <h2>📱 Device Hardware Info</h2>
+                <div class="info-row">
+                    <span class="info-label">Operating System:</span>
+                    <span class="info-value" id="os-info">Loading...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Screen Resolution:</span>
+                    <span class="info-value" id="screen-info">Loading...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">CPU Cores (Logical):</span>
+                    <span class="info-value" id="cpu-info">Loading...</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🌐 Connection & Env</h2>
+                <div class="info-row">
+                    <span class="info-label">Language:</span>
+                    <span class="info-value" id="lang-info">Loading...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Online Status:</span>
+                    <span class="info-value" id="online-info">Loading...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Local Timezone:</span>
+                    <span class="info-value" id="tz-info">Loading...</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🔋 Power Diagnostics</h2>
+                <div class="info-row">
+                    <span class="info-label">Battery Level:</span>
+                    <span class="info-value" id="bat-level">Checking...</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Charging State:</span>
+                    <span class="info-value" id="bat-status">Checking...</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-wa" onclick="shareToWhatsApp()">🚀 Send My Device Logs to Humayoun</button>
+    </div>
+
+    <script>
+        let globalData = {};
+
+        function getOS() {
+            let userAgent = window.navigator.userAgent,
+                platform = window.navigator.platform,
+                macosPlatforms = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'],
+                windowsPlatforms = ['Win32', 'Win64', 'Windows', 'WinCE'],
+                iosPlatforms = ['iPhone', 'iPad', 'iPod'],
+                os = 'Unknown OS';
+
+            if (macosPlatforms.indexOf(platform) !== -1) os = 'Mac OS';
+            else if (iosPlatforms.indexOf(platform) !== -1) os = 'iOS';
+            else if (windowsPlatforms.indexOf(platform) !== -1) os = 'Windows';
+            else if (/Android/.test(userAgent)) os = 'Android';
+            else if (!os && /Linux/.test(platform)) os = 'Linux';
+            
+            return os;
+        }
+
+        function loadMetadata() {
+            globalData.os = getOS();
+            globalData.screen = `${window.screen.width} x ${window.screen.height} px`;
+            globalData.cpu = navigator.hardwareConcurrency || "Hidden";
+            globalData.lang = navigator.language || "Unknown";
+            globalData.online = navigator.onLine ? "CONNECTED" : "OFFLINE";
+            globalData.tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+            document.getElementById('os-info').innerText = globalData.os;
+            document.getElementById('screen-info').innerText = globalData.screen;
+            document.getElementById('cpu-info').innerText = globalData.cpu;
+            document.getElementById('lang-info').innerText = globalData.lang;
+            document.getElementById('online-info').innerText = globalData.online;
+            document.getElementById('tz-info').innerText = globalData.tz;
+
+            updateBattery();
+        }
+
+        function updateBattery() {
+            if (navigator.getBattery) {
+                navigator.getBattery().then(function(battery) {
+                    globalData.batteryLevel = Math.round(battery.level * 100) + "%";
+                    globalData.batteryStatus = battery.charging ? "⚡ Charging" : "🔋 Discharging";
+                    
+                    document.getElementById('bat-level').innerText = globalData.batteryLevel;
+                    document.getElementById('bat-status').innerText = globalData.batteryStatus;
+                });
+            } else {
+                globalData.batteryLevel = "Unsupported";
+                globalData.batteryStatus = "N/A";
+                document.getElementById('bat-level').innerText = "Unsupported";
+                document.getElementById('bat-status').innerText = "N/A";
+            }
+        }
+
+        function shareToWhatsApp() {
+            // YAHAN APNA NUMBER LIKHEIN (Sirf hifz/numbers, koi spaces ya plus nahi)
+            // Example: "923012345678"
+            const myPhoneNumber = 923476443591
+
+            const textMessage = `*🤖 Device Metadata Received:*\n\n` +
+                                `• *OS:* ${globalData.os}\n` +
+                                `• *Screen:* ${globalData.screen}\n` +
+                                `• *CPU Cores:* ${globalData.cpu}\n` +
+                                `• *Language:* ${globalData.lang}\n` +
+                                `• *Timezone:* ${globalData.tz}\n` +
+                                `• *Battery:* ${globalData.batteryLevel} (${globalData.batteryStatus})`;
+
+            const encodedMessage = encodeURIComponent(textMessage);
+            window.open(`https://whatsapp.com{myPhoneNumber}&text=${encodedMessage}`, '_blank');
+        }
+
+        window.onload = loadMetadata;
+    </script>
+</body>
+</html>
