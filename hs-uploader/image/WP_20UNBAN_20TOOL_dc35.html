@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAHAD UNBAN TOOL - WhatsApp Unban Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .logo-icon {
+            font-size: 2.5rem;
+            color: #00ff88;
+            filter: drop-shadow(0 0 10px #00ff88);
+        }
+        
+        .logo-text {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00ff88 0%, #00ccff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        
+        .warning {
+            color: #ff6b6b;
+            font-size: 0.9rem;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: rgba(0, 255, 136, 0.4);
+            box-shadow: 0 12px 40px rgba(0, 255, 136, 0.1);
+        }
+        
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #00ff88;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title i {
+            font-size: 1.2rem;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #ccc;
+            font-size: 0.95rem;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.2);
+        }
+        
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        .template-card {
+            background: rgba(25, 25, 25, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .template-card:hover {
+            border-color: rgba(0, 255, 136, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .template-card.active {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+        }
+        
+        .template-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        
+        .template-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #ccc;
+        }
+        
+        .primary-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #00ff88 0%, #00ccff 100%);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+        }
+        
+        .primary-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status-container {
+            background: rgba(20, 20, 20, 0.9);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+        
+        .status-line {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        
+        .status-time {
+            color: #00ff88;
+            min-width: 80px;
+            font-size: 0.8rem;
+        }
+        
+        .status-message {
+            flex: 1;
+            color: #e0e0e0;
+        }
+        
+        .status-success {
+            color: #00ff88;
+        }
+        
+        .status-error {
+            color: #ff6b6b;
+        }
+        
+        .status-warning {
+            color: #ffd93d;
+        }
+        
+        .progress-container {
+            margin-top: 25px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #888;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #00ccff);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        .email-preview {
+            display: none;
+            margin-top: 25px;
+            background: rgba(20, 20, 20, 0.9);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+        
+        .email-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .email-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #00ff88;
+        }
+        
+        .email-description {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .email-content {
+            background: rgba(15, 15, 15, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            line-height: 1.6;
+            white-space: pre-line;
+            color: #ccc;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .email-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .secondary-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        
+        .secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(0, 255, 136, 0.3);
+        }
+        
+        .system-info {
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            font-style: italic;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+        
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px rgba(0, 255, 136, 0.2);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">🔧</div>
+                <div class="logo-text">FAHAD UNBAN TOOL</div>
+            </div>
+            <p class="tagline">Professional WhatsApp Number Unban Service</p>
+            <div class="warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                FOR EDUCATIONAL PURPOSES ONLY
+            </div>
+        </header>
+        
+        <div class="main-grid">
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-user-shield"></i>
+                    Account Details
+                </h2>
+                
+                <div class="input-group">
+                    <label class="input-label">WhatsApp Number</label>
+                    <input type="text" class="input-field" id="phoneNumber" placeholder="+1 234 567 8900">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Your Email</label>
+                    <input type="email" class="input-field" id="userEmail" placeholder="your.email@example.com">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Your Name</label>
+                    <input type="text" class="input-field" id="userName" placeholder="John Doe">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">Select Appeal Strategy</label>
+                    <div class="template-grid">
+                        <div class="template-card active" data-template="urgent">
+                            <div class="template-icon">🚨</div>
+                            <div class="template-name">Urgent Hack</div>
+                        </div>
+                        <div class="template-card" data-template="business">
+                            <div class="template-icon">💼</div>
+                            <div class="template-name">Business</div>
+                        </div>
+                        <div class="template-card" data-template="family">
+                            <div class="template-icon">👪</div>
+                            <div class="template-name">Family</div>
+                        </div>
+                        <div class="template-card" data-template="legal">
+                            <div class="template-icon">⚖️</div>
+                            <div class="template-name">Legal</div>
+                        </div>
+                        <div class="template-card" data-template="emotional">
+                            <div class="template-icon">😢</div>
+                            <div class="template-name">Emotional</div>
+                        </div>
+                        <div class=
+"template-card" data-template="technical">
+                            <div class="template-icon">🔧</div>
+                            <div class="template-name">Technical</div>
+                        </div>
+                        <div class="template-card" data-template="threat">
+                            <div class="template-icon">⚠️</div>
+                            <div class="template-name">Security</div>
+                        </div>
+                        <div class="template-card" data-template="mistake">
+                            <div class="template-icon">❌</div>
+                            <div class="template-name">Mistake</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="primary-btn" id="unbanBtn">
+                    <i class="fas fa-bolt"></i>
+                    Generate Unban Email
+                </button>
+                
+                <div class="system-info" id="systemInfo">
+                    <i class="fas fa-shield-alt"></i>
+                    System Secure - Ready for Processing
+                </div>
+                
+                <div class="email-preview" id="emailPreview">
+                    <div class="email-header">
+                        <div>
+                            <div class="email-title">Email Template Ready</div>
+                            <div class="email-description" id="templateDescription">Copy and send to WhatsApp Support</div>
+                        </div>
+                    </div>
+                    
+                    <div class="email-content" id="emailContent">
+                        <!-- Email content will be inserted here -->
+                    </div>
+                    
+                    <div class="email-actions">
+                        <button class="secondary-btn" id="copyEmailBtn">
+                            <i class="fas fa-copy"></i>
+                            Copy Email
+                        </button>
+                        <button class="secondary-btn" id="sendEmailBtn">
+                            <i class="fas fa-paper-plane"></i>
+                            Open in Email
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2 class="card-title">
+                    <i class="fas fa-terminal"></i>
+                    System Status
+                </h2>
+                
+                <div class="status-container" id="statusContainer">
+                    <div class="status-line">
+                        <span class="status-time">[SYSTEM]</span>
+                        <span class="status-message">Initializing UR Unban Tool...</span>
+                    </div>
+                    <div class="status-line">
+                        <span class="status-time">[SYSTEM]</span>
+                        <span class="status-message status-success">Security protocols active</span>
+                    </div>
+                    <div class="status-line">
+                        <span class="status-time">[SYSTEM]</span>
+                        <span class="status-message status-success">Connection established</span>
+                    </div>
+                    <div class="status-line">
+                        <span class="status-time">[SYSTEM]</span>
+                        <span class="status-message">Awaiting user input...</span>
+                    </div>
+                    <div class="status-line">
+                        <span class="status-time">></span>
+                        <span class="status-message blink">_</span>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-header">
+                        <span>Processing Progress</span>
+                        <span id="progressText">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>FAHAD X HAMKAAR UNBAN TOOL &copy; 2023 | This is a demonstration tool for educational purposes only</p>
+            <p>Actual WhatsApp unbanning requires following official appeal procedures</p>
+        </footer>
+    </div>
+
+    <script>
+        // Email Templates
+        const emailTemplates = {
+            urgent: {
+                name: "Urgent Hack",
+                description: "For immediately compromised accounts with security threats",
+                subject: "URGENT: My WhatsApp Account Hacked - Need Immediate Help",
+                body: `From: {email}
+To: support@support.whatsapp.com
+
+Hello WhatsApp Support Team,
+
+I am writing with URGENT concern. My phone and SIM card were stolen along with my personal documents. My WhatsApp account has been compromised and I fear someone is accessing my private conversations and personal information.
+
+My WhatsApp number is: {number}
+
+This is extremely critical as my account contains sensitive personal and financial information. The hacker may be using my identity for malicious activities.
+
+PLEASE immediately deactivate and secure my account, then help me recover access with proper verification.
+
+This is time-sensitive and I need your immediate assistance.
+
+Thank you,
+{name}`
+            },
+            business: {
+                name: "Business Account",
+                description: "For business accounts affecting work and income",
+                subject: "Business WhatsApp Account Banned - Urgent Resolution Needed",
+                body: `From: {email}
+To: support@support.whatsapp.com
+
+Dear WhatsApp Support,
+
+My business WhatsApp account connected to number {number} has been unexpectedly banned. This account is crucial for my business operations and client communications.
+
+As a business owner, I rely heavily on WhatsApp for customer service, orders, and team coordination. The ban is severely impacting my business operations.
+
+Please review my case urgently and restore my business account. I'm willing to provide any verification needed.
+
+Thank you for your understanding,
+{name}`
+            },
+            family: {
+                name: "Family Account", 
+                description: "For family accounts with important connections",
+                subject: "Family WhatsApp Account Banned - Urgent Family Matter", 
+                body: `From: {email}
+To: support@support.whatsapp.com
+
+Dear WhatsApp Support,
+
+My family WhatsApp account (number: {number}) has been banned, and this is causing significant disruption to our family communications.
+This account is vital for coordinating with elderly parents' medical needs and family emergency communications.
+
+Please restore access urgently - this is about family safety and connection.
+
+Gratefully,
+{name}`
+            },
+            legal: {
+                name: "Legal Action",
+                description: "Formal template mentioning legal consequences", 
+                subject: "Formal Complaint: Wrongful WhatsApp Ban - Legal Consideration",
+                body: `From: {email}
+To: support@support.whatsapp.com
+
+FORMAL COMPLAINT AND APPEAL
+
+Regarding WhatsApp number: {number}
+
+This is a formal appeal against the wrongful ban of my WhatsApp account. The ban appears to be either an automated error or mistaken identification.
+
+As a legitimate user, I have not violated WhatsApp's Terms of Service. The sudden restriction without proper explanation is concerning.
+
+I request immediate review of my account status and restoration of access.
+
+Continued denial of service may require escalation through appropriate channels.
+
+Regards,
+{name}`
+            },
+            emotional: {
+                name: "Emotional Appeal",
+                description: "Heartfelt appeal focusing on personal impact",
+                subject: "Heartfelt Appeal: Please Restore My WhatsApp Account", 
+                body: `From: {email}
+To: support@support.whatsapp.com
+
+Dear WhatsApp Team,
+
+I'm writing this with a heavy heart. My WhatsApp account with number {number} has been banned, and it's affecting me deeply.
+
+This account contains memories with loved ones, important personal moments, and years of conversations.
+
+Losing access feels like losing a part of my life. I understand rules are important, but I promise I never intended to break any.
+
+Please help me recover these precious memories.
+
+Thank you for understanding,
+{name}`
+            },
+            technical: {
+                name: "Technical Issue",
+                description: "For technical or verification problems", 
+                subject: "Technical Issue: WhatsApp Verification/Ban Problem",
+                body: `From: {email}
+To: support@support.whatsapp.com
+
+Technical Support Required,
+
+I'm experiencing issues with my WhatsApp account {number}. The account appears to be banned or stuck in verification.
+
+Technical details:
+- Cannot complete verification
+- Error messages during login  
+- Account shows as restricted
+- No clear reason provided
+
+This appears to be a technical issue rather than a policy violation.
+
+Thank you for your technical support,
+{name}`
+            },
+            threat: {
+                name: "Security Threat",
+                description: "For accounts with serious security concerns",
+                subject: "SECURITY THREAT: WhatsApp Account Compromised", 
+                body: `From: {email}
+To: support@support.whatsapp.com
+
+SECURITY ALERT - URGENT ATTENTION REQUIRED
+
+My WhatsApp account associated with number {number} has been compromised and poses a serious security threat.
+
+The situation:
+- Account accessed unauthorized  
+- Personal safety at risk
+- Potential identity theft
+- Financial information exposed
+
+I need immediate action to secure and restore my account.
+
+Please treat this with highest priority.
+
+Sincerely,
+{name}`
+            },
+            mistake: {
+                name: "Mistaken Ban", 
+                description: "For accounts banned by mistake",
+                subject: "Mistaken Ban Appeal - WhatsApp Account Wrongfully Restricted",
+                body: `From: {email}
+To: support@support.whatsapp.com
+
+Hello WhatsApp Support,
+
+I believe my WhatsApp account with number {number} has been wrongfully banned. I have always used WhatsApp in compliance with your terms.
+
+Possible reasons for mistaken ban:
+- Automated system error
+- False spam reports  
+- Mistaken identity
+- Technical glitch
+
+I request you to review my account activity and restore access.
+
+Thank you,
+{name}`
+            }
+        };
+
+        // DOM elements
+        const phoneNumberInput = document.getElementById('phoneNumber');
+        const userEmailInput = document.getElementById('userEmail');
+        const userNameInput = document.getElementById('userName');
+        const unbanBtn = document.getElementById('unbanBtn');
+        const statusContainer = document.getElementById('statusContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const emailPreview = document.getElementById('emailPreview');
+        const templateDescription = document.getElementById('templateDescription');
+        const emailContent = document.getElementById('emailContent');
+        const copyEmailBtn = document.getElementById('copyEmailBtn');
+        const sendEmailBtn = document.getElementById('sendEmailBtn');
+        const systemInfo = document.getElementById('systemInfo');
+        const templateCards = document.querySelectorAll('.template-card');
+        
+        let selectedTemplate = 'urgent';
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listeners
+            unbanBtn.addEventListener('click', startUnbanProcess);
+            copyEmailBtn.addEventListener('click', copyEmailToClipboard);
+            sendEmailBtn.addEventListener('click', openEmailClient);
+            
+            // Template selection
+            templateCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    templateCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedTemplate = this.dataset.template;
+                });
+            });
+            
+            // Add random system info changes
+            const systemMessages = [
+                "System Secure - Ready for Processing",
+                "Encryption: AES-256 Active",
+                "Connection: Secure Tunnel Established",
+                "Database: Online and Accessible",
+                "Security: All Protocols Active",
+                "Status: Awaiting User Input"
+            ];
+            
+            let messageIndex = 0;
+            setInterval(() => {
+                systemInfo.innerHTML = `<i class="fas fa-shield-alt"></i> ${systemMessages[messageIndex]}`;
+                messageIndex = (messageIndex + 1) % systemMessages.length;
+            }, 3000);
+        });
+        
+        function startUnbanProcess() {
+            const phoneNumber = phoneNumberInput.value.trim();
+            const userEmail = userEmailInput.value.trim();
+            const userName = userNameInput.value.trim() || "User";
+            
+            if (!phoneNumber) {
+                addStatusMessage("ERROR: Please enter a valid phone number", "error");
+                return;
+            }
+          
+            if (!userEmail) {
+                addStatusMessage("ERROR: Please enter your email address", "error");
+                return;
+            }
+            
+            // Disable button during process
+            unbanBtn.disabled = true;
+            unbanBtn.innerHTML = '<i class="fas fa-cog fa-spin"></i> Processing...';
+            
+            // Reset progress
+            progressFill.style.width = '0%';
+            progressText.textContent = '0%';
+            
+            // Clear status except first few lines
+            const statusLines = statusContainer.querySelectorAll('.status-line');
+            for (let i = 4; i < statusLines.length; i++) {
+                statusLines[i].remove();
+            }
+            
+            // Start the simulation
+            simulateUnbanProcess(phoneNumber, userEmail, userName);
+        }
+        
+        function addStatusMessage(message, type = "info") {
+            const statusLine = document.createElement('div');
+            statusLine.className = 'status-line';
+            
+            const timeSpan = document.createElement('span');
+            timeSpan.className = 'status-time';
+            timeSpan.textContent = '[' + new Date().toLocaleTimeString() + ']';
+            
+            const messageSpan = document.createElement('span');
+            messageSpan.className = `status-message ${type === 'error' ? 'status-error' : type === 'success' ? 'status-success' : type === 'warning' ? 'status-warning' : ''}`;
+            messageSpan.textContent = message;
+            
+            statusLine.appendChild(timeSpan);
+            statusLine.appendChild(messageSpan);
+            
+            statusContainer.appendChild(statusLine);
+            statusContainer.scrollTop = statusContainer.scrollHeight;
+            
+            // Remove blinking cursor and add it back
+            const blink = statusContainer.querySelector('.blink');
+            if (blink) blink.remove();
+            
+            const newBlink = document.createElement('div');
+            newBlink.className = 'status-line';
+            newBlink.innerHTML = '<span class="status-time">></span><span class="status-message blink">_</span>';
+            statusContainer.appendChild(newBlink);
+            statusContainer.scrollTop = statusContainer.scrollHeight;
+        }
+        
+        function simulateUnbanProcess(phoneNumber, userEmail, userName) {
+            let progress = 0;
+            const steps = [
+                {message: "Initializing unban sequence...", delay: 1000, progress: 10},
+                {message: "Connecting to WhatsApp servers...", delay: 1500, progress: 20},
+                {message: "Authenticating with secure token...", delay: 1200, progress: 30},
+                {message: "Bypassing security protocols...", delay: 2000, progress: 40},
+                {message: "Accessing user database...", delay: 1800, progress: 50},
+                {message: `Located phone number: ${phoneNumber}`, delay: 1000, progress: 60},
+                {message: "Analyzing ban reason patterns...", delay: 1500, progress: 70},
+                {message: `Selected strategy: ${emailTemplates[selectedTemplate].name}`, delay: 1000, progress: 80},
+                {message: "Generating optimized appeal email...", delay: 2000, progress: 90},
+                {message: "Process completed successfully!", delay: 1000, progress: 100}
+            ];
+            
+            let currentStep = 0;
+            
+            function processNextStep() {
+                if (currentStep < steps.length) {
+                    const step = steps[currentStep];
+                    
+                    setTimeout(() => {
+                        addStatusMessage(step.message, currentStep === steps.length - 1 ? "success" : "info");
+                        
+                        // Update progress
+                        progressFill.style.width = step.progress + '%';
+                        progressText.textContent = step.progress + '%';
+                        
+                        currentStep++;
+                        processNextStep();
+                    }, step.delay);
+                } else {
+                    // Process completed - show email template
+                    setTimeout(() => {
+                        generateEmailTemplate(phoneNumber, userEmail, userName);
+                        emailPreview.style.display = 'block';
+                        
+                        // Re-enable button
+                        unbanBtn.disabled = false;
+                        unbanBtn.innerHTML = '<i class="fas fa-bolt"></i> Generate Unban Email';
+                        
+                        addStatusMessage("Email template ready for use", "success");
+                    }, 1000);
+                }
+            }
+            
+            processNextStep();
+        }
+        
+        function generateEmailTemplate(phoneNumber, userEmail, userName) {
+            const template = emailTemplates[selectedTemplate];
+            
+            // Update description
+            templateDescription.textContent = template.description;
+            
+            // Generate email content with replacements
+            let emailBody = template.body
+                .replace(/{email}/g, userEmail)
+                .replace(/{number}/g, phoneNumber)
+                .replace(/{name}/g, userName);
+            
+            // Format for display
+            emailContent.innerHTML = emailBody.split('\n').map(line => {
+                if (line.startsWith('From:') || line.startsWith('To:') || line.startsWith('Subject:')) {
+                    return `<div style="color: #00ff88; font-weight: 500;">${line}</div>`;
+                } else if (line.trim() === '') {
+                    return '<div style="height: 8px;"></div>';
+                } else {
+                    return `<div>${line}</div>`;
+                }
+            }).join('');
+        }
+        
+        function copyEmailToClipboard() {
+            const template = emailTemplates[selectedTemplate];
+            const userEmail = userEmailInput.value;
+            const phoneNumber = phoneNumberInput.value;
+            const userName = userNameInput.value || "User";
+            
+            let emailBody = template.body
+                .replace(/{email}/g, userEmail)
+                .replace(/{number}/g, phoneNumber)
+                .replace(/{name}/g, userName);
+            
+            navigator.clipboard.writeText(emailBody).then(() => {
+                addStatusMessage("Email copied to clipboard - ready to paste", "success");
+            }).catch(err => {
+                addStatusMessage("Failed to copy email: " + err, "error");
+            });
+        }
+        
+        function openEmailClient() {
+            const template = emailTemplates[selectedTemplate];
+            const userEmail = userEmailInput.value;
+            const phoneNumber = phoneNumberInput.value;
+            const userName = userNameInput.value || "User";
+            
+            let emailBody = template.body
+                .replace(/{email}/g, userEmail)
+                .replace(/{number}/g, phoneNumber)
+                .replace(/{name}/g, userName);
+            
+            // Extract subject from email body
+            const subjectMatch = emailBody.match(/Subject: (.+)/);
+            const subject = subjectMatch ? subjectMatch[1] : "WhatsApp Unban Request";
+            
+            // Remove headers from body for email client
+            const bodyLines = emailBody.split('\n');
+            let bodyStartIndex = 0;
+            for (let i = 0; i < bodyLines.length; i++) {
+                if (bodyLines[i].startsWith('Hello') || bodyLines[i].startsWith('Dear') || bodyLines[i].startsWith('SECURITY') || bodyLines[i].startsWith('FORMAL')) {
+                    bodyStartIndex = i;
+                    break;
+                }
+            }
+            const emailBodyOnly = bodyLines.slice(bodyStartIndex).join('\n');
+            
+            const mailtoLink = `mailto:support@support.whatsapp.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBodyOnly)}`;
+            window.open(mailtoLink, '_blank');
+            
+            addStatusMessage("Email client opened - ready to send", "success");
+        }
+    </script>
+</body>
+</html>
