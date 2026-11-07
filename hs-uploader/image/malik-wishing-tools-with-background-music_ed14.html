@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090b18">
+<title>Malik Wishing Tools</title>
+<style>
+:root{--bg:#090b18;--panel:#11162a;--panel2:#171e35;--text:#f6f7ff;--muted:#a5aec8;--line:rgba(255,255,255,.1);--pink:#ff4fa3;--violet:#9271ff;--cyan:#54d8ed;--green:#50d6a0}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 12% 0%,#24204b 0,transparent 32%),radial-gradient(circle at 90% 12%,#342044 0,transparent 27%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial,sans-serif;min-height:100vh}button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}.wrap{max-width:1200px;margin:auto;padding:22px}.top{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 18px;border:1px solid var(--line);background:rgba(15,19,38,.78);backdrop-filter:blur(18px);border-radius:20px;position:sticky;top:12px;z-index:5}.brand{font-weight:950;letter-spacing:.06em;font-size:clamp(16px,3vw,22px);background:linear-gradient(90deg,#fff,#ff83c1,#9b8aff,#62e4f0);background-size:250%;color:transparent;background-clip:text;animation:shine 7s linear infinite}.nav{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.btn{padding:11px 16px;border-radius:12px;color:#fff;background:linear-gradient(100deg,#7657ee,#d94d9c);font-weight:800;box-shadow:0 8px 24px #8b4ce533}.btn.secondary{background:#202944;border:1px solid var(--line);box-shadow:none}.btn.ghost{background:transparent;border:1px solid var(--line);box-shadow:none;color:var(--muted)}.hero{text-align:center;padding:76px 12px 48px}.eyebrow{display:inline-flex;padding:8px 13px;border:1px solid #9c7bff66;border-radius:999px;color:#d8ccff;background:#9c7bff14;font-size:12px;font-weight:800;letter-spacing:.14em}.hero h1{font-size:clamp(38px,8vw,78px);line-height:1.04;margin:20px 0 14px;font-weight:1000;letter-spacing:-.055em;background:linear-gradient(100deg,#fff 10%,#ff77b7 38%,#a78bff 65%,#6be5f2 90%);background-size:250%;color:transparent;background-clip:text;animation:shine 8s linear infinite}.hero p{max-width:650px;margin:0 auto;color:var(--muted);font-size:16px;line-height:1.7}.hero-actions{margin-top:25px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.section-head{display:flex;justify-content:space-between;align-items:end;gap:15px;margin:25px 0 18px}.section-head h2{margin:0;font-size:25px}.muted{color:var(--muted)}.search{width:min(100%,330px);padding:12px 14px;border-radius:12px;background:#11182d;border:1px solid var(--line);color:white;outline:none}.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:17px}.card{background:linear-gradient(145deg,#171d35,#101528);border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:.25s;box-shadow:0 15px 40px #0002}.card:hover{transform:translateY(-5px);border-color:#a17aff88;box-shadow:0 18px 45px #8c5aff22}.thumb{height:145px;display:grid;place-items:center;background:linear-gradient(135deg,#35245c,#742f68,#1c5b72);font-size:42px}.card-body{padding:17px}.card h3{margin:0 0 7px;font-size:18px}.card p{margin:0;color:var(--muted);font-size:13px;line-height:1.55;min-height:40px}.tag{display:inline-block;margin-top:12px;padding:5px 9px;border-radius:99px;background:#a27aff1a;color:#cbbcff;font-size:11px}.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:15px;gap:8px}.open-link{color:#fff;text-decoration:none;font-weight:800;font-size:13px}.empty{padding:40px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:18px}.contact{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:42px 0}.contact a{color:#fff;text-decoration:none;padding:13px 18px;border:1px solid var(--line);border-radius:14px;background:#11182d;font-weight:800}.footer{text-align:center;color:var(--muted);padding:32px 10px 24px;border-top:1px solid var(--line);margin-top:45px}.credit{display:block;margin-top:7px;font-weight:1000;font-size:21px;letter-spacing:.03em;background:linear-gradient(90deg,#fff,#ff69b4,#a58cff,#6be5f2);color:transparent;background-clip:text;animation:shine 6s linear infinite}@keyframes shine{to{background-position:250% center}}
+/* Admin */
+.admin{display:none}.admin.active{display:block}.public.hidden{display:none}.admin-head{padding:35px 0 20px}.admin-head h1{font-size:34px;margin:0 0 8px}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:13px;margin:20px 0}.stat,.box{padding:18px;border:1px solid var(--line);border-radius:17px;background:#11182be8}.stat b{display:block;font-size:27px;margin-top:8px}.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.box h3{margin:0 0 15px}.field{display:grid;gap:7px;margin-bottom:13px}.field label{font-size:12px;color:#c2c9dc;font-weight:800}.field input,.field textarea,.field select{width:100%;padding:12px;border-radius:11px;border:1px solid var(--line);background:#0b1020;color:white;outline:none}.field textarea{min-height:75px;resize:vertical}.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1}.hint{font-size:12px;color:#aab4cf;line-height:1.6}.admin-list{display:grid;gap:10px}.admin-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-radius:13px;background:#0d1427;border:1px solid var(--line)}.admin-item small{display:block;color:var(--muted);margin-top:4px}.danger{background:#61263a!important}.login-screen{max-width:420px;margin:65px auto;padding:25px;border:1px solid var(--line);background:#11182bf2;border-radius:22px;box-shadow:0 25px 70px #0006}.login-screen h2{margin-top:0}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#202944;border:1px solid var(--line);padding:12px 18px;border-radius:12px;display:none;z-index:20}.note{border-left:3px solid #e7b45a;padding:11px 13px;background:#e7b45a12;color:#e9d8b5;border-radius:8px;font-size:12px;line-height:1.6;margin:12px 0}
+@media(max-width:760px){.wrap{padding:13px}.top{align-items:flex-start;flex-direction:column}.nav{width:100%}.nav button{flex:1}.hero{padding:55px 5px 35px}.admin-grid{grid-template-columns:1fr}.section-head{align-items:stretch;flex-direction:column}.search{width:100%}.admin-item{align-items:flex-start;flex-direction:column}.admin-item .row{width:100%}}
+
+.music-toggle{position:fixed;right:18px;bottom:18px;z-index:30;padding:12px 16px;border-radius:999px;background:linear-gradient(100deg,#7657ee,#d94d9c);color:#fff;font-weight:850;box-shadow:0 8px 28px #8b4ce555;border:1px solid #ffffff30}
+.music-toggle[aria-pressed="true"]{background:linear-gradient(100deg,#167e72,#3b9cce)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="brand">✦ MALIK WISHING TOOLS</div>
+  <nav class="nav" id="publicNav">
+    <button class="btn secondary" onclick="goHome()">Home</button>
+    <button class="btn" onclick="showLogin()">Admin</button>
+  </nav>
+  <nav class="nav" id="adminNav" style="display:none">
+    <button class="btn secondary" onclick="showPublic()">Public Preview</button>
+    <button class="btn ghost" onclick="logout()">Logout</button>
+  </nav>
+</header>
+
+<main class="public" id="publicView">
+  <section class="hero">
+    <span class="eyebrow">YOUR DESTINATION FOR SPECIAL MOMENTS</span>
+    <h1>MALIK WISHING TOOLS</h1>
+    <p>Explore beautiful wishing experiences, creative surprises and special websites — all together in one place.</p>
+    <div class="hero-actions"><button class="btn" onclick="document.getElementById('tools').scrollIntoView({behavior:'smooth'})">Explore Websites ↓</button></div>
+  </section>
+  <section id="tools">
+    <div class="section-head"><div><span class="eyebrow">DISCOVER</span><h2 style="margin-top:10px">Our Websites</h2><div class="muted" style="font-size:13px;margin-top:5px">Choose a tool and open its experience.</div></div><input class="search" id="searchBox" placeholder="Search websites..." oninput="renderPublic()"></div>
+    <div class="cards" id="publicCards"></div>
+    <div class="empty" id="publicEmpty" style="display:none">No websites published yet. Please check back soon.</div>
+  </section>
+  <div class="contact" id="publicContacts"></div>
+</main>
+
+<section class="login-screen" id="loginScreen" style="display:none">
+  <span class="eyebrow">PRIVATE ACCESS</span><h2>Administrator Login</h2>
+  <p class="muted" style="font-size:13px">This sign-in is for the site owner only.</p>
+  <div class="field"><label>Username</label><input id="loginUser" autocomplete="username" placeholder="Enter admin username"></div>
+  <div class="field"><label>Password</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="Enter admin password"></div>
+  <button class="btn" style="width:100%" onclick="login()">Secure Login</button>
+  <p class="hint" style="margin-top:12px">Demo interface only: connect server-side authentication before publishing online.</p>
+</section>
+
+<main class="admin" id="adminView">
+  <div class="admin-head"><span class="eyebrow">OWNER CONTROL CENTER</span><h1>Admin Dashboard</h1><div class="muted">Manage your published experiences and public contact details.</div></div>
+  <div class="stats">
+    <div class="stat"><span class="muted">Total websites</span><b id="statTotal">0</b></div>
+    <div class="stat"><span class="muted">Published</span><b id="statPublished">0</b></div>
+    <div class="stat"><span class="muted">Unpublished</span><b id="statDraft">0</b></div>
+    <div class="stat"><span class="muted">Categories</span><b id="statCats">0</b></div>
+  </div>
+  <div class="admin-grid">
+    <section class="box">
+      <h3>＋ Add / Update Website</h3>
+      <div class="field"><label>Website name *</label><input id="siteName" placeholder="e.g. Birthday Wishes"></div>
+      <div class="field"><label>Description</label><textarea id="siteDesc" placeholder="Write a short description"></textarea></div>
+      <div class="row">
+        <div class="field"><label>Category (optional)</label><input id="siteCategory" placeholder="e.g. Birthday"></div>
+        <div class="field"><label>Emoji / icon</label><input id="siteIcon" placeholder="🎂" maxlength="8"></div>
+      </div>
+      <div class="field"><label>Website URL (hosted project URL)</label><input id="siteUrl" placeholder="https://your-hosted-site.example"></div>
+      <div class="field"><label>Upload ZIP or HTML (stored only in this browser demo)</label><input id="siteFile" type="file" accept=".zip,.html,.htm"></div>
+      <div class="field"><label>Thumbnail image (optional)</label><input id="siteImage" type="file" accept="image/*"></div>
+      <label class="hint"><input type="checkbox" id="sitePublished" checked> Publish on public homepage</label>
+      <div class="note">Important: This single HTML demo can save project details in this browser and link to an already-hosted website. It cannot securely extract ZIPs, host files online, or publish projects for everyone. Those features require a backend and storage service.</div>
+      <div class="row"><button class="btn" onclick="saveSite()">Save Website</button><button class="btn secondary" onclick="clearForm()">Clear</button></div>
+      <input type="hidden" id="editId">
+    </section>
+    <section class="box">
+      <h3>⚙ Contact Settings</h3>
+      <div class="field"><label>WhatsApp link</label><input id="waLink" placeholder="https://wa.me/1234567890"></div>
+      <div class="field"><label>Telegram link</label><input id="tgLink" placeholder="https://t.me/username"></div>
+      <div class="row"><button class="btn" onclick="saveContacts()">Save Contacts</button><button class="btn secondary" onclick="resetContacts()">Clear</button></div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:22px 0">
+      <h3>▦ Category Overview</h3>
+      <p class="hint">Categories are optional. Leave the category field empty to show a website without a category label.</p>
+      <div id="categoryOverview" class="admin-list"></div>
+    </section>
+  </div>
+  <section class="box" style="margin-top:17px">
+    <div class="section-head" style="margin-top:0"><div><h3>Manage Websites</h3><div class="muted" style="font-size:12px">Edit, publish, unpublish or remove your entries.</div></div><input class="search" id="adminSearch" placeholder="Find a website..." oninput="renderAdmin()"></div>
+    <div id="adminList" class="admin-list"></div>
+  </section>
+</main>
+
+<footer class="footer">Made for beautiful moments.<span class="credit">Website generated by<br>Malik Mushahid</span><div style="font-size:11px;margin-top:10px">© <span id="year"></span> MALIK WISHING TOOLS</div></footer>
+</div>
+<button class="music-toggle" id="musicToggle" type="button" aria-pressed="false">♫ Background Music: OFF</button>
+<div class="toast" id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+const KEY='mwt_sites_v1', CONTACT='mwt_contacts_v1';
+let sites=JSON.parse(localStorage.getItem(KEY)||'[]'), editing=null;
+let contacts=JSON.parse(localStorage.getItem(CONTACT)||'{}');
+$('year').textContent=new Date().getFullYear();
+function persist(){localStorage.setItem(KEY,JSON.stringify(sites))}
+function toast(msg){$('toast').textContent=msg;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2600)}
+function goHome(){showPublic();window.scrollTo({top:0,behavior:'smooth'})}
+function showLogin(){$('publicView').classList.add('hidden');$('loginScreen').style.display='block';$('adminView').classList.remove('active');$('publicNav').style.display='flex';$('adminNav').style.display='none';}
+function showPublic(){$('publicView').classList.remove('hidden');$('loginScreen').style.display='none';$('adminView').classList.remove('active');$('publicNav').style.display='flex';$('adminNav').style.display='none';renderPublic()}
+function login(){
+  // DEMO ONLY. Replace with server-side authentication before deployment.
+  if($('loginUser').value==='Khan@1373' && $('loginPass').value==='Khan@1373'){
+    $('loginScreen').style.display='none';$('publicView').classList.add('hidden');$('adminView').classList.add('active');$('publicNav').style.display='none';$('adminNav').style.display='flex';renderAdmin();toast('Demo admin session opened');
+  }else toast('Incorrect username or password');
+}
+function logout(){$('loginUser').value='';$('loginPass').value='';showPublic();toast('Logged out')}
+function renderPublic(){
+ const q=($('searchBox')?.value||'').toLowerCase();
+ const list=sites.filter(s=>s.published && (s.name+' '+s.desc+' '+s.category).toLowerCase().includes(q));
+ $('publicCards').innerHTML=list.map(s=>`<article class="card"><div class="thumb">${s.image?`<img src="${s.image}" alt="" style="width:100%;height:145px;object-fit:cover">`:s.icon||'✨'}</div><div class="card-body"><h3>${esc(s.name)}</h3><p>${esc(s.desc||'Discover this special experience.')}</p>${s.category?`<span class="tag">${esc(s.category)}</span>`:''}<div class="card-foot"><a class="open-link" href="${safeUrl(s.url)}" target="_blank" rel="noopener">Open Website ↗</a><span style="color:var(--green);font-size:11px">● Live</span></div></div></article>`).join('');
+ $('publicEmpty').style.display=list.length?'none':'block';
+ $('publicContacts').innerHTML=[contacts.wa?`<a href="${safeUrl(contacts.wa)}" target="_blank" rel="noopener">◉ WhatsApp</a>`:'',contacts.tg?`<a href="${safeUrl(contacts.tg)}" target="_blank" rel="noopener">➤ Telegram</a>`:''].join('');
+}
+function safeUrl(u){try{let x=new URL(u);return ['http:','https:'].includes(x.protocol)?x.href:'#'}catch{return '#'}}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function saveSite(){
+ const name=$('siteName').value.trim();if(!name){toast('Please enter a website name');return}
+ const file=$('siteFile').files[0], imageFile=$('siteImage').files[0];
+ const finish=(imageData)=>{let id=$('editId').value||String(Date.now());let old=sites.find(x=>x.id===id);
+ const item={id,name,desc:$('siteDesc').value.trim(),category:$('siteCategory').value.trim(),icon:$('siteIcon').value.trim()||'✨',url:$('siteUrl').value.trim()||old?.url||'',image:imageData||old?.image||'',published:$('sitePublished').checked,filename:file?.name||old?.filename||''};
+ if(old)sites=sites.map(x=>x.id===id?item:x);else sites.unshift(item);persist();clearForm();renderAdmin();renderPublic();toast('Website details saved in this browser')};
+ if(imageFile){const r=new FileReader();r.onload=()=>finish(r.result);r.readAsDataURL(imageFile)}else finish(null);
+}
+function clearForm(){['siteName','siteDesc','siteCategory','siteIcon','siteUrl','siteFile','siteImage','editId'].forEach(id=>$(id).value='');$('sitePublished').checked=true}
+function editSite(id){let s=sites.find(x=>x.id===id);if(!s)return;$('siteName').value=s.name;$('siteDesc').value=s.desc;$('siteCategory').value=s.category;$('siteIcon').value=s.icon;$('siteUrl').value=s.url;$('sitePublished').checked=s.published;$('editId').value=id;window.scrollTo({top:350,behavior:'smooth'})}
+function toggleSite(id){sites=sites.map(s=>s.id===id?{...s,published:!s.published}:s);persist();renderAdmin();renderPublic()}
+function deleteSite(id){if(!confirm('Delete this website entry?'))return;sites=sites.filter(s=>s.id!==id);persist();renderAdmin();renderPublic();toast('Entry deleted')}
+function renderAdmin(){
+ $('statTotal').textContent=sites.length;$('statPublished').textContent=sites.filter(s=>s.published).length;$('statDraft').textContent=sites.filter(s=>!s.published).length;$('statCats').textContent=new Set(sites.map(s=>s.category).filter(Boolean)).size;
+ const q=($('adminSearch')?.value||'').toLowerCase(),list=sites.filter(s=>(s.name+' '+s.category).toLowerCase().includes(q));
+ $('adminList').innerHTML=list.length?list.map(s=>`<div class="admin-item"><div><b>${esc(s.icon)} ${esc(s.name)}</b><small>${esc(s.category||'No category')} · ${s.published?'Published':'Unpublished'} · ${esc(s.filename||'External URL')}</small></div><div class="row"><button class="btn secondary" onclick="editSite('${s.id}')">Edit</button><button class="btn secondary" onclick="toggleSite('${s.id}')">${s.published?'Unpublish':'Publish'}</button><button class="btn danger" onclick="deleteSite('${s.id}')">Delete</button></div></div>`).join(''):'<div class="empty">No website entries yet.</div>';
+ const cats=[...new Set(sites.map(s=>s.category).filter(Boolean))];$('categoryOverview').innerHTML=cats.length?cats.map(c=>`<div class="admin-item"><b>${esc(c)}</b><small>${sites.filter(s=>s.category===c).length} website(s)</small></div>`).join(''):'<p class="hint">No categories added yet.</p>';
+}
+function saveContacts(){contacts={wa:$('waLink').value.trim(),tg:$('tgLink').value.trim()};localStorage.setItem(CONTACT,JSON.stringify(contacts));renderPublic();toast('Contact settings saved')}
+function resetContacts(){$('waLink').value='';$('tgLink').value='';saveContacts()}
+$('waLink').value=contacts.wa||'';$('tgLink').value=contacts.tg||'';
+renderPublic();
+
+// Original, softly generated ambient background music (no external track required).
+let musicContext=null, musicMaster=null, musicTimer=null, musicStep=0;
+const musicNotes=[261.63,329.63,392.00,329.63,293.66,349.23,440.00,349.23,
+                  261.63,329.63,392.00,493.88,293.66,349.23,440.00,392.00];
+function playAmbientNote(){
+  if(!musicContext || !musicMaster) return;
+  const now=musicContext.currentTime, freq=musicNotes[musicStep%musicNotes.length];
+  const osc=musicContext.createOscillator(), gain=musicContext.createGain();
+  osc.type='sine'; osc.frequency.setValueAtTime(freq,now);
+  gain.gain.setValueAtTime(0.0001,now);
+  gain.gain.exponentialRampToValueAtTime(0.035,now+0.12);
+  gain.gain.exponentialRampToValueAtTime(0.0001,now+1.45);
+  osc.connect(gain); gain.connect(musicMaster);
+  osc.start(now); osc.stop(now+1.5);
+  musicStep++;
+}
+async function toggleBackgroundMusic(){
+  const button=$('musicToggle');
+  try{
+    if(musicTimer){
+      clearInterval(musicTimer); musicTimer=null;
+      if(musicMaster) musicMaster.gain.setTargetAtTime(0.0001,musicContext.currentTime,0.12);
+      button.textContent='♫ Background Music: OFF';button.setAttribute('aria-pressed','false');
+      return;
+    }
+    const AudioCtx=window.AudioContext||window.webkitAudioContext;
+    if(!AudioCtx){toast('Background music is not supported in this browser');return}
+    if(!musicContext){musicContext=new AudioCtx();musicMaster=musicContext.createGain();musicMaster.gain.value=0.55;musicMaster.connect(musicContext.destination)}
+    await musicContext.resume();
+    musicMaster.gain.setTargetAtTime(1,musicContext.currentTime,0.2);
+    musicStep=0;playAmbientNote();musicTimer=setInterval(playAmbientNote,1650);
+    button.textContent='♫ Background Music: ON';button.setAttribute('aria-pressed','true');
+  }catch(e){toast('Could not start background music')}
+}
+$('musicToggle').addEventListener('click',toggleBackgroundMusic);
+
+</script>
+</body>
+</html>
