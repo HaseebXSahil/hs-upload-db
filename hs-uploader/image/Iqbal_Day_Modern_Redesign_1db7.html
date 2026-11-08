@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090b18">
+<title>Iqbal Day — 09.11</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;800&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080a17;--panel:#11152a;--ink:#f5f2eb;--muted:#a8adc2;--gold:#f3ce83;--cyan:#8de7df;--pink:#d8a6ff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;z-index:-3;background:radial-gradient(ellipse at 14% 10%,#49316d88,transparent 34%),radial-gradient(ellipse at 88% 24%,#126d7180,transparent 34%),radial-gradient(ellipse at 50% 100%,#39244c70,transparent 45%),#080a17}
+body:after{content:"";position:fixed;inset:0;z-index:-2;opacity:.12;background-image:linear-gradient(#ffffff12 1px,transparent 1px),linear-gradient(90deg,#ffffff12 1px,transparent 1px);background-size:54px 54px;mask-image:linear-gradient(to bottom,black,transparent 80%)}
+a,button{font:inherit}.topbar{max-width:1200px;margin:auto;padding:24px 5vw;display:flex;justify-content:space-between;align-items:center}.logo{font-size:12px;font-weight:900;letter-spacing:3px}.logo b{color:var(--gold)}.top-pill{border:1px solid #ffffff26;border-radius:99px;padding:9px 15px;color:#c9cce0;font-size:10px;letter-spacing:1.7px;background:#ffffff08;backdrop-filter:blur(15px)}
+.hero{max-width:1200px;margin:auto;padding:65px 5vw 105px;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:5vw;min-height:690px}
+.overline{font-size:11px;text-transform:uppercase;letter-spacing:4px;color:var(--cyan);font-weight:800;display:flex;align-items:center;gap:12px}.overline:before{content:"";width:32px;height:1px;background:var(--cyan)}
+h1{font-size:clamp(65px,9vw,116px);line-height:.88;letter-spacing:-7px;margin:26px 0 24px;font-weight:900}.headline-gradient{background:linear-gradient(100deg,#fff1d4 5%,#f3ce83 42%,#9de6de 90%);color:transparent;background-clip:text;-webkit-background-clip:text}
+.date-line{display:flex;align-items:center;gap:13px;color:var(--gold);font-size:12px;letter-spacing:3px;font-weight:800}.date-line span{height:1px;width:45px;background:#f3ce8366}
+.intro{max-width:510px;color:#b9bdd0;line-height:1.9;font-size:15px;margin:23px 0 30px}.actions{display:flex;gap:12px;flex-wrap:wrap}.btn{border:1px solid #ffffff30;background:#ffffff0a;color:#f7f3e9;padding:14px 19px;border-radius:13px;cursor:pointer;font-size:11px;letter-spacing:1px;font-weight:800;transition:.25s;backdrop-filter:blur(15px)}.btn:hover{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 12px 35px #0005}.btn.primary{background:linear-gradient(110deg,#f3ce83,#e6b96e);border:0;color:#171426;box-shadow:0 8px 30px #e9c47730}
+.visual{position:relative;max-width:430px;width:100%;margin:auto;animation:levitate 7s ease-in-out infinite}.orbit{position:absolute;inset:-32px;border:1px solid #9de6de30;border-radius:48%;transform:rotate(-18deg);animation:spin 24s linear infinite}.orbit:before{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:var(--gold);top:13%;left:14%;box-shadow:0 0 18px var(--gold)}
+.photo-shell{position:relative;padding:9px;border-radius:28px;background:linear-gradient(140deg,#ffffff6b,#ffffff06 28%,#f3ce8377 70%,#8de7df88);box-shadow:0 30px 100px #0009,0 0 65px #8de7df1b}
+.photo-inner{height:510px;position:relative;border-radius:21px;overflow:hidden;background:linear-gradient(145deg,#242341,#102d3b);border:1px solid #ffffff30}
+#portrait{width:100%;height:100%;object-fit:cover;display:none}.empty-photo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:25px;background:radial-gradient(circle at 50% 40%,#f3ce8320,transparent 45%)}
+.monogram{font:700 82px 'Playfair Display';background:linear-gradient(120deg,#f9e8c2,#e5bd76,#9de6de);color:transparent;background-clip:text;-webkit-background-clip:text}
+.empty-photo h3{font:700 25px 'Playfair Display';margin:13px 0 8px}.empty-photo p{font-size:12px;color:#b8c4d1;line-height:1.7;max-width:240px}
+.upload{margin-top:15px;cursor:pointer;border:1px solid #f3ce83a0;color:var(--gold);border-radius:99px;padding:11px 16px;font-size:10px;font-weight:900;letter-spacing:1.3px;background:#f3ce8312}.upload input{display:none}
+.photo-label{position:absolute;bottom:20px;left:20px;right:20px;padding:12px 15px;border:1px solid #ffffff25;border-radius:12px;background:#080a17a8;backdrop-filter:blur(15px);display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:1.8px;color:#e8e6e1}.photo-label b{color:var(--gold)}
+.float-tag{position:absolute;right:-25px;top:40px;padding:12px 15px;border-radius:13px;background:#11152ad9;border:1px solid #ffffff2b;backdrop-filter:blur(18px);font-size:10px;letter-spacing:1px;color:var(--cyan);box-shadow:0 12px 35px #0006}
+.section{max-width:1120px;margin:auto;padding:75px 5vw}.section-head{text-align:center;margin-bottom:38px}.section-head .overline{justify-content:center}.section-head .overline:before{display:none}h2{font:700 clamp(34px,5vw,55px) 'Playfair Display';letter-spacing:-1.5px;margin:14px 0}.sub{color:var(--muted);font-size:13px;line-height:1.8}
+.quote-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}.quote{padding:29px;border:1px solid #ffffff1c;border-radius:20px;background:linear-gradient(140deg,#ffffff0d,#ffffff04);backdrop-filter:blur(18px);min-height:205px;position:relative;overflow:hidden;transition:.3s}.quote:hover{transform:translateY(-5px);border-color:#f3ce8377}.quote:after{content:"“";position:absolute;right:18px;top:-14px;font:110px Georgia;color:#f3ce8318}.urdu{font-family:'Noto Nastaliq Urdu',serif;font-weight:600;font-size:clamp(19px,2.6vw,25px);line-height:2.25;text-align:right;direction:rtl;color:#fff}.meaning{font-size:12px;line-height:1.7;color:#aeb5c9;margin-top:12px}.by{font-size:9px;letter-spacing:2px;color:var(--gold);font-weight:900;margin-top:15px}
+.surprise-box{max-width:850px;margin:auto;border:1px solid #ffffff25;border-radius:26px;padding:48px 25px;text-align:center;background:radial-gradient(ellipse at 50% 0%,#a67ad32c,transparent 60%),#ffffff08;backdrop-filter:blur(20px);box-shadow:0 25px 80px #0005}.gift{font-size:34px;color:var(--gold);animation:glow 2s infinite}.surprise-msg{display:none;margin:22px auto}.surprise-msg.show{display:block;animation:rise .8s both}.surprise-msg .urdu{font-size:clamp(22px,4vw,34px);color:var(--gold)}.surprise-msg p{color:#c0c5d5;line-height:1.8;font-size:13px}
+.card-layout{display:grid;grid-template-columns:1fr .8fr;gap:35px;align-items:center}.greeting-card{min-height:355px;border-radius:25px;padding:30px;position:relative;overflow:hidden;color:#16172a;background:radial-gradient(circle at 95% 0%,#ffffffa6,transparent 32%),linear-gradient(130deg,#f7e7c7,#e4c17e 60%,#a9dcd1);box-shadow:0 25px 70px #0007}.greeting-card:before{content:"اقبال";position:absolute;right:-15px;bottom:-65px;font:220px 'Noto Nastaliq Urdu';color:#18243a0d}.card-top{display:flex;justify-content:space-between;font-size:10px;font-weight:900;letter-spacing:2px}.card-title{font:800 55px 'Playfair Display';margin:48px 0 12px;letter-spacing:-2px}.card-verse{font:600 22px/2 'Noto Nastaliq Urdu';direction:rtl;text-align:right;position:relative}.card-bottom{position:absolute;bottom:25px;left:30px;font-size:9px;letter-spacing:1.6px;font-weight:900}.card-credit{position:absolute;bottom:25px;right:30px;font-size:9px;font-weight:900}
+.card-copy h3{font:700 34px 'Playfair Display';margin:10px 0}.card-copy p{font-size:13px;color:#aeb5c9;line-height:1.8}.card-copy .btn{margin:8px 7px 0 0}
+footer{border-top:1px solid #ffffff18;text-align:center;padding:36px 20px 44px;color:#9299b0;font-size:10px;letter-spacing:2px}footer strong{display:block;color:var(--gold);font-size:14px;letter-spacing:1.5px;margin-top:12px}
+.spark{position:fixed;z-index:8;top:-20px;pointer-events:none;color:var(--gold);animation:drop linear forwards}
+@keyframes levitate{50%{transform:translateY(-13px)}}@keyframes spin{to{transform:rotate(342deg)}}@keyframes glow{50%{filter:drop-shadow(0 0 14px #f3ce83);transform:scale(1.12)}}@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}@keyframes drop{to{transform:translateY(110vh) rotate(360deg);opacity:0}}
+@media(max-width:780px){.hero{grid-template-columns:1fr;text-align:center;padding-top:48px;gap:55px}.overline{justify-content:center}h1{font-size:clamp(65px,17vw,95px);letter-spacing:-5px}.intro{margin-left:auto;margin-right:auto}.actions{justify-content:center}.visual{max-width:340px}.photo-inner{height:430px}.float-tag{right:-12px}.quote-grid,.card-layout{grid-template-columns:1fr}.section{padding:58px 6vw}.topbar{padding:20px 6vw}.top-pill{font-size:8px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="logo">IQBAL<span style="color:var(--gold)">.</span><b>DAY</b></div><div class="top-pill">09 NOVEMBER <span style="color:var(--gold)">/</span> A TRIBUTE</div></header>
+<main>
+<section class="hero">
+<div class="hero-copy">
+<div class="overline">The poet of the East</div>
+<h1>Dream<br><span class="headline-gradient">Beyond.</span></h1>
+<div class="date-line"><span></span> 9 NOVEMBER · IQBAL DAY <span></span></div>
+<p class="intro">Celebrating the vision, wisdom and timeless words of Allama Muhammad Iqbal. A reminder to think boldly, discover your potential and rise with purpose.</p>
+<div class="actions"><button class="btn primary" onclick="document.querySelector('#surprise').scrollIntoView({behavior:'smooth'})">UNLOCK YOUR SURPRISE ✦</button><button class="btn" onclick="document.getElementById('photoInput').click()">＋ ADD PORTRAIT</button></div>
+</div>
+<div class="visual"><div class="orbit"></div><div class="photo-shell"><div class="photo-inner"><img id="portrait" alt="Selected Allama Iqbal portrait"><div class="empty-photo" id="emptyPhoto"><div class="monogram">اقبال</div><h3>Allama Muhammad Iqbal</h3><p>Your portrait goes here. Choose any Iqbal picture from your gallery.</p><label class="upload">UPLOAD PORTRAIT<input id="photoInput" type="file" accept="image/*"></label></div><div class="photo-label"><span>THE POET OF THE EAST</span><b>1877 — 1938</b></div></div></div><div class="float-tag">✦ &nbsp; KHudi · VISION · HOPE</div></div>
+</section>
+<section class="section"><div class="section-head"><div class="overline">Words to remember</div><h2>Echoes of Iqbal</h2><p class="sub">Timeless poetry. A fearless spirit. A vision that lives on.</p></div>
+<div class="quote-grid">
+<article class="quote"><div class="urdu">ستاروں سے آگے جہاں اور بھی ہیں<br>ابھی عشق کے امتحاں اور بھی ہیں</div><div class="meaning">There are worlds beyond the stars; many more horizons await.</div><div class="by">ALLAMA IQBAL</div></article>
+<article class="quote"><div class="urdu">خودی کو کر بلند اتنا کہ ہر تقدیر سے پہلے<br>خدا بندے سے خود پوچھے، بتا تیری رضا کیا ہے</div><div class="meaning">Build your selfhood through courage, character and effort.</div><div class="by">ALLAMA IQBAL</div></article>
+<article class="quote"><div class="urdu">عمل سے زندگی بنتی ہے جنت بھی جہنم بھی</div><div class="meaning">Our actions shape the life we create.</div><div class="by">ALLAMA IQBAL</div></article>
+<article class="quote"><div class="urdu">نہیں ہے ناامید اقبال اپنی کشتِ ویراں سے</div><div class="meaning">Even in difficult times, keep hope alive.</div><div class="by">ALLAMA IQBAL</div></article>
+</div></section>
+<section class="section" id="surprise"><div class="section-head"><div class="overline">A message just for you</div><h2>The Iqbal Day Surprise</h2><p class="sub">A little inspiration, waiting to be discovered.</p></div>
+<div class="surprise-box"><div class="gift">✧ ✦ ✧</div><div id="surpriseMsg" class="surprise-msg"><div class="urdu">اپنے خوابوں کو بلند رکھو،<br>اپنی محنت کو اپنا راستہ بناؤ،<br>اور امید کا دامن کبھی نہ چھوڑو۔</div><p><b>یومِ اقبال مبارک!</b><br>May Iqbal's message inspire you to learn, create and achieve.</p></div><button id="revealBtn" class="btn primary" onclick="reveal()">REVEAL THE MESSAGE ✦</button></div></section>
+<section class="section"><div class="section-head"><div class="overline">Save the moment</div><h2>A Card to Keep</h2><p class="sub">Download your own Iqbal Day greeting card.</p></div>
+<div class="card-layout"><div class="greeting-card" id="greetingCard"><div class="card-top"><span>09 / NOVEMBER</span><span>یومِ اقبال</span></div><div class="card-title">Iqbal Day.</div><div class="card-verse">خواب دیکھو، محنت کرو،<br>اور اپنی منزل خود بناؤ۔</div><div class="card-bottom">A TRIBUTE TO THE POET OF THE EAST</div><div class="card-credit">IQBAL DAY 2026</div></div>
+<div class="card-copy"><div class="overline">Your digital keepsake</div><h3>Made to remember.</h3><p>Save this elegant greeting card as an image. Your selected portrait will also be included in the saved card.</p><button class="btn primary" onclick="downloadCard()">↓ &nbsp; SAVE CARD AS PNG</button><button class="btn" onclick="window.print()">PRINT PAGE</button></div></div></section>
+</main>
+<footer>CELEBRATING WISDOM · COURAGE · SELF-BELIEF<strong>Website generated by Malik Mushahid</strong></footer>
+<script>
+let selectedPhoto=null;
+const input=document.getElementById('photoInput');
+input.addEventListener('change',e=>{const f=e.target.files?.[0];if(!f)return;if(!f.type.startsWith('image/')){alert('Please select an image.');return;}const r=new FileReader();r.onload=()=>{selectedPhoto=r.result;const img=document.getElementById('portrait');img.src=selectedPhoto;img.style.display='block';document.getElementById('emptyPhoto').style.display='none';};r.readAsDataURL(f);});
+function reveal(){document.getElementById('surpriseMsg').classList.add('show');const b=document.getElementById('revealBtn');b.textContent='MESSAGE UNLOCKED ✦';b.disabled=true;for(let i=0;i<38;i++)setTimeout(()=>{const s=document.createElement('i');s.className='spark';s.textContent=['✦','✧','•'][Math.floor(Math.random()*3)];s.style.left=Math.random()*100+'vw';s.style.fontSize=(10+Math.random()*17)+'px';s.style.animationDuration=(3+Math.random()*3)+'s';document.body.appendChild(s);setTimeout(()=>s.remove(),6500)},i*45);}
+function downloadCard(){
+ const c=document.createElement('canvas'),ctx=c.getContext('2d');c.width=1400;c.height=900;
+ const g=ctx.createLinearGradient(0,0,1400,900);g.addColorStop(0,'#f8ebd0');g.addColorStop(.6,'#e8c989');g.addColorStop(1,'#a9dcd1');ctx.fillStyle=g;ctx.fillRect(0,0,1400,900);
+ ctx.strokeStyle='#9b7946';ctx.lineWidth=4;ctx.strokeRect(30,30,1340,840);ctx.strokeStyle='#ffffff99';ctx.lineWidth=2;ctx.strokeRect(47,47,1306,806);
+ ctx.fillStyle='#182033';ctx.font='800 25px Arial';ctx.fillText('09 / NOVEMBER',90,110);ctx.textAlign='right';ctx.font='bold 30px serif';ctx.fillText('یومِ اقبال',1310,110);
+ ctx.textAlign='left';ctx.font='bold 100px Georgia';ctx.fillText('Iqbal Day.',90,300);
+ ctx.font='bold 31px Arial';ctx.fillText('A TRIBUTE TO THE POET OF THE EAST',95,365);
+ ctx.textAlign='right';ctx.font='bold 45px serif';ctx.fillText('خواب دیکھو، محنت کرو،',1300,570);ctx.fillText('اور اپنی منزل خود بناؤ۔',1300,650);
+ ctx.textAlign='left';ctx.font='bold 22px Arial';ctx.fillText('WISDOM  ·  COURAGE  ·  SELF-BELIEF',95,790);
+ ctx.font='bold 23px Arial';ctx.fillText('Website generated by Malik Mushahid',95,835);
+ const finish=()=>{const a=document.createElement('a');a.download='Iqbal-Day-Malik-Mushahid.png';a.href=c.toDataURL('image/png');a.click();};
+ if(selectedPhoto){const im=new Image();im.onload=()=>{ctx.save();ctx.beginPath();ctx.roundRect(920,145,330,250,20);ctx.clip();const scale=Math.max(330/im.width,250/im.height),w=im.width*scale,h=im.height*scale;ctx.drawImage(im,920+(330-w)/2,145+(250-h)/2,w,h);ctx.restore();finish();};im.src=selectedPhoto;}else finish();
+}
+</script>
+</body></html>
